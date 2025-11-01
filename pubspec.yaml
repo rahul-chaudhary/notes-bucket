@@ -1,0 +1,43 @@
+name: notes_bucket
+description: "A new Flutter project."
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  dio: ^5.8.0+1
+  google_fonts: ^6.2.1
+  auto_size_text: ^3.0.0
+  lottie: ^3.3.1
+  audioplayers: ^6.4.0
+  flutter_svg: ^2.1.0
+  url_launcher: ^6.2.1
+  flutter_secure_storage: ^9.2.4
+  dart_mappable: ^4.5.0
+  intl: ^0.20.2
+  path_provider: ^2.1.5
+  riverpod: ^3.0.3
+  flutter_riverpod: ^3.0.3
+  riverpod_annotation: ^3.0.3
+  shared_preferences: ^2.5.3
+  rxdart: ^0.28.0
+  flutter_local_notifications: ^19.4.0
+  permission_handler: ^12.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+flutter:
+
+  uses-material-design: true
+
