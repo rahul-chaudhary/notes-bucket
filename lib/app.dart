@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:notes_bucket/core/constants/app_routes.dart';
+import 'package:notes_bucket/features/notes/presentation/edit_note_page.dart';
 
 import 'core/theme/app_theme.dart';
 import 'features/notes/presentation/home_page.dart';
@@ -14,6 +16,11 @@ class MyApp extends ConsumerWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
       home: const HomePage(),
+      initialRoute: AppRoutes.home,
+      routes: {
+        AppRoutes.home: (context) => const HomePage(),
+        AppRoutes.editNotes: (context) => const EditNotePage(),
+      },
     );
   }
 }
