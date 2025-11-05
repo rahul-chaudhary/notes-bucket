@@ -14,6 +14,7 @@ class AppTheme {
     brightness: Brightness.light,
     primarySwatch: Colors.amber,
     scaffoldBackgroundColor: Colors.white,
+    splashColor: Colors.amber.withAlpha(30),
     // fontFamily: "Inter",
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.transparent,
@@ -39,6 +40,7 @@ class AppTheme {
     brightness: Brightness.dark,
     fontFamily: "Inter",
     scaffoldBackgroundColor: Colors.black87,
+    splashColor: Colors.amber.withAlpha(30),
     appBarTheme: const AppBarTheme(
       backgroundColor: Color(0xFF0b1014),
       surfaceTintColor: Color(0xFF0b1014),
