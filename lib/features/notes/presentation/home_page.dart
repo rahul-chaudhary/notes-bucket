@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notes_bucket/core/theme/app_text_style.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/recent_notes.dart';
 
+import '../../../core/constants/app_assets.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_alert_dialog.dart';
 import '../../../core/widgets/app_text_field.dart';
@@ -70,6 +72,8 @@ class HomePage extends ConsumerWidget {
             HomePageHeader(title: 'Recent Notes'),
 
             Expanded(child: RecentNotes()),
+            SvgPicture.asset(AppSvgs.moon)
+
           ],
         ),
       ),
