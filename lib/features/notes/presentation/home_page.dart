@@ -17,7 +17,9 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final TextEditingController controller = TextEditingController();
     return Scaffold(
-      appBar: AppBar(title: const Text('Notes Home Page')),
+      appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: const Text('Notes Home Page')),
       body: Padding(
         padding: AppSpacing.paddingAllS,
         child: Column(

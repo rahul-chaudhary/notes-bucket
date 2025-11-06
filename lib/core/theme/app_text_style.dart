@@ -41,6 +41,12 @@ import 'package:flutter/material.dart';
           color: Theme.of(context).colorScheme.onSurface.withAlpha(178),
         );
 
+    static TextStyle bodyXSmall(BuildContext context) =>
+        GoogleFonts.poppins(
+          fontSize: 10,
+          color: Theme.of(context).colorScheme.onSurface.withAlpha(178),
+        );
+
     /// Button text
     static TextStyle button(BuildContext context) =>
         GoogleFonts.poppins(
