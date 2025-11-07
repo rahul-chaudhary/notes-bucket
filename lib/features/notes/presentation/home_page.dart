@@ -18,9 +18,6 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final TextEditingController controller = TextEditingController();
     return Scaffold(
-      // appBar: AppBar(
-      //     automaticallyImplyLeading: false,
-      //     title: const Text('Notes Home Page')),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
