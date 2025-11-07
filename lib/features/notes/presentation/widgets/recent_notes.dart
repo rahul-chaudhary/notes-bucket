@@ -10,6 +10,7 @@ class RecentNotes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MasonryGridView.count(
+      physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 2,
       // Number of columns
       mainAxisSpacing: 8,

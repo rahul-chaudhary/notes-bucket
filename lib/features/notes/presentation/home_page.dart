@@ -19,63 +19,100 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final TextEditingController controller = TextEditingController();
     return Scaffold(
-      appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: const Text('Notes Home Page')),
-      body: Padding(
-        padding: AppSpacing.paddingAllS,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                HomePageHeader(title: 'My Folders'),
-                IconButton(
-                  onPressed: () {
-                    // Add dialog to create new folder
-                    showDialog(
-                      context: context,
-                      builder: (context) => AppAlertDialog(
-                        dialogTitle: 'Create New Folder',
-                        primaryButtonText: 'Create',
-                        primaryButtonColor: Theme.of(
-                          context,
-                        ).colorScheme.primary,
-                        content: AppTextField(
-                          controller: controller,
-                          hintText: 'Folder Name',
+      // appBar: AppBar(
+      //     automaticallyImplyLeading: false,
+      //     title: const Text('Notes Home Page')),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            automaticallyImplyLeading: false,
+            pinned: true,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(
+                'Notes Bucket',
+                style: AppTextStyles.headlineMedium(context),
+              ),
+              centerTitle: true,
+            ),
+          ),
+          SliverAppBar(
+            automaticallyImplyLeading: false,
+            pinned: false,
+            floating: true,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            expandedHeight: 150,
+            toolbarHeight: 150,
+
+            flexibleSpace: FlexibleSpaceBar(
+              background: Padding(
+                padding: AppSpacing.paddingAllS,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        HomePageHeader(title: 'My Folders'),
+                        const Spacer(),
+                        IconButton(
+                          onPressed: () {
+                            // Add dialog to create new folder
+                            showDialog(
+                              context: context,
+                              builder: (context) => AppAlertDialog(
+                                dialogTitle: 'Create New Folder',
+                                primaryButtonText: 'Create',
+                                primaryButtonColor: Theme.of(
+                                  context,
+                                ).colorScheme.primary,
+                                content: AppTextField(
+                                  controller: controller,
+                                  hintText: 'Folder Name',
+                                ),
+                                secondaryButtonText: 'Cancel',
+                                onPressPrimary: () {
+                                  // Handle folder creation logic here
+                                  Navigator.pop(context);
+                                },
+                                onPressSecondary: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.add_circle_rounded),
                         ),
-                        secondaryButtonText: 'Cancel',
-                        onPressPrimary: () {
-                          // Handle folder creation logic here
-                          Navigator.pop(context);
-                        },
-                        onPressSecondary: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.add_circle_rounded),
+                      ],
+                    ),
+                    AppSpacing.gapS,
+                    Row(
+                      children: [
+                        FolderButton(title: 'Homework'),
+                        FolderButton(title: 'Workout'),
+                        FolderButton(title: 'Sports'),
+                      ],
+                    ),
+                  ],
                 ),
-              ],
+              ),
+              centerTitle: true,
             ),
-            AppSpacing.gapS,
-            Row(
-              children: [
-                FolderButton(title: 'Homework'),
-                FolderButton(title: 'Workout'),
-                FolderButton(title: 'Sports'),
-              ],
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: AppSpacing.paddingAllS,
+              child: Column(
+                children: [
+                  HomePageHeader(title: 'Recent Notes'),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 1,
+                    child: const RecentNotes(),
+                  ),
+                  SizedBox(height: 150, child: SvgPicture.asset(AppSvgs.moon)),
+                ],
+              ),
             ),
-            AppSpacing.gapM,
-            HomePageHeader(title: 'Recent Notes'),
-
-            Expanded(child: RecentNotes()),
-            SvgPicture.asset(AppSvgs.moon)
-
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
