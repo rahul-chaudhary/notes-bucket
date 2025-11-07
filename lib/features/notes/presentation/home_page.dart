@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:notes_bucket/core/constants/app_routes.dart';
 import 'package:notes_bucket/core/theme/app_text_style.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/recent_notes.dart';
-
 import '../../../core/constants/app_assets.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_alert_dialog.dart';
@@ -109,6 +109,16 @@ class HomePage extends ConsumerWidget {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        onPressed: () {
+          Navigator.pushNamed(context, AppRoutes.editNotes);
+        },
+        child: Icon(
+          Icons.add,
+          color: Theme.of(context).colorScheme.onSecondary,
+        ),
       ),
     );
   }
