@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notes_bucket/core/theme/app_text_style.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/recent_notes.dart';
