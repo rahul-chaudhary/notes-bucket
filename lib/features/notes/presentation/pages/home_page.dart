@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:notes_bucket/core/constants/app_assets.dart';
 import 'package:notes_bucket/core/constants/app_routes.dart';
+import 'package:notes_bucket/core/theme/app_spacing.dart';
 import 'package:notes_bucket/core/theme/app_text_style.dart';
+import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
+import 'package:notes_bucket/core/widgets/app_text_field.dart';
+import 'package:notes_bucket/core/widgets/folder_button.dart';
+import 'package:notes_bucket/features/notes/presentation/widgets/home_page_header.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/recent_notes.dart';
-import '../../../core/constants/app_assets.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/widgets/app_alert_dialog.dart';
-import '../../../core/widgets/app_text_field.dart';
-import '../../../core/widgets/folder_button.dart';
-import 'widgets/home_page_header.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});

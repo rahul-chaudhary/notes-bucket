@@ -1,27 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:notes_bucket/core/theme/app_spacing.dart';
+import 'package:notes_bucket/features/notes/presentation/providers/notes_provider.dart';
 import '../../../../core/constants/app_routes.dart';
 import '../../../../core/theme/app_text_style.dart';
 
-class RecentNotes extends StatelessWidget {
+class RecentNotes extends ConsumerWidget {
   const RecentNotes({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final notes = ref.watch(notesProvider);
     return MasonryGridView.count(
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 2,
       // Number of columns
       mainAxisSpacing: 8,
       crossAxisSpacing: 8,
-      itemCount: 10,
+      itemCount: notes.value?.length,
       padding: const EdgeInsets.all(8),
       itemBuilder: (context, index) {
+        final item = notes.value?[index];
         return NoteItem(
-          title: 'This is my title of the notes',
-          content:
-              'Lorem ipsum txt is just random shit which does not mean anything. It just used to add element to mock website to see the look of the website.',
+          title: item?.title ?? 'Untitled',
+          content: item?.content ?? '',
           onTap: () => Navigator.pushNamed(context, AppRoutes.editNotes),
 
         );

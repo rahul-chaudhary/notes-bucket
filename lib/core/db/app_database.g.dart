@@ -45,7 +45,6 @@ class $FolderItemsTable extends FolderItems
     ),
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
@@ -387,6 +386,9 @@ class $NotesItemsTable extends NotesItems
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES folder_items (id) ON DELETE CASCADE',
+    ),
   );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
@@ -431,9 +433,10 @@ class $NotesItemsTable extends NotesItems
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
     'updated_at',
     aliasedName,
-    true,
+    false,
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
   );
   @override
   List<GeneratedColumn> get $columns => [
@@ -523,7 +526,7 @@ class $NotesItemsTable extends NotesItems
       updatedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
-      ),
+      )!,
     );
   }
 
@@ -539,14 +542,14 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
   final String? title;
   final String? content;
   final DateTime createdAt;
-  final DateTime? updatedAt;
+  final DateTime updatedAt;
   const NotesItem({
     required this.id,
     required this.folderID,
     this.title,
     this.content,
     required this.createdAt,
-    this.updatedAt,
+    required this.updatedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -560,9 +563,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
       map['content'] = Variable<String>(content);
     }
     map['created_at'] = Variable<DateTime>(createdAt);
-    if (!nullToAbsent || updatedAt != null) {
-      map['updated_at'] = Variable<DateTime>(updatedAt);
-    }
+    map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
   }
 
@@ -577,9 +578,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
           ? const Value.absent()
           : Value(content),
       createdAt: Value(createdAt),
-      updatedAt: updatedAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(updatedAt),
+      updatedAt: Value(updatedAt),
     );
   }
 
@@ -594,7 +593,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
       title: serializer.fromJson<String?>(json['title']),
       content: serializer.fromJson<String?>(json['content']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
   }
   @override
@@ -606,7 +605,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
       'title': serializer.toJson<String?>(title),
       'content': serializer.toJson<String?>(content),
       'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
   }
 
@@ -616,14 +615,14 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
     Value<String?> title = const Value.absent(),
     Value<String?> content = const Value.absent(),
     DateTime? createdAt,
-    Value<DateTime?> updatedAt = const Value.absent(),
+    DateTime? updatedAt,
   }) => NotesItem(
     id: id ?? this.id,
     folderID: folderID ?? this.folderID,
     title: title.present ? title.value : this.title,
     content: content.present ? content.value : this.content,
     createdAt: createdAt ?? this.createdAt,
-    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
+    updatedAt: updatedAt ?? this.updatedAt,
   );
   NotesItem copyWithCompanion(NotesItemsCompanion data) {
     return NotesItem(
@@ -670,7 +669,7 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
   final Value<String?> title;
   final Value<String?> content;
   final Value<DateTime> createdAt;
-  final Value<DateTime?> updatedAt;
+  final Value<DateTime> updatedAt;
   const NotesItemsCompanion({
     this.id = const Value.absent(),
     this.folderID = const Value.absent(),
@@ -711,7 +710,7 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
     Value<String?>? title,
     Value<String?>? content,
     Value<DateTime>? createdAt,
-    Value<DateTime?>? updatedAt,
+    Value<DateTime>? updatedAt,
   }) {
     return NotesItemsCompanion(
       id: id ?? this.id,
@@ -771,6 +770,16 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [folderItems, notesItems];
+  @override
+  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'folder_items',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('notes_items', kind: UpdateKind.delete)],
+    ),
+  ]);
 }
 
 typedef $$FolderItemsTableCreateCompanionBuilder =
@@ -789,6 +798,29 @@ typedef $$FolderItemsTableUpdateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<DateTime?> updatedAt,
     });
+
+final class $$FolderItemsTableReferences
+    extends BaseReferences<_$AppDatabase, $FolderItemsTable, FolderItem> {
+  $$FolderItemsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$NotesItemsTable, List<NotesItem>>
+  _notesItemsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.notesItems,
+    aliasName: $_aliasNameGenerator(db.folderItems.id, db.notesItems.folderID),
+  );
+
+  $$NotesItemsTableProcessedTableManager get notesItemsRefs {
+    final manager = $$NotesItemsTableTableManager(
+      $_db,
+      $_db.notesItems,
+    ).filter((f) => f.folderID.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_notesItemsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
 
 class $$FolderItemsTableFilterComposer
     extends Composer<_$AppDatabase, $FolderItemsTable> {
@@ -823,6 +855,31 @@ class $$FolderItemsTableFilterComposer
     column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  Expression<bool> notesItemsRefs(
+    Expression<bool> Function($$NotesItemsTableFilterComposer f) f,
+  ) {
+    final $$NotesItemsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.notesItems,
+      getReferencedColumn: (t) => t.folderID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$NotesItemsTableFilterComposer(
+            $db: $db,
+            $table: $db.notesItems,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$FolderItemsTableOrderingComposer
@@ -883,6 +940,31 @@ class $$FolderItemsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  Expression<T> notesItemsRefs<T extends Object>(
+    Expression<T> Function($$NotesItemsTableAnnotationComposer a) f,
+  ) {
+    final $$NotesItemsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.notesItems,
+      getReferencedColumn: (t) => t.folderID,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$NotesItemsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.notesItems,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$FolderItemsTableTableManager
@@ -896,12 +978,9 @@ class $$FolderItemsTableTableManager
           $$FolderItemsTableAnnotationComposer,
           $$FolderItemsTableCreateCompanionBuilder,
           $$FolderItemsTableUpdateCompanionBuilder,
-          (
-            FolderItem,
-            BaseReferences<_$AppDatabase, $FolderItemsTable, FolderItem>,
-          ),
+          (FolderItem, $$FolderItemsTableReferences),
           FolderItem,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool notesItemsRefs})
         > {
   $$FolderItemsTableTableManager(_$AppDatabase db, $FolderItemsTable table)
     : super(
@@ -943,9 +1022,43 @@ class $$FolderItemsTableTableManager
                 updatedAt: updatedAt,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$FolderItemsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({notesItemsRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (notesItemsRefs) db.notesItems],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (notesItemsRefs)
+                    await $_getPrefetchedData<
+                      FolderItem,
+                      $FolderItemsTable,
+                      NotesItem
+                    >(
+                      currentTable: table,
+                      referencedTable: $$FolderItemsTableReferences
+                          ._notesItemsRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$FolderItemsTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).notesItemsRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.folderID == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
         ),
       );
 }
@@ -960,12 +1073,9 @@ typedef $$FolderItemsTableProcessedTableManager =
       $$FolderItemsTableAnnotationComposer,
       $$FolderItemsTableCreateCompanionBuilder,
       $$FolderItemsTableUpdateCompanionBuilder,
-      (
-        FolderItem,
-        BaseReferences<_$AppDatabase, $FolderItemsTable, FolderItem>,
-      ),
+      (FolderItem, $$FolderItemsTableReferences),
       FolderItem,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool notesItemsRefs})
     >;
 typedef $$NotesItemsTableCreateCompanionBuilder =
     NotesItemsCompanion Function({
@@ -974,7 +1084,7 @@ typedef $$NotesItemsTableCreateCompanionBuilder =
       Value<String?> title,
       Value<String?> content,
       Value<DateTime> createdAt,
-      Value<DateTime?> updatedAt,
+      Value<DateTime> updatedAt,
     });
 typedef $$NotesItemsTableUpdateCompanionBuilder =
     NotesItemsCompanion Function({
@@ -983,8 +1093,32 @@ typedef $$NotesItemsTableUpdateCompanionBuilder =
       Value<String?> title,
       Value<String?> content,
       Value<DateTime> createdAt,
-      Value<DateTime?> updatedAt,
+      Value<DateTime> updatedAt,
     });
+
+final class $$NotesItemsTableReferences
+    extends BaseReferences<_$AppDatabase, $NotesItemsTable, NotesItem> {
+  $$NotesItemsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $FolderItemsTable _folderIDTable(_$AppDatabase db) =>
+      db.folderItems.createAlias(
+        $_aliasNameGenerator(db.notesItems.folderID, db.folderItems.id),
+      );
+
+  $$FolderItemsTableProcessedTableManager get folderID {
+    final $_column = $_itemColumn<int>('folder_i_d')!;
+
+    final manager = $$FolderItemsTableTableManager(
+      $_db,
+      $_db.folderItems,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_folderIDTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
 
 class $$NotesItemsTableFilterComposer
     extends Composer<_$AppDatabase, $NotesItemsTable> {
@@ -997,11 +1131,6 @@ class $$NotesItemsTableFilterComposer
   });
   ColumnFilters<int> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get folderID => $composableBuilder(
-    column: $table.folderID,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1024,6 +1153,29 @@ class $$NotesItemsTableFilterComposer
     column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$FolderItemsTableFilterComposer get folderID {
+    final $$FolderItemsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.folderID,
+      referencedTable: $db.folderItems,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FolderItemsTableFilterComposer(
+            $db: $db,
+            $table: $db.folderItems,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$NotesItemsTableOrderingComposer
@@ -1037,11 +1189,6 @@ class $$NotesItemsTableOrderingComposer
   });
   ColumnOrderings<int> get id => $composableBuilder(
     column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get folderID => $composableBuilder(
-    column: $table.folderID,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -1064,6 +1211,29 @@ class $$NotesItemsTableOrderingComposer
     column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$FolderItemsTableOrderingComposer get folderID {
+    final $$FolderItemsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.folderID,
+      referencedTable: $db.folderItems,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FolderItemsTableOrderingComposer(
+            $db: $db,
+            $table: $db.folderItems,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$NotesItemsTableAnnotationComposer
@@ -1078,9 +1248,6 @@ class $$NotesItemsTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<int> get folderID =>
-      $composableBuilder(column: $table.folderID, builder: (column) => column);
-
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
@@ -1092,6 +1259,29 @@ class $$NotesItemsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$FolderItemsTableAnnotationComposer get folderID {
+    final $$FolderItemsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.folderID,
+      referencedTable: $db.folderItems,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FolderItemsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.folderItems,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$NotesItemsTableTableManager
@@ -1105,12 +1295,9 @@ class $$NotesItemsTableTableManager
           $$NotesItemsTableAnnotationComposer,
           $$NotesItemsTableCreateCompanionBuilder,
           $$NotesItemsTableUpdateCompanionBuilder,
-          (
-            NotesItem,
-            BaseReferences<_$AppDatabase, $NotesItemsTable, NotesItem>,
-          ),
+          (NotesItem, $$NotesItemsTableReferences),
           NotesItem,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool folderID})
         > {
   $$NotesItemsTableTableManager(_$AppDatabase db, $NotesItemsTable table)
     : super(
@@ -1130,7 +1317,7 @@ class $$NotesItemsTableTableManager
                 Value<String?> title = const Value.absent(),
                 Value<String?> content = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
-                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
               }) => NotesItemsCompanion(
                 id: id,
                 folderID: folderID,
@@ -1146,7 +1333,7 @@ class $$NotesItemsTableTableManager
                 Value<String?> title = const Value.absent(),
                 Value<String?> content = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
-                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
               }) => NotesItemsCompanion.insert(
                 id: id,
                 folderID: folderID,
@@ -1156,9 +1343,54 @@ class $$NotesItemsTableTableManager
                 updatedAt: updatedAt,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$NotesItemsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({folderID = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (folderID) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.folderID,
+                                referencedTable: $$NotesItemsTableReferences
+                                    ._folderIDTable(db),
+                                referencedColumn: $$NotesItemsTableReferences
+                                    ._folderIDTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
         ),
       );
 }
@@ -1173,9 +1405,9 @@ typedef $$NotesItemsTableProcessedTableManager =
       $$NotesItemsTableAnnotationComposer,
       $$NotesItemsTableCreateCompanionBuilder,
       $$NotesItemsTableUpdateCompanionBuilder,
-      (NotesItem, BaseReferences<_$AppDatabase, $NotesItemsTable, NotesItem>),
+      (NotesItem, $$NotesItemsTableReferences),
       NotesItem,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool folderID})
     >;
 
 class $AppDatabaseManager {
