@@ -55,50 +55,27 @@ class _SelectFolderDialogState extends State<SelectFolderDialog> {
         },
         content: Column(
           children: [
-            ListTile(
-              leading: Icon(
-                Icons.folder,
-                color: selectedFolder == 'Work'
-                    ? Theme.of(context).colorScheme.primary
-                    : null,
+            SizedBox(
+              height: 100,
+              child: ListView(
+                physics: const BouncingScrollPhysics(),
+                scrollDirection: Axis.horizontal,
+                children: [
+                  // for (var folder in )
+                  //   Padding(
+                  //     padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  //     child: ChoiceChip(
+                  //       label: Text(folder),
+                  //       selected: selectedFolder == folder,
+                  //       onSelected: (bool selected) {
+                  //         setState(() {
+                  //           selectedFolder = selected ? folder : null;
+                  //         });
+                  //       },
+                  //     ),
+                  //   ),
+                ],
               ),
-              title: const Text('Work'),
-              selected: selectedFolder == 'Work',
-              onTap: () {
-                setState(() {
-                  selectedFolder = 'Work';
-                });
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.folder,
-                color: selectedFolder == 'Personal'
-                    ? Theme.of(context).colorScheme.primary
-                    : null,
-              ),
-              title: const Text('Personal'),
-              selected: selectedFolder == 'Personal',
-              onTap: () {
-                setState(() {
-                  selectedFolder = 'Personal';
-                });
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.folder,
-                color: selectedFolder == 'Ideas'
-                    ? Theme.of(context).colorScheme.primary
-                    : null,
-              ),
-              title: const Text('Ideas'),
-              selected: selectedFolder == 'Ideas',
-              onTap: () {
-                setState(() {
-                  selectedFolder = 'Ideas';
-                });
-              },
             ),
             const Divider(),
             ListTile(

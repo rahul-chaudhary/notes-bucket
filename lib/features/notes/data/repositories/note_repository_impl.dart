@@ -8,11 +8,12 @@ import 'package:notes_bucket/features/notes/domain/repositories/note_repo.dart';
 
 class NoteRepositoryImpl implements NoteRepository {
   final NoteLocalDataSource noteLocalDataSource;
-  NoteRepositoryImpl({required this.noteLocalDataSource});
+
+  const NoteRepositoryImpl({required this.noteLocalDataSource});
 
   @override
   Future<Either<Failure, NoteEntity>> addNote(note) async {
-    try{
+    try {
       final noteToInsert = Note.fromEntity(note);
       await noteLocalDataSource.add(noteToInsert);
       return Right(noteToInsert.toEntity());
@@ -22,9 +23,9 @@ class NoteRepositoryImpl implements NoteRepository {
   }
 
   @override
-  Future<Either<Failure, List<NoteEntity>>> fetchNotes() async {
+  Future<Either<Failure, List<NoteEntity>>> fetchNotesById(int folderId) async {
     try {
-      final notes = await noteLocalDataSource.fetchNotes();
+      final notes = await noteLocalDataSource.fetchNotesByFolderId(folderId);
       final noteEntities = notes.map((note) => note.toEntity()).toList();
       return Right(noteEntities);
     } on DatabaseException catch (e) {

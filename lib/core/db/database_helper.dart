@@ -2,16 +2,14 @@ import 'package:drift/drift.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/features/notes/data/models/note.dart';
 
-import '../../../../../core/db/app_database.dart';
+import 'app_database.dart';
 
 class DatabaseHelper {
   static final instance = DatabaseHelper._instance();
   static AppDatabase? _db;
-  static late DatabaseHelper _databaseHelper;
 
   DatabaseHelper._instance() {
     initDB();
-    _databaseHelper = this;
   }
 
   factory DatabaseHelper() => instance;
@@ -41,8 +39,10 @@ class DatabaseHelper {
   }
 
 
-  Future<List<Note>> fetchNotes() async {
-    final queryResult = await _db!.select(_db!.notesItems).get();
+  Future<List<Note>> fetchNotesByFolderId(int folderId) async {
+    final queryResult = await (_db!.select(_db!.notesItems)
+          ..where((tbl) => tbl.folderID.equals(folderId)))
+        .get();
     final notes = queryResult.map((row) => Note(
       id: row.id,
       folderId: row.folderID,

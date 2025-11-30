@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:notes_bucket/core/theme/app_spacing.dart';
+import 'package:notes_bucket/features/notes/presentation/widgets/select_folder_dialog.dart';
 
 class EditNotePage extends ConsumerWidget {
   const EditNotePage({super.key});
@@ -20,6 +21,16 @@ class EditNotePage extends ConsumerWidget {
             Navigator.of(context).pop();
           },
         ),
+        actions: [
+          TextButton(onPressed: (){
+            // Open select folder dialog
+           showDialog(
+               context: context,
+               builder: (BuildContext context) {
+                 return SelectFolderDialog();
+               });
+          }, child: const Text('Select Folder')),
+        ],
       ),
       body: Padding(
         padding: AppSpacing.paddingAllM,

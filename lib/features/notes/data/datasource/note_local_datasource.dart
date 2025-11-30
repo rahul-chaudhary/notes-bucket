@@ -1,18 +1,23 @@
-import 'package:notes_bucket/features/notes/data/datasource/local_data/database_helper.dart';
+
+import 'package:notes_bucket/core/db/database_helper.dart';
 
 import '../models/note.dart';
 
-abstract class NoteLocalDataSource {
+abstract interface class NoteLocalDataSource {
   Future<Note> add(Note note);
-  Future<List<Note>> fetchNotes();
+
+  Future<List<Note>> fetchNotesByFolderId(int folderId);
 }
 
 class NoteLocalDataSourceImpl implements NoteLocalDataSource {
-  final DatabaseHelper _databaseHelper = DatabaseHelper.instance;
+  final DatabaseHelper databaseHelper;
+
+  NoteLocalDataSourceImpl({required this.databaseHelper});
 
   @override
-  Future<Note> add(Note note) => _databaseHelper.add(note);
+  Future<Note> add(Note note) => databaseHelper.add(note);
 
   @override
-  Future<List<Note>> fetchNotes() => _databaseHelper.fetchNotes();
+  Future<List<Note>> fetchNotesByFolderId(int folderId) => databaseHelper.fetchNotesByFolderId(folderId);
+
 }
