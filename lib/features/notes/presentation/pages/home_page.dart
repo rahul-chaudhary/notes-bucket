@@ -8,6 +8,7 @@ import 'package:notes_bucket/core/theme/app_text_style.dart';
 import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
 import 'package:notes_bucket/core/widgets/app_text_field.dart';
 import 'package:notes_bucket/core/widgets/folder_button.dart';
+import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/home_page_header.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/recent_notes.dart';
 
@@ -17,6 +18,7 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final TextEditingController controller = TextEditingController();
+    final foldersAsync = ref.watch(rootFoldersProvider);
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -80,12 +82,23 @@ class HomePage extends ConsumerWidget {
                       ],
                     ),
                     AppSpacing.gapS,
-                    Row(
-                      children: [
-                        FolderButton(title: 'Homework'),
-                        FolderButton(title: 'Workout'),
-                        FolderButton(title: 'Sports'),
-                      ],
+                    foldersAsync.when(
+                      loading: () =>
+                          const Center(child: CircularProgressIndicator()),
+                      error: (error, stack) =>
+                          Center(child: Text('Error: $error')),
+                      data: (data) => SizedBox(
+                        height: 80,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: data.length,
+                          separatorBuilder: (context, index) => AppSpacing.gapM,
+                          itemBuilder: (context, index) {
+                            final folder = data[index];
+                            return FolderButton(folder: folder);
+                          },
+                        ),
+                      ),
                     ),
                   ],
                 ),

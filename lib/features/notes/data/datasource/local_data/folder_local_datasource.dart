@@ -1,29 +1,70 @@
-import 'package:notes_bucket/core/db/database_helper.dart';
+import 'package:drift/drift.dart';
+import 'package:notes_bucket/core/db/app_database.dart';
 import 'package:notes_bucket/features/notes/data/models/folder.dart';
 
 abstract interface class FolderLocalDataSource {
-
-  Future<Folder> create(Folder folder);
+  Future<Folder> createFolder(Folder folder);
 
   Future<List<Folder>> fetchRootFolders();
 
   Future<List<Folder>> fetchFoldersByParentId(int parentId);
-
 }
 
 class FolderLocalDataSourceImpl implements FolderLocalDataSource {
-  final DatabaseHelper databaseHelper;
+  final AppDatabase database;
 
-  FolderLocalDataSourceImpl({required this.databaseHelper});
-
-  @override
-  Future<Folder> create(Folder folder) => databaseHelper.createFolder(folder);
+  FolderLocalDataSourceImpl({required this.database});
 
   @override
-  Future<List<Folder>> fetchRootFolders() => databaseHelper.fetchRootFolders();
-
-  @override
-  Future<List<Folder>> fetchFoldersByParentId(int parentId) => databaseHelper.fetchFoldersByParentId(parentId);
-
-
+  Future<Folder> createFolder(Folder folder) async {
+    await database
+        .into(database.folderItems)
+        .insert(
+          FolderItemsCompanion.insert(
+            parentID: Value(folder.parentId),
+            name: folder.name,
+            createdAt: Value(folder.createdAt),
+            updatedAt: Value(folder.updatedAt),
+          ),
+        );
+    return folder;
   }
+
+  @override
+  Future<List<Folder>> fetchRootFolders() async {
+    final queryResult = await (database.select(
+      database.folderItems,
+    )..where((tbl) => tbl.parentID.isNull())).get();
+    final folders = queryResult
+        .map(
+          (row) => Folder(
+            id: row.id,
+            parentId: row.parentID,
+            name: row.name,
+            createdAt: row.createdAt,
+            updatedAt: row.updatedAt,
+          ),
+        )
+        .toList();
+    return folders;
+  }
+
+  @override
+  Future<List<Folder>> fetchFoldersByParentId(int parentId) async {
+    final queryResult = await (database.select(
+      database.folderItems,
+    )..where((tbl) => tbl.parentID.equals(parentId))).get();
+    final folders = queryResult
+        .map(
+          (row) => Folder(
+            id: row.id,
+            parentId: row.parentID,
+            name: row.name,
+            createdAt: row.createdAt,
+            updatedAt: row.updatedAt,
+          ),
+        )
+        .toList();
+    return folders;
+  }
+}

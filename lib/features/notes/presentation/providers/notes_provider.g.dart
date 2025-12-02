@@ -53,47 +53,6 @@ abstract class _$Notes extends $AsyncNotifier<void> {
   }
 }
 
-@ProviderFor(databaseHelper)
-const databaseHelperProvider = DatabaseHelperProvider._();
-
-final class DatabaseHelperProvider
-    extends $FunctionalProvider<DatabaseHelper, DatabaseHelper, DatabaseHelper>
-    with $Provider<DatabaseHelper> {
-  const DatabaseHelperProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'databaseHelperProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$databaseHelperHash();
-
-  @$internal
-  @override
-  $ProviderElement<DatabaseHelper> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  DatabaseHelper create(Ref ref) {
-    return databaseHelper(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(DatabaseHelper value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<DatabaseHelper>(value),
-    );
-  }
-}
-
-String _$databaseHelperHash() => r'd9a91b257d3ed9a4f2d87bd829e17dc900678685';
-
 @ProviderFor(noteLocalDataSource)
 const noteLocalDataSourceProvider = NoteLocalDataSourceProvider._();
 
@@ -140,7 +99,7 @@ final class NoteLocalDataSourceProvider
 }
 
 String _$noteLocalDataSourceHash() =>
-    r'4280970c886992a508391badcdc670928cbf2d25';
+    r'bc01ce831003458d5c4ce07cacead2efc4222451';
 
 @ProviderFor(noteRepository)
 const noteRepositoryProvider = NoteRepositoryProvider._();

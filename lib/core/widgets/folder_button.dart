@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
+import 'package:notes_bucket/features/notes/domain/entities/folder_entity.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_text_style.dart';
 
 class FolderButton extends ConsumerWidget {
-  final String title;
+  final FolderEntity folder;
 
-  const FolderButton({super.key, required this.title});
+  const FolderButton({super.key, required this.folder});
 
   void _showOptionsBottomSheet(BuildContext context) {
     showModalBottomSheet(
@@ -47,7 +48,7 @@ class FolderButton extends ConsumerWidget {
   }
 
   void _showRenameDialog(BuildContext context) {
-    final TextEditingController controller = TextEditingController(text: title);
+    final TextEditingController controller = TextEditingController(text: folder.name);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -93,7 +94,7 @@ class FolderButton extends ConsumerWidget {
             Navigator.pop(context);
           },
           content: Text(
-            'Are you sure you want to delete "$title"? This action cannot be undone.',
+            'Are you sure you want to delete "${folder.name}"? This action cannot be undone.',
           ),
       ),
     );
@@ -115,7 +116,7 @@ class FolderButton extends ConsumerWidget {
                 size: 80,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              Text(title, style: AppTextStyles.bodySmall(context)),
+              Text(folder.name, style: AppTextStyles.bodySmall(context)),
             ],
           ),
           Positioned(

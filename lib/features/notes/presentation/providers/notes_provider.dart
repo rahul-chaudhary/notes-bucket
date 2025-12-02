@@ -1,4 +1,4 @@
-import 'package:notes_bucket/core/db/database_helper.dart';
+import 'package:notes_bucket/core/db/database_provider.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/features/notes/data/datasource/local_data/note_local_datasource.dart';
 import 'package:notes_bucket/features/notes/data/repositories/note_repository_impl.dart';
@@ -39,16 +39,10 @@ class Notes extends _$Notes {
   }
 }
 
-
-@riverpod
-DatabaseHelper databaseHelper(Ref ref) {
-  return DatabaseHelper();
-}
-
 @riverpod
 NoteLocalDataSource noteLocalDataSource(Ref ref) {
-  final db = ref.watch(databaseHelperProvider);
-  return NoteLocalDataSourceImpl(databaseHelper: db);
+  final db = ref.watch(appDatabaseProvider);
+  return NoteLocalDataSourceImpl(database: db);
 }
 
 @riverpod

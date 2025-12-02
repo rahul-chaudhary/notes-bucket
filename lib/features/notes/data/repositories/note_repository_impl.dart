@@ -15,7 +15,7 @@ class NoteRepositoryImpl implements NoteRepository {
   Future<Either<Failure, NoteEntity>> addNote(NoteEntity note) async {
     try {
       final noteToInsert = Note.fromEntity(note);
-      await noteLocalDataSource.add(noteToInsert);
+      await noteLocalDataSource.addNote(noteToInsert);
       return Right(noteToInsert.toEntity());
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(e.message));

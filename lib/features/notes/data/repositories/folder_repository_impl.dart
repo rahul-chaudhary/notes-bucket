@@ -14,7 +14,7 @@ class FolderRepositoryImpl implements FolderRepository {
   Future<Either<Failure, FolderEntity>> createFolder(FolderEntity folder) async {
     try {
      final folderToInsert = Folder.fromEntity(folder);
-     await folderLocalDataSource.create(folderToInsert);
+     await folderLocalDataSource.createFolder(folderToInsert);
      return Right(folderToInsert.toEntity());
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(e.message));

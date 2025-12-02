@@ -9,52 +9,58 @@ part of 'folder_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(Folders)
-const foldersProvider = FoldersProvider._();
+@ProviderFor(RootFolders)
+const rootFoldersProvider = RootFoldersProvider._();
 
-final class FoldersProvider extends $AsyncNotifierProvider<Folders, void> {
-  const FoldersProvider._()
+final class RootFoldersProvider
+    extends $AsyncNotifierProvider<RootFolders, List<FolderEntity>> {
+  const RootFoldersProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'foldersProvider',
-        isAutoDispose: false,
+        name: r'rootFoldersProvider',
+        isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$foldersHash();
+  String debugGetCreateSourceHash() => _$rootFoldersHash();
 
   @$internal
   @override
-  Folders create() => Folders();
+  RootFolders create() => RootFolders();
 }
 
-String _$foldersHash() => r'ae9011ef76d139ef3b07eea88f7fb355e4b6d141';
+String _$rootFoldersHash() => r'a882813ee2093eb93055dc9f6980a526c66a434a';
 
-abstract class _$Folders extends $AsyncNotifier<void> {
-  FutureOr<void> build();
+abstract class _$RootFolders extends $AsyncNotifier<List<FolderEntity>> {
+  FutureOr<List<FolderEntity>> build();
   @$mustCallSuper
   @override
   void runBuild() {
-    build();
-    final ref = this.ref as $Ref<AsyncValue<void>, void>;
+    final created = build();
+    final ref =
+        this.ref as $Ref<AsyncValue<List<FolderEntity>>, List<FolderEntity>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<void>, void>,
-              AsyncValue<void>,
+              AnyNotifier<AsyncValue<List<FolderEntity>>, List<FolderEntity>>,
+              AsyncValue<List<FolderEntity>>,
               Object?,
               Object?
             >;
-    element.handleValue(ref, null);
+    element.handleValue(ref, created);
   }
 }
 
+/// Provider for FolderLocalDataSource
+
 @ProviderFor(folderLocalDataSource)
 const folderLocalDataSourceProvider = FolderLocalDataSourceProvider._();
+
+/// Provider for FolderLocalDataSource
 
 final class FolderLocalDataSourceProvider
     extends
@@ -64,6 +70,7 @@ final class FolderLocalDataSourceProvider
           FolderLocalDataSource
         >
     with $Provider<FolderLocalDataSource> {
+  /// Provider for FolderLocalDataSource
   const FolderLocalDataSourceProvider._()
     : super(
         from: null,
@@ -99,10 +106,14 @@ final class FolderLocalDataSourceProvider
 }
 
 String _$folderLocalDataSourceHash() =>
-    r'cd18c6f846d35acc2077cb7275f895327c5e0776';
+    r'91d972a57d97a4336a315c82ca7a71a7056771b1';
+
+/// Provider for FolderRepository
 
 @ProviderFor(folderRepository)
 const folderRepositoryProvider = FolderRepositoryProvider._();
+
+/// Provider for FolderRepository
 
 final class FolderRepositoryProvider
     extends
@@ -112,6 +123,7 @@ final class FolderRepositoryProvider
           FolderRepository
         >
     with $Provider<FolderRepository> {
+  /// Provider for FolderRepository
   const FolderRepositoryProvider._()
     : super(
         from: null,
@@ -147,12 +159,17 @@ final class FolderRepositoryProvider
 
 String _$folderRepositoryHash() => r'9f1a078f12197ec6db9e1a6ef493815dac8caae6';
 
+/// Provider for CreateFolder use case
+
 @ProviderFor(createFolder)
 const createFolderProvider = CreateFolderProvider._();
+
+/// Provider for CreateFolder use case
 
 final class CreateFolderProvider
     extends $FunctionalProvider<CreateFolder, CreateFolder, CreateFolder>
     with $Provider<CreateFolder> {
+  /// Provider for CreateFolder use case
   const CreateFolderProvider._()
     : super(
         from: null,

@@ -23,7 +23,7 @@ class NotesItems extends Table {
 
 @DriftDatabase(tables: [FolderItems, NotesItems])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
+  AppDatabase() : super(_openConnection());
 
   @override
   int get schemaVersion => 1;
