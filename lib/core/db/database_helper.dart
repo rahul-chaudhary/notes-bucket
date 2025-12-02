@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
+import 'package:notes_bucket/features/notes/data/models/folder.dart';
 import 'package:notes_bucket/features/notes/data/models/note.dart';
 
 import 'app_database.dart';
@@ -25,7 +26,7 @@ class DatabaseHelper {
     return _db;
   }
 
-  Future<Note> add(Note note) async {
+  Future<Note> addNote(Note note) async {
     await _db!.into(_db!.notesItems).insert(
       NotesItemsCompanion.insert(
         folderID: note.folderId,
@@ -52,5 +53,45 @@ class DatabaseHelper {
       updatedAt: row.updatedAt,
     )).toList();
     return notes;
+  }
+
+  Future<Folder> createFolder(Folder folder) async {
+    await _db!.into(_db!.folderItems).insert(
+      FolderItemsCompanion.insert(
+        parentID: Value(folder.parentId),
+        name: folder.name,
+        createdAt: Value(folder.createdAt),
+        updatedAt: Value(folder.updatedAt),
+      ),
+    );
+    return folder;
+  }
+
+  Future<List<Folder>> fetchRootFolders() async {
+    final queryResult = await (_db!.select(_db!.folderItems)
+          ..where((tbl) => tbl.parentID.isNull()))
+        .get();
+    final folders = queryResult.map((row) => Folder(
+      id: row.id,
+      parentId: row.parentID,
+      name: row.name,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    )).toList();
+    return folders;
+  }
+
+  Future<List<Folder>> fetchFoldersByParentId(int parentId) async {
+    final queryResult = await (_db!.select(_db!.folderItems)
+          ..where((tbl) => tbl.parentID.equals(parentId)))
+        .get();
+    final folders = queryResult.map((row) => Folder(
+      id: row.id,
+      parentId: row.parentID,
+      name: row.name,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    )).toList();
+    return folders;
   }
 }

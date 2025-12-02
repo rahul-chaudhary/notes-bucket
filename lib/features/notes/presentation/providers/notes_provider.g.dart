@@ -9,6 +9,50 @@ part of 'notes_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
+@ProviderFor(Notes)
+const notesProvider = NotesProvider._();
+
+final class NotesProvider extends $AsyncNotifierProvider<Notes, void> {
+  const NotesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'notesProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$notesHash();
+
+  @$internal
+  @override
+  Notes create() => Notes();
+}
+
+String _$notesHash() => r'11510323bc83a77b855c07bb5c4a916dd829aaa0';
+
+abstract class _$Notes extends $AsyncNotifier<void> {
+  FutureOr<void> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    build();
+    final ref = this.ref as $Ref<AsyncValue<void>, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<void>, void>,
+              AsyncValue<void>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, null);
+  }
+}
+
 @ProviderFor(databaseHelper)
 const databaseHelperProvider = DatabaseHelperProvider._();
 
@@ -179,47 +223,3 @@ final class AddNoteProvider
 }
 
 String _$addNoteHash() => r'444d84fa503d424475036c6e72b1168afc656f62';
-
-@ProviderFor(Notes)
-const notesProvider = NotesProvider._();
-
-final class NotesProvider extends $AsyncNotifierProvider<Notes, void> {
-  const NotesProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'notesProvider',
-        isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$notesHash();
-
-  @$internal
-  @override
-  Notes create() => Notes();
-}
-
-String _$notesHash() => r'11510323bc83a77b855c07bb5c4a916dd829aaa0';
-
-abstract class _$Notes extends $AsyncNotifier<void> {
-  FutureOr<void> build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    build();
-    final ref = this.ref as $Ref<AsyncValue<void>, void>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<AsyncValue<void>, void>,
-              AsyncValue<void>,
-              Object?,
-              Object?
-            >;
-    element.handleValue(ref, null);
-  }
-}

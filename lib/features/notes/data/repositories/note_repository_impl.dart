@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:notes_bucket/core/errors/exceptions.dart';
 import 'package:notes_bucket/core/errors/failures.dart';
-import 'package:notes_bucket/features/notes/data/datasource/note_local_datasource.dart';
+import 'package:notes_bucket/features/notes/data/datasource/local_data/note_local_datasource.dart';
 import 'package:notes_bucket/features/notes/data/models/note.dart';
 import 'package:notes_bucket/features/notes/domain/entities/note_entity.dart';
 import 'package:notes_bucket/features/notes/domain/repositories/note_repo.dart';
@@ -12,7 +12,7 @@ class NoteRepositoryImpl implements NoteRepository {
   const NoteRepositoryImpl({required this.noteLocalDataSource});
 
   @override
-  Future<Either<Failure, NoteEntity>> addNote(note) async {
+  Future<Either<Failure, NoteEntity>> addNote(NoteEntity note) async {
     try {
       final noteToInsert = Note.fromEntity(note);
       await noteLocalDataSource.add(noteToInsert);

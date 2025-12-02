@@ -36,10 +36,11 @@ class FolderEntityMapper extends ClassMapperBase<FolderEntity> {
     'createdAt',
     _$createdAt,
   );
-  static DateTime _$updatedAt(FolderEntity v) => v.updatedAt;
+  static DateTime? _$updatedAt(FolderEntity v) => v.updatedAt;
   static const Field<FolderEntity, DateTime> _f$updatedAt = Field(
     'updatedAt',
     _$updatedAt,
+    opt: true,
   );
 
   @override
@@ -147,14 +148,14 @@ class _FolderEntityCopyWithImpl<$R, $Out>
     Object? parentId = $none,
     String? name,
     DateTime? createdAt,
-    DateTime? updatedAt,
+    Object? updatedAt = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
       if (parentId != $none) #parentId: parentId,
       if (name != null) #name: name,
       if (createdAt != null) #createdAt: createdAt,
-      if (updatedAt != null) #updatedAt: updatedAt,
+      if (updatedAt != $none) #updatedAt: updatedAt,
     }),
   );
   @override

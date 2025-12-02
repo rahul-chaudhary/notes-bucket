@@ -18,16 +18,17 @@ class RecentNotes extends ConsumerWidget {
       // Number of columns
       mainAxisSpacing: 8,
       crossAxisSpacing: 8,
-      itemCount: notes.value?.length,
+      // itemCount: notes.value?.length,
       padding: const EdgeInsets.all(8),
       itemBuilder: (context, index) {
-        final item = notes.value?[index];
-        return NoteItem(
-          title: item?.title ?? 'Untitled',
-          content: item?.content ?? '',
-          onTap: () => Navigator.pushNamed(context, AppRoutes.editNotes),
-
-        );
+        return SizedBox.shrink();
+        // final item = notes.value?[index];
+        // return NoteItem(
+        //   title: item?.title ?? 'Untitled',
+        //   content: item?.content ?? '',
+        //   onTap: () => Navigator.pushNamed(context, AppRoutes.editNotes),
+        //
+        // );
       },
     );
   }

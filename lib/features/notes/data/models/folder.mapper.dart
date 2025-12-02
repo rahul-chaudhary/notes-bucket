@@ -36,10 +36,11 @@ class FolderMapper extends ClassMapperBase<Folder> {
     'createdAt',
     _$createdAt,
   );
-  static DateTime _$updatedAt(Folder v) => v.updatedAt;
+  static DateTime? _$updatedAt(Folder v) => v.updatedAt;
   static const Field<Folder, DateTime> _f$updatedAt = Field(
     'updatedAt',
     _$updatedAt,
+    opt: true,
   );
 
   @override
@@ -129,14 +130,14 @@ class _FolderCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Folder, $Out>
     Object? parentId = $none,
     String? name,
     DateTime? createdAt,
-    DateTime? updatedAt,
+    Object? updatedAt = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
       if (parentId != $none) #parentId: parentId,
       if (name != null) #name: name,
       if (createdAt != null) #createdAt: createdAt,
-      if (updatedAt != null) #updatedAt: updatedAt,
+      if (updatedAt != $none) #updatedAt: updatedAt,
     }),
   );
   @override

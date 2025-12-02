@@ -9,14 +9,14 @@ class Folder with FolderMappable {
   final int? parentId; // null = root folder
   final String name;
   final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
 
   Folder({
     required this.id,
     this.parentId,
     required this.name,
     required this.createdAt,
-    required this.updatedAt,
+    this.updatedAt,
   });
 
   //toEntity method
