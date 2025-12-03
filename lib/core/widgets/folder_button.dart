@@ -110,13 +110,28 @@ class FolderButton extends ConsumerWidget {
       child: Stack(
         children: [
           Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.folder,
-                size: 80,
-                color: Theme.of(context).colorScheme.primary,
+              Container(
+                width: 70,
+                height: 70,
+                alignment: Alignment.center,
+                child: Icon(
+                  Icons.folder,
+                  size: 80,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
-              Text(folder.name, style: AppTextStyles.bodySmall(context)),
+              Flexible(
+                child: Center(
+                  child: Text(
+                    folder.name,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                    style: AppTextStyles.bodySmall(context),
+                  ),
+                ),
+              ),
             ],
           ),
           Positioned(

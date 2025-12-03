@@ -11,6 +11,7 @@ import 'package:notes_bucket/core/widgets/folder_button.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/home_page_header.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/recent_notes.dart';
+import '../../domain/entities/folder_entity.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -68,7 +69,19 @@ class HomePage extends ConsumerWidget {
                                 ),
                                 secondaryButtonText: 'Cancel',
                                 onPressPrimary: () {
-                                  // Handle folder creation logic here
+                                  final folderName = controller.text.trim();
+                                  if (folderName.isNotEmpty) {
+                                    final newFolder = FolderEntity(
+                                      id: 0,
+                                      name: folderName,
+                                      parentId: null,
+                                      createdAt: DateTime.now(),
+                                      updatedAt: DateTime.now(),
+                                    );
+                                    ref
+                                        .read(rootFoldersProvider.notifier)
+                                        .createFolder(newFolder);
+                                  }
                                   Navigator.pop(context);
                                 },
                                 onPressSecondary: () {
@@ -88,8 +101,16 @@ class HomePage extends ConsumerWidget {
                       error: (error, stack) =>
                           Center(child: Text('Error: $error')),
                       data: (data) => SizedBox(
-                        height: 80,
-                        child: ListView.separated(
+                        height: 90,
+                        child: data.isEmpty
+                            ? Center(
+                                child: Text(
+                                  'No folders found. Create a new folder!',
+                                  style: AppTextStyles.bodyMedium(context),
+                                ),
+                              )
+                            :
+                        ListView.separated(
                           scrollDirection: Axis.horizontal,
                           itemCount: data.length,
                           separatorBuilder: (context, index) => AppSpacing.gapM,
