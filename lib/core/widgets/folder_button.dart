@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:notes_bucket/core/constants/app_assets.dart';
 import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
 import 'package:notes_bucket/features/notes/domain/entities/folder_entity.dart';
 import '../theme/app_spacing.dart';
@@ -109,30 +111,28 @@ class FolderButton extends ConsumerWidget {
       borderRadius: BorderRadius.circular(12),
       child: Stack(
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 70,
-                height: 70,
-                alignment: Alignment.center,
-                child: Icon(
-                  Icons.folder,
-                  size: 80,
-                  color: Theme.of(context).colorScheme.primary,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                    AppSvgs.blueMacFolder,
+                    height: 80,
+                  clipBehavior: Clip.none,
                 ),
-              ),
-              Flexible(
-                child: Center(
-                  child: Text(
-                    folder.name,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.bodySmall(context),
+                Flexible(
+                  child: Center(
+                    child: Text(
+                      folder.name,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.bodySmall(context),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           Positioned(
             top: 10,

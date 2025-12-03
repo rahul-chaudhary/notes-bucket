@@ -101,7 +101,7 @@ class HomePage extends ConsumerWidget {
                       error: (error, stack) =>
                           Center(child: Text('Error: $error')),
                       data: (data) => SizedBox(
-                        height: 90,
+                        height: 100,
                         child: data.isEmpty
                             ? Center(
                                 child: Text(
