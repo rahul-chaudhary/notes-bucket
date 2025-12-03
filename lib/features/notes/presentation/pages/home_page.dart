@@ -19,7 +19,7 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final TextEditingController controller = TextEditingController();
-    final foldersAsync = ref.watch(rootFoldersProvider);
+    final rootFoldersAsync = ref.watch(rootFoldersProvider);
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -79,7 +79,7 @@ class HomePage extends ConsumerWidget {
                                       updatedAt: DateTime.now(),
                                     );
                                     ref
-                                        .read(rootFoldersProvider.notifier)
+                                        .read(folderControllerProvider.notifier)
                                         .createFolder(newFolder);
                                   }
                                   Navigator.pop(context);
@@ -95,7 +95,7 @@ class HomePage extends ConsumerWidget {
                       ],
                     ),
                     AppSpacing.gapS,
-                    foldersAsync.when(
+                    rootFoldersAsync.when(
                       loading: () =>
                           const Center(child: CircularProgressIndicator()),
                       error: (error, stack) =>
