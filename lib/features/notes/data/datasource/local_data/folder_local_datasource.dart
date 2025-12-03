@@ -3,11 +3,13 @@ import 'package:notes_bucket/core/db/app_database.dart';
 import 'package:notes_bucket/features/notes/data/models/folder.dart';
 
 abstract interface class FolderLocalDataSource {
+
   Future<Folder> createFolder(Folder folder);
-
   Future<List<Folder>> fetchRootFolders();
-
   Future<List<Folder>> fetchFoldersByParentId(int parentId);
+  Future<void> renameFolder(int folderId, String newName);
+  Future<void> deleteFolder(int folderId);
+
 }
 
 class FolderLocalDataSourceImpl implements FolderLocalDataSource {
@@ -66,5 +68,22 @@ class FolderLocalDataSourceImpl implements FolderLocalDataSource {
         )
         .toList();
     return folders;
+  }
+  @override
+  Future<void> renameFolder(int folderId, String newName) async {
+    await (database.update(database.folderItems)
+          ..where((tbl) => tbl.id.equals(folderId)))
+        .write(
+      FolderItemsCompanion(
+        name: Value(newName),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+  @override
+  Future<void> deleteFolder(int folderId) async {
+    await (database.delete(database.folderItems)
+          ..where((tbl) => tbl.id.equals(folderId)))
+        .go();
   }
 }

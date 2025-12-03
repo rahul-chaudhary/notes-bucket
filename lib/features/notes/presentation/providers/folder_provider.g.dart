@@ -8,12 +8,15 @@ part of 'folder_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Provider for root folders list
 
 @ProviderFor(RootFolders)
 const rootFoldersProvider = RootFoldersProvider._();
 
+/// Provider for root folders list
 final class RootFoldersProvider
     extends $AsyncNotifierProvider<RootFolders, List<FolderEntity>> {
+  /// Provider for root folders list
   const RootFoldersProvider._()
     : super(
         from: null,
@@ -33,7 +36,9 @@ final class RootFoldersProvider
   RootFolders create() => RootFolders();
 }
 
-String _$rootFoldersHash() => r'a882813ee2093eb93055dc9f6980a526c66a434a';
+String _$rootFoldersHash() => r'6ceae8cf3f712c7694eea517a95f444405bcf127';
+
+/// Provider for root folders list
 
 abstract class _$RootFolders extends $AsyncNotifier<List<FolderEntity>> {
   FutureOr<List<FolderEntity>> build();
@@ -55,12 +60,168 @@ abstract class _$RootFolders extends $AsyncNotifier<List<FolderEntity>> {
   }
 }
 
-/// Provider for FolderLocalDataSource
+/// Provider for folders by parent ID
+
+@ProviderFor(FoldersByParent)
+const foldersByParentProvider = FoldersByParentFamily._();
+
+/// Provider for folders by parent ID
+final class FoldersByParentProvider
+    extends $AsyncNotifierProvider<FoldersByParent, List<FolderEntity>> {
+  /// Provider for folders by parent ID
+  const FoldersByParentProvider._({
+    required FoldersByParentFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'foldersByParentProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$foldersByParentHash();
+
+  @override
+  String toString() {
+    return r'foldersByParentProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  FoldersByParent create() => FoldersByParent();
+
+  @override
+  bool operator ==(Object other) {
+    return other is FoldersByParentProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$foldersByParentHash() => r'2c315f9eac0d16cd045946e828a54d46e4b43180';
+
+/// Provider for folders by parent ID
+
+final class FoldersByParentFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          FoldersByParent,
+          AsyncValue<List<FolderEntity>>,
+          List<FolderEntity>,
+          FutureOr<List<FolderEntity>>,
+          int
+        > {
+  const FoldersByParentFamily._()
+    : super(
+        retry: null,
+        name: r'foldersByParentProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Provider for folders by parent ID
+
+  FoldersByParentProvider call(int parentId) =>
+      FoldersByParentProvider._(argument: parentId, from: this);
+
+  @override
+  String toString() => r'foldersByParentProvider';
+}
+
+/// Provider for folders by parent ID
+
+abstract class _$FoldersByParent extends $AsyncNotifier<List<FolderEntity>> {
+  late final _$args = ref.$arg as int;
+  int get parentId => _$args;
+
+  FutureOr<List<FolderEntity>> build(int parentId);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(_$args);
+    final ref =
+        this.ref as $Ref<AsyncValue<List<FolderEntity>>, List<FolderEntity>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<FolderEntity>>, List<FolderEntity>>,
+              AsyncValue<List<FolderEntity>>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+/// Separate controller for folder mutations
+
+@ProviderFor(FolderController)
+const folderControllerProvider = FolderControllerProvider._();
+
+/// Separate controller for folder mutations
+final class FolderControllerProvider
+    extends $NotifierProvider<FolderController, void> {
+  /// Separate controller for folder mutations
+  const FolderControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'folderControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$folderControllerHash();
+
+  @$internal
+  @override
+  FolderController create() => FolderController();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(void value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<void>(value),
+    );
+  }
+}
+
+String _$folderControllerHash() => r'c671169de2efa617561e3c3ec067debdbf4c61c9';
+
+/// Separate controller for folder mutations
+
+abstract class _$FolderController extends $Notifier<void> {
+  void build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    build();
+    final ref = this.ref as $Ref<void, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<void, void>,
+              void,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, null);
+  }
+}
 
 @ProviderFor(folderLocalDataSource)
 const folderLocalDataSourceProvider = FolderLocalDataSourceProvider._();
-
-/// Provider for FolderLocalDataSource
 
 final class FolderLocalDataSourceProvider
     extends
@@ -70,7 +231,6 @@ final class FolderLocalDataSourceProvider
           FolderLocalDataSource
         >
     with $Provider<FolderLocalDataSource> {
-  /// Provider for FolderLocalDataSource
   const FolderLocalDataSourceProvider._()
     : super(
         from: null,
@@ -108,12 +268,8 @@ final class FolderLocalDataSourceProvider
 String _$folderLocalDataSourceHash() =>
     r'91d972a57d97a4336a315c82ca7a71a7056771b1';
 
-/// Provider for FolderRepository
-
 @ProviderFor(folderRepository)
 const folderRepositoryProvider = FolderRepositoryProvider._();
-
-/// Provider for FolderRepository
 
 final class FolderRepositoryProvider
     extends
@@ -123,7 +279,6 @@ final class FolderRepositoryProvider
           FolderRepository
         >
     with $Provider<FolderRepository> {
-  /// Provider for FolderRepository
   const FolderRepositoryProvider._()
     : super(
         from: null,
@@ -159,17 +314,12 @@ final class FolderRepositoryProvider
 
 String _$folderRepositoryHash() => r'9f1a078f12197ec6db9e1a6ef493815dac8caae6';
 
-/// Provider for CreateFolder use case
-
 @ProviderFor(createFolder)
 const createFolderProvider = CreateFolderProvider._();
-
-/// Provider for CreateFolder use case
 
 final class CreateFolderProvider
     extends $FunctionalProvider<CreateFolder, CreateFolder, CreateFolder>
     with $Provider<CreateFolder> {
-  /// Provider for CreateFolder use case
   const CreateFolderProvider._()
     : super(
         from: null,

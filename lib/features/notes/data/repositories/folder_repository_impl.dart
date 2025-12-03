@@ -41,7 +41,27 @@ class FolderRepositoryImpl implements FolderRepository {
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(e.message));
     }
-
   }
+
+  @override
+  Future<Either<Failure, void>> renameFolder(int folderId, String newName) async {
+    try {
+      await folderLocalDataSource.renameFolder(folderId, newName);
+      return const Right(null);
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteFolder(int folderId) async {
+    try {
+      await folderLocalDataSource.deleteFolder(folderId);
+      return const Right(null);
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(e.message));
+    }
+  }
+
 
 }

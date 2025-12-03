@@ -9,7 +9,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'folder_provider.g.dart';
 
-// Provider for root folders list
+/// Provider for root folders list
 @riverpod
 class RootFolders extends _$RootFolders {
   @override
@@ -35,27 +35,6 @@ class RootFolders extends _$RootFolders {
     }
   }
 
-  Future<void> createFolder(FolderEntity folder) async {
-    state = const AsyncValue.loading();
-
-    try {
-      final folderUseCase = ref.read(createFolderProvider);
-      final result = await folderUseCase.execute(folder);
-
-      await result.fold(
-            (failure) async {
-          state = AsyncValue.error(failure.message, StackTrace.current);
-        },
-            (_) async {
-          // Refresh the list after creating
-          state = await AsyncValue.guard(() => _fetchRootFolders());
-        },
-      );
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-      dbPrint('Failed to create folder', e: e, st: st);
-    }
-  }
   /// Refresh the root folders list
   Future<void> refresh() async {
     state = const AsyncValue.loading();
@@ -63,20 +42,136 @@ class RootFolders extends _$RootFolders {
   }
 }
 
-/// Provider for FolderLocalDataSource
+/// Provider for folders by parent ID
+@riverpod
+class FoldersByParent extends _$FoldersByParent {
+  @override
+  Future<List<FolderEntity>> build(int parentId) async {
+    return _fetchFoldersByParent(parentId);
+  }
+
+  Future<List<FolderEntity>> _fetchFoldersByParent(int parentId) async {
+    final folderRepo = ref.read(folderRepositoryProvider);
+
+    try {
+      final result = await folderRepo.fetchFoldersByParentId(parentId);
+      return result.fold(
+            (failure) {
+          dbPrint('Failed to fetch folders: ${failure.message}');
+          throw Exception(failure.message);
+        },
+            (folders) => folders,
+      );
+    } catch (e, st) {
+      dbPrint('Failed to fetch folders', e: e, st: st);
+      rethrow;
+    }
+  }
+
+  Future<void> refresh() async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() => _fetchFoldersByParent(parentId));
+  }
+}
+
+/// Separate controller for folder mutations
+@riverpod
+class FolderController extends _$FolderController {
+  @override
+  void build() {
+    // No state needed
+  }
+
+  /// Create a folder and invalidate relevant lists
+  Future<void> createFolder(FolderEntity folder) async {
+    try {
+      final folderUseCase = ref.read(createFolderProvider);
+      final result = await folderUseCase.execute(folder);
+
+      await result.fold(
+            (failure) async {
+          dbPrint('Failed to create folder: ${failure.message}');
+          throw Exception(failure.message);
+        },
+            (_) async {
+          // Invalidate the appropriate folder list based on parentId
+          if (folder.parentId == null) {
+            // Refresh root folders
+            ref.invalidate(rootFoldersProvider);
+          } else {
+            // Refresh the specific parent's children
+            ref.invalidate(foldersByParentProvider(folder.parentId!));
+          }
+        },
+      );
+    } catch (e, st) {
+      dbPrint('Failed to create folder', e: e, st: st);
+      rethrow;
+    }
+  }
+
+  /// Delete a folder and invalidate lists
+  Future<void> deleteFolder(int folderId, int? parentId) async {
+    try {
+      // Implement delete logic here
+      final folderRepo = ref.read(folderRepositoryProvider);
+      final result = await folderRepo.deleteFolder(folderId);
+
+      result.fold(
+            (failure) => throw Exception(failure.message),
+            (_) {
+          // Invalidate appropriate lists
+          if (parentId == null) {
+            ref.invalidate(rootFoldersProvider);
+          } else {
+            ref.invalidate(foldersByParentProvider(parentId));
+          }
+        },
+      );
+    } catch (e, st) {
+      dbPrint('Failed to delete folder', e: e, st: st);
+      rethrow;
+    }
+  }
+
+  /// Rename a folder and invalidate lists
+  Future<void> renameFolder(FolderEntity folder, String newName) async {
+    try {
+      // Implement update logic
+      final folderRepo = ref.read(folderRepositoryProvider);
+      final result = await folderRepo.renameFolder(folder.id, newName);
+
+      result.fold(
+            (failure) => throw Exception(failure.message),
+            (_) {
+          // Invalidate the parent's list
+          if (folder.parentId == null) {
+            ref.invalidate(rootFoldersProvider);
+          } else {
+            ref.invalidate(foldersByParentProvider(folder.parentId!));
+          }
+        },
+      );
+    } catch (e, st) {
+      dbPrint('Failed to update folder', e: e, st: st);
+      rethrow;
+    }
+  }
+}
+
+// Infrastructure providers
 @riverpod
 FolderLocalDataSource folderLocalDataSource(Ref ref) {
   final db = ref.watch(appDatabaseProvider);
   return FolderLocalDataSourceImpl(database: db);
 }
 
-/// Provider for FolderRepository
 @riverpod
 FolderRepository folderRepository(Ref ref) {
   final dataSource = ref.watch(folderLocalDataSourceProvider);
   return FolderRepositoryImpl(folderLocalDataSource: dataSource);
 }
-/// Provider for CreateFolder use case
+
 @riverpod
 CreateFolder createFolder(Ref ref) {
   final repository = ref.watch(folderRepositoryProvider);
