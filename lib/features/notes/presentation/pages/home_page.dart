@@ -43,7 +43,6 @@ class HomePage extends ConsumerWidget {
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             expandedHeight: 150,
             toolbarHeight: 150,
-
             flexibleSpace: FlexibleSpaceBar(
               background: Padding(
                 padding: AppSpacing.paddingAllS,
@@ -69,7 +68,7 @@ class HomePage extends ConsumerWidget {
                                   hintText: 'Folder Name',
                                 ),
                                 secondaryButtonText: 'Cancel',
-                                onPressPrimary: () {
+                                onPressPrimary: () async {
                                   final folderName = controller.text.trim();
                                   if (folderName.isNotEmpty) {
                                     final newFolder = FolderEntity(
@@ -79,15 +78,30 @@ class HomePage extends ConsumerWidget {
                                       createdAt: DateTime.now(),
                                       updatedAt: DateTime.now(),
                                     );
-                                    ref
-                                        .read(folderControllerProvider.notifier)
-                                        .createFolder(newFolder)
-                                        .catchError((e) {
-                                      AppSnackBar.showError(context,
-                                          'Failed to create folder: $e');
-                                    });
+                                    try {
+                                      await ref
+                                          .read(folderControllerProvider
+                                              .notifier)
+                                          .createFolder(newFolder);
+                                      if (context.mounted) {
+                                        Navigator.pop(context);
+                                        AppSnackBar.showSuccess(
+                                          context,
+                                          'Folder created successfully!',
+                                        );
+                                      }
+
+                                    } catch (e) {
+                                      if (context.mounted) {
+                                        Navigator.pop(context);
+                                        AppSnackBar.showError(
+                                          context,
+                                          'Failed to create folder: $e',
+                                        );
+                                      }
+                                      rethrow;
+                                    }
                                   }
-                                  Navigator.pop(context);
                                 },
                                 onPressSecondary: () {
                                   Navigator.pop(context);
@@ -114,16 +128,16 @@ class HomePage extends ConsumerWidget {
                                   style: AppTextStyles.bodyMedium(context),
                                 ),
                               )
-                            :
-                        ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: data.length,
-                          separatorBuilder: (context, index) => AppSpacing.gapM,
-                          itemBuilder: (context, index) {
-                            final folder = data[index];
-                            return FolderButton(folder: folder);
-                          },
-                        ),
+                            : ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: data.length,
+                                separatorBuilder: (context, index) =>
+                                    AppSpacing.gapM,
+                                itemBuilder: (context, index) {
+                                  final folder = data[index];
+                                  return FolderButton(folder: folder);
+                                },
+                              ),
                       ),
                     ),
                   ],

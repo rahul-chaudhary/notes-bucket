@@ -75,87 +75,77 @@ class FoldersByParent extends _$FoldersByParent {
 }
 
 /// Separate controller for folder mutations
-@riverpod
+/// Separate controller for folder mutations
+@Riverpod(keepAlive: true)
 class FolderController extends _$FolderController {
   @override
-  void build() {
-    // No state needed
-  }
+  void build() {}
 
   /// Create a folder and invalidate relevant lists
   Future<void> createFolder(FolderEntity folder) async {
-    try {
-      final folderUseCase = ref.read(createFolderProvider);
-      final result = await folderUseCase.execute(folder);
+    final folderUseCase = ref.read(createFolderProvider);
+    final result = await folderUseCase.execute(folder);
 
-      await result.fold(
-            (failure) async {
-          dbPrint('Failed to create folder: ${failure.message}');
-          throw Exception(failure.message);
-        },
-            (_) async {
-          // Invalidate the appropriate folder list based on parentId
+    return result.fold(
+          (failure) {
+        dbPrint('Failed to create folder: ${failure.message}');
+        throw Exception(failure.message);
+      },
+          (_) {
+        // Only invalidate on success
+        if (ref.mounted) {
           if (folder.parentId == null) {
-            // Refresh root folders
             ref.invalidate(rootFoldersProvider);
           } else {
-            // Refresh the specific parent's children
             ref.invalidate(foldersByParentProvider(folder.parentId!));
           }
-        },
-      );
-    } catch (e, st) {
-      dbPrint('Failed to create folder', e: e, st: st);
-      rethrow;
-    }
+        }
+      },
+    );
   }
 
   /// Delete a folder and invalidate lists
   Future<void> deleteFolder(int folderId, int? parentId) async {
-    try {
-      // Implement delete logic here
-      final folderRepo = ref.read(folderRepositoryProvider);
-      final result = await folderRepo.deleteFolder(folderId);
+    final folderRepo = ref.read(folderRepositoryProvider);
+    final result = await folderRepo.deleteFolder(folderId);
 
-      result.fold(
-            (failure) => throw Exception(failure.message),
-            (_) {
-          // Invalidate appropriate lists
+    return result.fold(
+          (failure) {
+        dbPrint('Failed to delete folder: ${failure.message}');
+        throw Exception(failure.message);
+      },
+          (_) {
+        if (ref.mounted) {
           if (parentId == null) {
             ref.invalidate(rootFoldersProvider);
           } else {
             ref.invalidate(foldersByParentProvider(parentId));
           }
-        },
-      );
-    } catch (e, st) {
-      dbPrint('Failed to delete folder', e: e, st: st);
-      rethrow;
-    }
+        }
+      },
+    );
   }
 
   /// Rename a folder and invalidate lists
   Future<void> renameFolder(FolderEntity folder, String newName) async {
-    try {
-      // Implement update logic
-      final folderRepo = ref.read(folderRepositoryProvider);
-      final result = await folderRepo.renameFolder(folder.id, newName);
+    final folderRepo = ref.read(folderRepositoryProvider);
+    final result = await folderRepo.renameFolder(folder.id, newName);
 
-      result.fold(
-            (failure) => throw Exception(failure.message),
-            (_) {
-          // Invalidate the parent's list
+    return result.fold(
+          (failure) {
+        dbPrint('Failed to rename folder: ${failure.message}');
+        throw Exception(failure.message);
+      },
+          (_) {
+        if (ref.mounted) {
           if (folder.parentId == null) {
             ref.invalidate(rootFoldersProvider);
           } else {
             ref.invalidate(foldersByParentProvider(folder.parentId!));
           }
-        },
-      );
-    } catch (e, st) {
-      dbPrint('Failed to update folder', e: e, st: st);
-      rethrow;
-    }
+        }
+      },
+    );
   }
 }
 
