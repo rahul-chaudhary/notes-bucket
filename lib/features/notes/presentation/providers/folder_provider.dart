@@ -65,14 +65,14 @@ RenameFolder renameFolder(Ref ref) {
 @riverpod
 class RootFolders extends _$RootFolders {
   @override
-  Future<List<FolderEntity>> build() async {
-    return _load();
+  Future<List<FolderEntity>> build({required int limit, required int offset}) async {
+    return _load(limit,offset);
   }
 
-  Future<List<FolderEntity>> _load() async {
+  Future<List<FolderEntity>> _load(int limit, int offset) async {
     final usecase = ref.read(fetchRootFoldersProvider);
 
-    final result = await usecase.execute(limit: 3, offset: 0);
+    final result = await usecase.execute(limit: limit, offset: offset);
     return result.fold(
           (failure) => throw Exception(failure.message),
           (folders) => folders,
@@ -81,7 +81,7 @@ class RootFolders extends _$RootFolders {
 
   Future<void> refresh() async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() => _load());
+    state = await AsyncValue.guard(() => _load(limit, offset));
   }
 }
 
@@ -128,7 +128,7 @@ class FolderController extends _$FolderController {
         if (!ref.mounted) return;
 
         folder.parentId == null
-            ? ref.invalidate(rootFoldersProvider)
+            ? ref.invalidate(rootFoldersProvider(limit: 10, offset: 0))
             : ref.invalidate(foldersByParentProvider(folder.parentId!));
       },
     );

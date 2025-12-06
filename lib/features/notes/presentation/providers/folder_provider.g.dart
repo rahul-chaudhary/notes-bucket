@@ -323,41 +323,94 @@ String _$renameFolderHash() => r'236476d6e462dac3ca92ae41b087f128d32d429a';
 /// Root folders provider
 
 @ProviderFor(RootFolders)
-const rootFoldersProvider = RootFoldersProvider._();
+const rootFoldersProvider = RootFoldersFamily._();
 
 /// Root folders provider
 final class RootFoldersProvider
     extends $AsyncNotifierProvider<RootFolders, List<FolderEntity>> {
   /// Root folders provider
-  const RootFoldersProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'rootFoldersProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
+  const RootFoldersProvider._({
+    required RootFoldersFamily super.from,
+    required ({int limit, int offset}) super.argument,
+  }) : super(
+         retry: null,
+         name: r'rootFoldersProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$rootFoldersHash();
 
+  @override
+  String toString() {
+    return r'rootFoldersProvider'
+        ''
+        '$argument';
+  }
+
   @$internal
   @override
   RootFolders create() => RootFolders();
+
+  @override
+  bool operator ==(Object other) {
+    return other is RootFoldersProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
-String _$rootFoldersHash() => r'f02a554e53f38c6556f2628729b8512bbf989974';
+String _$rootFoldersHash() => r'f0563858621fd61eaff17ba0dda2ef93a151fca2';
+
+/// Root folders provider
+
+final class RootFoldersFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          RootFolders,
+          AsyncValue<List<FolderEntity>>,
+          List<FolderEntity>,
+          FutureOr<List<FolderEntity>>,
+          ({int limit, int offset})
+        > {
+  const RootFoldersFamily._()
+    : super(
+        retry: null,
+        name: r'rootFoldersProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Root folders provider
+
+  RootFoldersProvider call({required int limit, required int offset}) =>
+      RootFoldersProvider._(
+        argument: (limit: limit, offset: offset),
+        from: this,
+      );
+
+  @override
+  String toString() => r'rootFoldersProvider';
+}
 
 /// Root folders provider
 
 abstract class _$RootFolders extends $AsyncNotifier<List<FolderEntity>> {
-  FutureOr<List<FolderEntity>> build();
+  late final _$args = ref.$arg as ({int limit, int offset});
+  int get limit => _$args.limit;
+  int get offset => _$args.offset;
+
+  FutureOr<List<FolderEntity>> build({required int limit, required int offset});
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
+    final created = build(limit: _$args.limit, offset: _$args.offset);
     final ref =
         this.ref as $Ref<AsyncValue<List<FolderEntity>>, List<FolderEntity>>;
     final element =
@@ -509,7 +562,7 @@ final class FolderControllerProvider
   }
 }
 
-String _$folderControllerHash() => r'0694df32623d9699ddf138792ec700d16af1d9e7';
+String _$folderControllerHash() => r'2d5213d79a1ffe7389570eb61493b7f404e5db66';
 
 /// Controller for mutations (create/delete/rename)
 

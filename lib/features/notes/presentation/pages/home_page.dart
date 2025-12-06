@@ -20,7 +20,7 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final TextEditingController controller = TextEditingController();
-    final rootFoldersAsync = ref.watch(rootFoldersProvider);
+    final rootFoldersAsync = ref.watch(rootFoldersProvider(limit: 3, offset: 0));
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -41,12 +41,13 @@ class HomePage extends ConsumerWidget {
             pinned: false,
             floating: true,
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            expandedHeight: 200,
-            toolbarHeight: 200,
+            expandedHeight: 190,
+            toolbarHeight: 0,
             flexibleSpace: FlexibleSpaceBar(
               background: Padding(
                 padding: AppSpacing.paddingAllS,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Row(
                       children: [
@@ -112,8 +113,9 @@ class HomePage extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    AppSpacing.gapS,
-                    Flexible(
+                    Container(
+                      color: Colors.transparent,
+                      height: 120,
                       child: rootFoldersAsync.when(
                         loading: () =>
                             const Center(child: CircularProgressIndicator()),
@@ -126,17 +128,10 @@ class HomePage extends ConsumerWidget {
                                   style: AppTextStyles.bodyMedium(context),
                                 ),
                               )
-                            : GridView.builder(
-                                scrollDirection: Axis.vertical,
+                            : ListView.builder(
+                                scrollDirection: Axis.horizontal,
                                 itemCount: data.length,
                                 physics: const BouncingScrollPhysics(),
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3,
-                                      crossAxisSpacing: 10,
-                                      mainAxisSpacing: 15,
-                                      mainAxisExtent: 120,
-                                    ),
                                 itemBuilder: (context, index) {
                                   final folder = data[index];
                                   return FolderButton(folder: folder);
@@ -149,7 +144,7 @@ class HomePage extends ConsumerWidget {
                       child: TextButton(
                         onPressed: () {},
                         child: Text(
-                          'View More',
+                          'View All',
                           style: AppTextStyles.hyperlink(context)
                         ),
                       ),
