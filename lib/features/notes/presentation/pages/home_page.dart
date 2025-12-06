@@ -41,8 +41,8 @@ class HomePage extends ConsumerWidget {
             pinned: false,
             floating: true,
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            expandedHeight: 150,
-            toolbarHeight: 150,
+            expandedHeight: 200,
+            toolbarHeight: 200,
             flexibleSpace: FlexibleSpaceBar(
               background: Padding(
                 padding: AppSpacing.paddingAllS,
@@ -80,8 +80,9 @@ class HomePage extends ConsumerWidget {
                                     );
                                     try {
                                       await ref
-                                          .read(folderControllerProvider
-                                              .notifier)
+                                          .read(
+                                            folderControllerProvider.notifier,
+                                          )
                                           .createFolder(newFolder);
                                       if (context.mounted) {
                                         Navigator.pop(context);
@@ -90,7 +91,6 @@ class HomePage extends ConsumerWidget {
                                           'Folder created successfully!',
                                         );
                                       }
-
                                     } catch (e) {
                                       if (context.mounted) {
                                         Navigator.pop(context);
@@ -114,30 +114,45 @@ class HomePage extends ConsumerWidget {
                       ],
                     ),
                     AppSpacing.gapS,
-                    rootFoldersAsync.when(
-                      loading: () =>
-                          const Center(child: CircularProgressIndicator()),
-                      error: (error, stack) =>
-                          Center(child: Text('Error: $error')),
-                      data: (data) => SizedBox(
-                        height: 100,
-                        child: data.isEmpty
+                    Flexible(
+                      child: rootFoldersAsync.when(
+                        loading: () =>
+                            const Center(child: CircularProgressIndicator()),
+                        error: (error, stack) =>
+                            Center(child: Text('Error: $error')),
+                        data: (data) => data.isEmpty
                             ? Center(
                                 child: Text(
                                   'No folders found. Create a new folder!',
                                   style: AppTextStyles.bodyMedium(context),
                                 ),
                               )
-                            : ListView.separated(
-                                scrollDirection: Axis.horizontal,
+                            : GridView.builder(
+                                scrollDirection: Axis.vertical,
                                 itemCount: data.length,
-                                separatorBuilder: (context, index) =>
-                                    AppSpacing.gapM,
+                                physics: const BouncingScrollPhysics(),
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3,
+                                      crossAxisSpacing: 10,
+                                      mainAxisSpacing: 15,
+                                      mainAxisExtent: 120,
+                                    ),
                                 itemBuilder: (context, index) {
                                   final folder = data[index];
                                   return FolderButton(folder: folder);
                                 },
                               ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          'View More',
+                          style: AppTextStyles.hyperlink(context)
+                        ),
                       ),
                     ),
                   ],
