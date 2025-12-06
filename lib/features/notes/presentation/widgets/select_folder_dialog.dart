@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
 import 'package:notes_bucket/core/widgets/app_text_field.dart';
+import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
 
-class SelectFolderDialog extends StatefulWidget {
+class SelectFolderDialog extends ConsumerWidget {
   const SelectFolderDialog({super.key});
 
-  @override
-  State<SelectFolderDialog> createState() => _SelectFolderDialogState();
-}
-
-class _SelectFolderDialogState extends State<SelectFolderDialog> {
-  String? selectedFolder;
-
-  void _showCreateFolderDialog() {
+  void _showCreateFolderDialog(BuildContext context, WidgetRef ref) {
     final TextEditingController folderNameController = TextEditingController();
 
     showDialog(
@@ -25,74 +21,79 @@ class _SelectFolderDialogState extends State<SelectFolderDialog> {
           secondaryButtonText: 'Cancel',
           onPressPrimary: () {
             if (folderNameController.text.isNotEmpty) {
-              setState(() {
-                selectedFolder = folderNameController.text;
-              });
+              var selectedFolder = folderNameController.text;
+
               Navigator.of(context).pop();
             }
           },
           onPressSecondary: () {
             Navigator.of(context).pop();
           },
-          content: AppTextField(controller: folderNameController, hintText: 'Folder Name')
+          content: AppTextField(
+            controller: folderNameController,
+            hintText: 'Folder Name',
+          ),
         );
       },
     );
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final rootFoldersAsync = ref.watch(
+      rootFoldersProvider(limit: 15, offset: 0),
+    );
+
     return AppAlertDialog(
-        dialogTitle: 'Select Folder',
-        primaryButtonText: 'Select',
-        primaryButtonColor: Theme.of(context).colorScheme.primary,
-        secondaryButtonText: 'Cancel',
-        onPressPrimary: () {
-          Navigator.of(context).pop(selectedFolder);
-        },
-        onPressSecondary: () {
-          Navigator.of(context).pop(null);
-        },
-        content: Column(
-          children: [
-            SizedBox(
-              height: 100,
-              child: ListView(
-                physics: const BouncingScrollPhysics(),
-                scrollDirection: Axis.horizontal,
-                children: [
-                  // for (var folder in )
-                  //   Padding(
-                  //     padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                  //     child: ChoiceChip(
-                  //       label: Text(folder),
-                  //       selected: selectedFolder == folder,
-                  //       onSelected: (bool selected) {
-                  //         setState(() {
-                  //           selectedFolder = selected ? folder : null;
-                  //         });
-                  //       },
-                  //     ),
-                  //   ),
-                ],
-              ),
-            ),
-            const Divider(),
-            ListTile(
-              leading: Icon(
-                Icons.create_new_folder,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              title: Text(
-                'Create New Folder',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w500,
+      dialogTitle: 'Select Folder',
+      primaryButtonText: 'Select',
+      primaryButtonColor: Theme.of(context).colorScheme.primary,
+      secondaryButtonText: 'Cancel',
+      onPressPrimary: () {
+        // Navigator.of(context).pop(selectedFolder);
+      },
+      onPressSecondary: () {
+        Navigator.of(context).pop(null);
+      },
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            height: getScreenHeight(context) / 2,
+            width: double.maxFinite,
+            child: rootFoldersAsync.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => Center(child: Text('Error: $error')),
+              data: (data) => ListView.builder(
+                itemCount: data.length,
+
+                itemBuilder: (context, index) => ListTile(
+                  leading: Icon(
+                    Icons.folder,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  title: Text(data[index].name),
                 ),
               ),
-              onTap: _showCreateFolderDialog,
             ),
-          ],
-        ));
+          ),
+          const Divider(),
+          ListTile(
+            leading: Icon(
+              Icons.create_new_folder,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            title: Text(
+              'Create New Folder',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            onTap: () => _showCreateFolderDialog(context, ref),
+          ),
+        ],
+      ),
+    );
   }
 }
