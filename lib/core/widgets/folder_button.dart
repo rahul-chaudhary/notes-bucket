@@ -118,7 +118,7 @@ class FolderButton extends ConsumerWidget {
               children: [
                 SvgPicture.asset(
                     AppSvgs.blueMacFolder,
-                    height: 80,
+                    height: 100,
                   clipBehavior: Clip.none,
                 ),
                 Flexible(
@@ -136,7 +136,7 @@ class FolderButton extends ConsumerWidget {
           ),
           Positioned(
             top: 10,
-            left: 10,
+            left: 18,
             child: Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
