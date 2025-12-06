@@ -33,9 +33,9 @@ class FolderRepositoryImpl implements FolderRepository {
   }
 
   @override
-  Future<Either<Failure, List<FolderEntity>>> fetchRootFolders() async {
+  Future<Either<Failure, List<FolderEntity>>> fetchRootFolders({required int limit, required int offset}) async {
     try {
-      final folders = await folderLocalDataSource.fetchRootFolders();
+      final folders = await folderLocalDataSource.fetchRootFolders(limit: limit, offset: offset);
       final folderEntities = folders.map((folder) => folder.toEntity()).toList();
       return Right(folderEntities);
     } on DatabaseException catch (e) {

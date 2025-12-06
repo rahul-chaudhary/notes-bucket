@@ -82,8 +82,7 @@ class HomePage extends ConsumerWidget {
                                       await ref
                                           .read(
                                             folderControllerProvider.notifier,
-                                          )
-                                          .createFolder(newFolder);
+                                          ).create(newFolder);
                                       if (context.mounted) {
                                         Navigator.pop(context);
                                         AppSnackBar.showSuccess(

@@ -17,8 +17,8 @@ class FetchRootFolders {
   final FolderRepository repository;
   FetchRootFolders(this.repository);
 
-  Future<Either<Failure, List<FolderEntity>>> execute() {
-    return repository.fetchRootFolders();
+  Future<Either<Failure, List<FolderEntity>>> execute({required int limit, required int offset}) {
+    return repository.fetchRootFolders(limit: limit, offset: offset);
   }
 }
 
@@ -30,3 +30,20 @@ class FetchFoldersByParentId {
     return repository.fetchFoldersByParentId(parentId);
   }
 }
+
+class DeleteFolder {
+  final FolderRepository repository;
+  DeleteFolder(this.repository);
+
+  Future<Either<Failure, void>> execute(int folderId) {
+    return repository.deleteFolder(folderId);
+  }
+}
+
+class RenameFolder {
+  final FolderRepository repository;
+  RenameFolder(this.repository);
+  Future<Either<Failure, void>> execute(int folderId, String newName) {
+    return repository.renameFolder(folderId, newName);
+  }
+  }
