@@ -75,7 +75,6 @@ class FoldersByParent extends _$FoldersByParent {
 }
 
 /// Separate controller for folder mutations
-/// Separate controller for folder mutations
 @Riverpod(keepAlive: true)
 class FolderController extends _$FolderController {
   @override

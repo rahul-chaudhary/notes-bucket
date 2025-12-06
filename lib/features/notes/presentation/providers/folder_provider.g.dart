@@ -162,16 +162,13 @@ abstract class _$FoldersByParent extends $AsyncNotifier<List<FolderEntity>> {
 }
 
 /// Separate controller for folder mutations
-/// Separate controller for folder mutations
 
 @ProviderFor(FolderController)
 const folderControllerProvider = FolderControllerProvider._();
 
 /// Separate controller for folder mutations
-/// Separate controller for folder mutations
 final class FolderControllerProvider
     extends $NotifierProvider<FolderController, void> {
-  /// Separate controller for folder mutations
   /// Separate controller for folder mutations
   const FolderControllerProvider._()
     : super(
@@ -202,7 +199,6 @@ final class FolderControllerProvider
 
 String _$folderControllerHash() => r'7fad3d2404c32048db33c73e8788a6f841c9097e';
 
-/// Separate controller for folder mutations
 /// Separate controller for folder mutations
 
 abstract class _$FolderController extends $Notifier<void> {
