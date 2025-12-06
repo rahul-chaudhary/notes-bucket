@@ -90,14 +90,14 @@ class RootFolders extends _$RootFolders {
 @riverpod
 class FoldersByParent extends _$FoldersByParent {
   @override
-  Future<List<FolderEntity>> build(int parentId) async {
-    return _load(parentId);
+  Future<List<FolderEntity>> build({required int? parentId, required int limit, required int offset}) async {
+    return _load(parentId, limit, offset);
   }
 
-  Future<List<FolderEntity>> _load(int parentId) async {
+  Future<List<FolderEntity>> _load(int? parentId, int limit, int offset) async {
     final usecase = ref.read(fetchFoldersByParentProvider);
 
-    final result = await usecase.execute(parentId);
+    final result = await usecase.execute(parentId: parentId, limit: limit, offset: offset);
     return result.fold(
           (failure) => throw Exception(failure.message),
           (folders) => folders,
@@ -106,7 +106,7 @@ class FoldersByParent extends _$FoldersByParent {
 
   Future<void> refresh() async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() => _load(parentId));
+    state = await AsyncValue.guard(() => _load(parentId, limit, offset));
   }
 }
 
@@ -129,7 +129,7 @@ class FolderController extends _$FolderController {
 
         folder.parentId == null
             ? ref.invalidate(rootFoldersProvider(limit: 10, offset: 0))
-            : ref.invalidate(foldersByParentProvider(folder.parentId!));
+            : ref.invalidate(foldersByParentProvider(parentId: folder.parentId!, limit: 20, offset: 0));
       },
     );
   }
@@ -146,7 +146,7 @@ class FolderController extends _$FolderController {
 
         parentId == null
             ? ref.invalidate(rootFoldersProvider)
-            : ref.invalidate(foldersByParentProvider(parentId));
+            : ref.invalidate(foldersByParentProvider(parentId: parentId, limit: 20, offset: 0));
       },
     );
   }
@@ -163,7 +163,7 @@ class FolderController extends _$FolderController {
 
         folder.parentId == null
             ? ref.invalidate(rootFoldersProvider)
-            : ref.invalidate(foldersByParentProvider(folder.parentId!));
+            : ref.invalidate(foldersByParentProvider(parentId: folder.parentId!, limit: 20, offset: 0));
       },
     );
   }

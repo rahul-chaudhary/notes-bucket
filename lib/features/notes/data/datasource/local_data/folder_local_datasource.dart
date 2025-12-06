@@ -10,7 +10,11 @@ abstract interface class FolderLocalDataSource {
     required int offset,
   });
 
-  Future<List<Folder>> fetchFoldersByParentId(int parentId);
+  Future<List<Folder>> fetchFoldersByParentId({
+    required int? parentId,
+    required int limit,
+    required int offset,
+  });
 
   Future<void> renameFolder(int folderId, String newName);
 
@@ -62,7 +66,14 @@ class FolderLocalDataSourceImpl implements FolderLocalDataSource {
   }
 
   @override
-  Future<List<Folder>> fetchFoldersByParentId(int parentId) async {
+  Future<List<Folder>> fetchFoldersByParentId({
+    required int? parentId,
+    required int limit,
+    required int offset,
+  }) async {
+    if (parentId == null) {
+      return fetchRootFolders(limit: limit, offset: offset);
+    }
     final queryResult = await (database.select(
       database.folderItems,
     )..where((tbl) => tbl.parentID.equals(parentId))).get();

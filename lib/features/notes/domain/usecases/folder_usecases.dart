@@ -5,6 +5,7 @@ import '../repositories/folder_repo.dart';
 
 class CreateFolder {
   final FolderRepository repository;
+
   CreateFolder(this.repository);
 
   Future<Either<Failure, FolderEntity>> execute(FolderEntity folder) {
@@ -12,27 +13,40 @@ class CreateFolder {
   }
 }
 
-
 class FetchRootFolders {
   final FolderRepository repository;
+
   FetchRootFolders(this.repository);
 
-  Future<Either<Failure, List<FolderEntity>>> execute({required int limit, required int offset}) {
+  Future<Either<Failure, List<FolderEntity>>> execute({
+    required int limit,
+    required int offset,
+  }) {
     return repository.fetchRootFolders(limit: limit, offset: offset);
   }
 }
 
 class FetchFoldersByParentId {
   final FolderRepository repository;
+
   FetchFoldersByParentId(this.repository);
 
-  Future<Either<Failure, List<FolderEntity>>> execute(int parentId) {
-    return repository.fetchFoldersByParentId(parentId);
+  Future<Either<Failure, List<FolderEntity>>> execute({
+    required int? parentId,
+    required int limit,
+    required int offset,
+  }) {
+    return repository.fetchFoldersByParentId(
+      parentId: parentId,
+      limit: limit,
+      offset: offset,
+    );
   }
 }
 
 class DeleteFolder {
   final FolderRepository repository;
+
   DeleteFolder(this.repository);
 
   Future<Either<Failure, void>> execute(int folderId) {
@@ -42,8 +56,10 @@ class DeleteFolder {
 
 class RenameFolder {
   final FolderRepository repository;
+
   RenameFolder(this.repository);
+
   Future<Either<Failure, void>> execute(int folderId, String newName) {
     return repository.renameFolder(folderId, newName);
   }
-  }
+}

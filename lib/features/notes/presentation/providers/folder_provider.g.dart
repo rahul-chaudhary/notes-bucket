@@ -436,7 +436,7 @@ final class FoldersByParentProvider
   /// Folders by parent ID provider
   const FoldersByParentProvider._({
     required FoldersByParentFamily super.from,
-    required int super.argument,
+    required ({int? parentId, int limit, int offset}) super.argument,
   }) : super(
          retry: null,
          name: r'foldersByParentProvider',
@@ -452,7 +452,7 @@ final class FoldersByParentProvider
   String toString() {
     return r'foldersByParentProvider'
         ''
-        '($argument)';
+        '$argument';
   }
 
   @$internal
@@ -470,7 +470,7 @@ final class FoldersByParentProvider
   }
 }
 
-String _$foldersByParentHash() => r'a7a13dd6fab981438d2ace80bca74c518c8aff81';
+String _$foldersByParentHash() => r'c8bbb24470144e5be860c58384f6617b9c41aa16';
 
 /// Folders by parent ID provider
 
@@ -481,7 +481,7 @@ final class FoldersByParentFamily extends $Family
           AsyncValue<List<FolderEntity>>,
           List<FolderEntity>,
           FutureOr<List<FolderEntity>>,
-          int
+          ({int? parentId, int limit, int offset})
         > {
   const FoldersByParentFamily._()
     : super(
@@ -494,8 +494,14 @@ final class FoldersByParentFamily extends $Family
 
   /// Folders by parent ID provider
 
-  FoldersByParentProvider call(int parentId) =>
-      FoldersByParentProvider._(argument: parentId, from: this);
+  FoldersByParentProvider call({
+    required int? parentId,
+    required int limit,
+    required int offset,
+  }) => FoldersByParentProvider._(
+    argument: (parentId: parentId, limit: limit, offset: offset),
+    from: this,
+  );
 
   @override
   String toString() => r'foldersByParentProvider';
@@ -504,14 +510,24 @@ final class FoldersByParentFamily extends $Family
 /// Folders by parent ID provider
 
 abstract class _$FoldersByParent extends $AsyncNotifier<List<FolderEntity>> {
-  late final _$args = ref.$arg as int;
-  int get parentId => _$args;
+  late final _$args = ref.$arg as ({int? parentId, int limit, int offset});
+  int? get parentId => _$args.parentId;
+  int get limit => _$args.limit;
+  int get offset => _$args.offset;
 
-  FutureOr<List<FolderEntity>> build(int parentId);
+  FutureOr<List<FolderEntity>> build({
+    required int? parentId,
+    required int limit,
+    required int offset,
+  });
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(_$args);
+    final created = build(
+      parentId: _$args.parentId,
+      limit: _$args.limit,
+      offset: _$args.offset,
+    );
     final ref =
         this.ref as $Ref<AsyncValue<List<FolderEntity>>, List<FolderEntity>>;
     final element =
@@ -562,7 +578,7 @@ final class FolderControllerProvider
   }
 }
 
-String _$folderControllerHash() => r'2d5213d79a1ffe7389570eb61493b7f404e5db66';
+String _$folderControllerHash() => r'd7855e344a0ad4a2964b8329dc16f8de701957e6';
 
 /// Controller for mutations (create/delete/rename)
 
