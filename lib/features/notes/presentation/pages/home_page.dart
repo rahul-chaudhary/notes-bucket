@@ -29,7 +29,7 @@ class HomePage extends ConsumerWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          NotesAppBar('Notes Bucket'),
+          NotesAppBar('Notes Bucket',isBackButtonVisible: false),
           myFoldersSliverAppBar(context, controller, ref, rootFoldersAsync),
           recentNoteSliverBox(context),
         ],

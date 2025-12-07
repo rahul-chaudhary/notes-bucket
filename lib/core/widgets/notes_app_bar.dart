@@ -4,7 +4,8 @@ import 'package:notes_bucket/core/theme/app_text_style.dart';
 
 class NotesAppBar extends ConsumerWidget {
   final String title;
-  const NotesAppBar(this.title, {super.key});
+  final bool isBackButtonVisible;
+  const NotesAppBar(this.title,{this.isBackButtonVisible = true, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -12,6 +13,12 @@ class NotesAppBar extends ConsumerWidget {
       automaticallyImplyLeading: false,
       pinned: true,
       backgroundColor: Theme.of(context).colorScheme.primary,
+      leading: isBackButtonVisible
+          ? IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () => Navigator.of(context).pop(),
+      )
+          : null,
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
           title,
