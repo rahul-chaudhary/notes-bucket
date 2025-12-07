@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:notes_bucket/core/constants/app_routes.dart';
 import 'package:notes_bucket/features/notes/presentation/pages/edit_note_page.dart';
+import 'package:notes_bucket/features/notes/presentation/pages/view_all_page.dart';
 
 import 'core/theme/app_theme.dart';
 import 'features/notes/presentation/pages/home_page.dart';
@@ -21,6 +22,7 @@ class MyApp extends ConsumerWidget {
       routes: {
         AppRoutes.home: (context) => const HomePage(),
         AppRoutes.editNotes: (context) => const EditNotePage(),
+        AppRoutes.viewAll: (context) => const ViewAllPage(),
       },
     );
   }

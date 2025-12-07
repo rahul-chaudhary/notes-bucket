@@ -5,6 +5,8 @@ import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
 import 'package:notes_bucket/core/widgets/app_text_field.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
 
+import '../../domain/entities/folder_entity.dart';
+
 class SelectFolderDialog extends ConsumerWidget {
   const SelectFolderDialog({super.key});
 
@@ -40,17 +42,26 @@ class SelectFolderDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    FolderEntity? selectedFolder;
+    String warningText = '';
+
     final rootFoldersAsync = ref.watch(
       rootFoldersProvider(limit: 15, offset: 0),
     );
 
     return AppAlertDialog(
       dialogTitle: 'Select Folder',
-      primaryButtonText: 'Select',
-      primaryButtonColor: Theme.of(context).colorScheme.primary,
+      primaryButtonText: 'Save Here',
+      primaryButtonColor: selectedFolder != null
+          ? Theme.of(context).colorScheme.primary
+          : Theme.of(context).disabledColor,
       secondaryButtonText: 'Cancel',
       onPressPrimary: () {
-        // Navigator.of(context).pop(selectedFolder);
+        if(selectedFolder == null) {
+          warningText = 'Please select a folder to save your note in.';
+        } else {
+          Navigator.of(context).pop(selectedFolder);
+        }
       },
       onPressSecondary: () {
         Navigator.of(context).pop(null);
@@ -92,6 +103,7 @@ class SelectFolderDialog extends ConsumerWidget {
             ),
             onTap: () => _showCreateFolderDialog(context, ref),
           ),
+          Text(warningText, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.red))
         ],
       ),
     );

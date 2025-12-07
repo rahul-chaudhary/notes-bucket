@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:notes_bucket/core/theme/app_text_style.dart';
 
 class NotesAppBar extends ConsumerWidget {
-  const NotesAppBar({super.key});
+  final String title;
+  const NotesAppBar(this.title, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const Placeholder();
+    return SliverAppBar(
+      automaticallyImplyLeading: false,
+      pinned: true,
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      flexibleSpace: FlexibleSpaceBar(
+        title: Text(
+          title,
+          style: AppTextStyles.headlineMedium(context),
+        ),
+        centerTitle: true,
+      ),
+    );
   }
 }
