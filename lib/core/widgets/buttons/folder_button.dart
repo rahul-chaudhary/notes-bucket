@@ -4,8 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notes_bucket/core/constants/app_assets.dart';
 import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
 import 'package:notes_bucket/features/notes/domain/entities/folder_entity.dart';
-import '../theme/app_spacing.dart';
-import '../theme/app_text_style.dart';
+import '../../theme/app_spacing.dart';
+import '../../theme/app_text_style.dart';
 
 class FolderButton extends ConsumerWidget {
   final Color? color;

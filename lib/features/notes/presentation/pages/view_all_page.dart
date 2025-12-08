@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:notes_bucket/core/theme/app_spacing.dart';
+import 'package:notes_bucket/core/widgets/buttons/app_fab.dart';
 import 'package:notes_bucket/core/widgets/errors/app_error_widget.dart';
-import 'package:notes_bucket/core/widgets/folder_button.dart';
+import 'package:notes_bucket/core/widgets/buttons/folder_button.dart';
 import 'package:notes_bucket/core/widgets/notes_app_bar.dart';
 import 'package:notes_bucket/core/widgets/skeletons/folder_grid_view_skeleton.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
+import 'package:notes_bucket/features/notes/presentation/widgets/create_folder_dialog.dart';
 
 class ViewAllPage extends ConsumerWidget {
   const ViewAllPage({super.key});
@@ -13,9 +15,9 @@ class ViewAllPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final rootFoldersAsync = ref.watch(
-      rootFoldersProvider(limit: 15, offset: 0),
+      rootFoldersProvider(limit: 20, offset: 0),
     );
-
+    final controller = TextEditingController();
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -38,12 +40,16 @@ class ViewAllPage extends ConsumerWidget {
                       final folder = data[index];
                       return FolderButton(folder: folder);
                     },),
-                  error: (err, st) => AppErrorWidget(onRetry: () => ref.refresh(rootFoldersProvider(limit: 15, offset: 0))),
+                  error: (err, st) => AppErrorWidget(onRetry: () => ref.refresh(rootFoldersProvider(limit: 20, offset: 0))),
                   loading: () => FolderGridVewSkeleton(itemCount: 20),)
             ),
           ),
         ],
       ),
+      floatingActionButton: AppFab(
+        onPressed: () async {
+          await createFolderDialog(context, ref, controller);
+      },),
     );
   }
 }

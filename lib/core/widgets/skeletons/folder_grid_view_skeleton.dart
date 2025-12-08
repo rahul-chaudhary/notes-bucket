@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notes_bucket/core/theme/app_color.dart';
-import 'package:notes_bucket/core/widgets/folder_button.dart';
+import 'package:notes_bucket/core/widgets/buttons/folder_button.dart';
 import 'package:notes_bucket/features/notes/domain/entities/folder_entity.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
