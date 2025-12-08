@@ -8,9 +8,10 @@ import '../theme/app_spacing.dart';
 import '../theme/app_text_style.dart';
 
 class FolderButton extends ConsumerWidget {
+  final Color? color;
   final FolderEntity folder;
 
-  const FolderButton({super.key, required this.folder});
+  const FolderButton({this.color, super.key, required this.folder});
 
   void _showOptionsBottomSheet(BuildContext context) {
     showModalBottomSheet(
@@ -118,6 +119,11 @@ class FolderButton extends ConsumerWidget {
               children: [
                 SvgPicture.asset(
                     AppSvgs.blueMacFolder,
+                    colorFilter: color != null ?
+                    ColorFilter.mode(
+                      color!,
+                      BlendMode.srcIn,
+                    ): null,
                     height: 100,
                   clipBehavior: Clip.none,
                 ),

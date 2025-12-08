@@ -37,6 +37,7 @@ dependencies:
   fpdart: ^1.2.0
   internet_connection_checker_plus: ^2.9.1
   riverpod_generator: ^3.0.3
+  skeletonizer: ^2.1.1
 
 dev_dependencies:
   flutter_test:

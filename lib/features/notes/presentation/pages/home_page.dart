@@ -12,6 +12,7 @@ import 'package:notes_bucket/core/widgets/buttons/app_fab.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_text_button.dart';
 import 'package:notes_bucket/core/widgets/folder_button.dart';
 import 'package:notes_bucket/core/widgets/notes_app_bar.dart';
+import 'package:notes_bucket/core/widgets/skeletons/folder_grid_view_skeleton.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/home_page_header.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/recent_notes.dart';
@@ -107,7 +108,7 @@ class HomePage extends ConsumerWidget {
       color: Colors.transparent,
       height: 120,
       child: rootFoldersAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => FolderGridVewSkeleton(itemCount: 3),
         error: (error, stack) => Center(child: Text('Error: $error')),
         data: (data) => data.isEmpty
             ? Center(
