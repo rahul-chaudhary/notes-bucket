@@ -70,9 +70,11 @@ class RenameFolder {
     String newName,
   ) async {
     final exists = await repository.folderExists(folder);
-    if (exists.isLeft()) {
-      return Future.error('Folder name already exists');
-    }
-    return repository.renameFolder(folder.id, newName);
+    return exists.fold(
+          (l) => Future.error(l.message),
+          (r) => r == true
+          ? Future.error('Folder name already exists')
+          : repository.renameFolder(folder.id, newName),
+    );
   }
 }
