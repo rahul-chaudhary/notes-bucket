@@ -92,7 +92,7 @@ class HomePage extends ConsumerWidget {
               height: MediaQuery.of(context).size.height * 1,
               child: const RecentNotes(),
             ),
-        InfoCard(message: 'You have reached the void', primaryImage: AppImages.playfulCat),
+        InfoCard(message: 'You have reached the void\n\n', primaryImage: AppImages.playfulCat),
           ],
         ),
       ),
