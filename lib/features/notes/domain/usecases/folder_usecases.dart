@@ -9,7 +9,7 @@ class CreateFolder {
   CreateFolder(this.repository);
 
   Future<Either<Failure, FolderEntity>> execute(FolderEntity folder) async {
-    final exists = await repository.folderExists(folder);
+    final exists = await repository.folderExists(folder.parentId, folder.name);
     return exists.fold(
       (l) => Future.error(l.message),
       (r) => r == true
@@ -69,7 +69,7 @@ class RenameFolder {
     FolderEntity folder,
     String newName,
   ) async {
-    final exists = await repository.folderExists(folder);
+    final exists = await repository.folderExists(folder.parentId, newName);
     return exists.fold(
           (l) => Future.error(l.message),
           (r) => r == true
