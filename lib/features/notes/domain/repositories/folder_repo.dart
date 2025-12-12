@@ -20,4 +20,6 @@ abstract interface class FolderRepository {
   Future<Either<Failure, void>> renameFolder(int folderId, String newName);
 
   Future<Either<Failure, void>> deleteFolder(int folderId);
+
+  Future<Either<Failure, bool>> folderExists(FolderEntity folder);
 }

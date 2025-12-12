@@ -71,5 +71,15 @@ class FolderRepositoryImpl implements FolderRepository {
     }
   }
 
+  @override
+  Future<Either<Failure, bool>> folderExists(FolderEntity folder) async {
+    try{
+      final res = await folderLocalDataSource.folderExists(Folder.fromEntity(folder));
+      return Right(res);
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(e.message));
+    }
+  }
+
 
 }

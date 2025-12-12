@@ -1,3 +1,4 @@
+import 'package:notes_bucket/core/constants/app_constants.dart';
 import 'package:notes_bucket/core/db/database_provider.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/features/notes/data/datasource/local_data/folder_local_datasource.dart';
@@ -128,8 +129,8 @@ class FolderController extends _$FolderController {
         if (!ref.mounted) return;
 
         folder.parentId == null
-            ? ref.invalidate(rootFoldersProvider(limit: 10, offset: 0))
-            : ref.invalidate(foldersByParentProvider(parentId: folder.parentId!, limit: 20, offset: 0));
+            ? ref.invalidate(rootFoldersProvider(limit: AppConstants.folderPageLimit, offset: 0))
+            : ref.invalidate(foldersByParentProvider(parentId: folder.parentId!, limit: AppConstants.folderPageLimit, offset: 0));
       },
     );
   }
@@ -146,7 +147,7 @@ class FolderController extends _$FolderController {
 
         parentId == null
             ? ref.invalidate(rootFoldersProvider)
-            : ref.invalidate(foldersByParentProvider(parentId: parentId, limit: 20, offset: 0));
+            : ref.invalidate(foldersByParentProvider(parentId: parentId, limit: AppConstants.folderPageLimit, offset: 0));
       },
     );
   }
@@ -154,7 +155,7 @@ class FolderController extends _$FolderController {
   // RENAME
   Future<void> rename(FolderEntity folder, String newName) async {
     final usecase = ref.read(renameFolderProvider);
-    final result = await usecase.execute(folder.id, newName);
+    final result = await usecase.execute(folder, newName);
 
     result.fold(
           (f) => throw Exception(f.message),
@@ -163,7 +164,7 @@ class FolderController extends _$FolderController {
 
         folder.parentId == null
             ? ref.invalidate(rootFoldersProvider)
-            : ref.invalidate(foldersByParentProvider(parentId: folder.parentId!, limit: 20, offset: 0));
+            : ref.invalidate(foldersByParentProvider(parentId: folder.parentId!, limit: AppConstants.folderPageLimit, offset: 0));
       },
     );
   }

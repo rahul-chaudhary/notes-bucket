@@ -8,8 +8,14 @@ class CreateFolder {
 
   CreateFolder(this.repository);
 
-  Future<Either<Failure, FolderEntity>> execute(FolderEntity folder) {
-    return repository.createFolder(folder);
+  Future<Either<Failure, FolderEntity>> execute(FolderEntity folder) async {
+    final exists = await repository.folderExists(folder);
+    return exists.fold(
+      (l) => Future.error(l.message),
+      (r) => r == true
+          ? Future.error('Folder name already exists')
+          : repository.createFolder(folder),
+    );
   }
 }
 
@@ -59,7 +65,14 @@ class RenameFolder {
 
   RenameFolder(this.repository);
 
-  Future<Either<Failure, void>> execute(int folderId, String newName) {
-    return repository.renameFolder(folderId, newName);
+  Future<Either<Failure, void>> execute(
+    FolderEntity folder,
+    String newName,
+  ) async {
+    final exists = await repository.folderExists(folder);
+    if (exists.isLeft()) {
+      return Future.error('Folder name already exists');
+    }
+    return repository.renameFolder(folder.id, newName);
   }
 }

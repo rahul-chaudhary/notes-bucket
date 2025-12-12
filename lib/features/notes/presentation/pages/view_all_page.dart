@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:notes_bucket/core/constants/app_constants.dart';
 import 'package:notes_bucket/core/theme/app_spacing.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_fab.dart';
 import 'package:notes_bucket/core/widgets/errors/app_error_widget.dart';
@@ -15,7 +16,7 @@ class ViewAllPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final rootFoldersAsync = ref.watch(
-      rootFoldersProvider(limit: 20, offset: 0),
+      rootFoldersProvider(limit: AppConstants.folderPageLimit, offset: 0),
     );
     final controller = TextEditingController();
     return Scaffold(
@@ -40,7 +41,7 @@ class ViewAllPage extends ConsumerWidget {
                       final folder = data[index];
                       return FolderButton(folder: folder);
                     },),
-                  error: (err, st) => AppErrorWidget(onRetry: () => ref.refresh(rootFoldersProvider(limit: 20, offset: 0))),
+                  error: (err, st) => AppErrorWidget(onRetry: () => ref.refresh(rootFoldersProvider(limit: AppConstants.folderPageLimit, offset: 0))),
                   loading: () => FolderGridVewSkeleton(itemCount: 20),)
             ),
           ),
