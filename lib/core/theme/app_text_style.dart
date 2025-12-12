@@ -20,7 +20,7 @@ class AppTextStyles {
   /// Small headline text
   static TextStyle headlineSmall(BuildContext context) => GoogleFonts.poppins(
     fontSize: 18,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
     color: Theme.of(context).colorScheme.onSurface,
   );
 
