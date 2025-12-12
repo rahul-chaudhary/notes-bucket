@@ -5,4 +5,5 @@ abstract final class AppSvgs {
 
 abstract final class AppImages {
   static const String confusedCat = 'assets/images/confused_cat.png';
+  static const String playfulCat = 'assets/images/playful_cat.png';
 }

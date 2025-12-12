@@ -8,6 +8,7 @@ import 'package:notes_bucket/core/theme/app_text_style.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_fab.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_text_button.dart';
 import 'package:notes_bucket/core/widgets/buttons/folder_button.dart';
+import 'package:notes_bucket/core/widgets/cards/info_card.dart';
 import 'package:notes_bucket/core/widgets/notes_app_bar.dart';
 import 'package:notes_bucket/core/widgets/skeletons/folder_grid_view_skeleton.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
@@ -91,7 +92,7 @@ class HomePage extends ConsumerWidget {
               height: MediaQuery.of(context).size.height * 1,
               child: const RecentNotes(),
             ),
-            SizedBox(height: 150, child: SvgPicture.asset(AppSvgs.moon)),
+        InfoCard(message: 'You have reached the void', primaryImage: AppImages.playfulCat),
           ],
         ),
       ),
