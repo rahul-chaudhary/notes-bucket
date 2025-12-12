@@ -32,6 +32,7 @@ Future<void> createFolderDialog(BuildContext context, WidgetRef ref, TextEditing
             await ref
                 .read(folderControllerProvider.notifier)
                 .create(newFolder);
+            ref.invalidate(rootFoldersProvider);
             if (context.mounted) {
               Navigator.pop(context);
               AppSnackBar.showSuccess(

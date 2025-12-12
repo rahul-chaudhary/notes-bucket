@@ -15,7 +15,6 @@ import 'package:notes_bucket/features/notes/presentation/providers/folder_provid
 import 'package:notes_bucket/features/notes/presentation/widgets/create_folder_dialog.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/home_page_header.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/recent_notes.dart';
-import '../../domain/entities/folder_entity.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -23,14 +22,11 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final TextEditingController controller = TextEditingController();
-    final rootFoldersAsync = ref.watch(
-      rootFoldersProvider(limit: 3, offset: 0),
-    );
     return Scaffold(
       body: CustomScrollView(
         slivers: [
           NotesAppBar('Notes Bucket',isBackButtonVisible: false),
-          myFoldersSliverAppBar(context, controller, ref, rootFoldersAsync),
+          myFoldersSliverAppBar(context, controller, ref),
           recentNoteSliverBox(context),
         ],
       ),
@@ -44,7 +40,6 @@ class HomePage extends ConsumerWidget {
     BuildContext context,
     TextEditingController controller,
     WidgetRef ref,
-    AsyncValue<List<FolderEntity>> rootFoldersAsync,
   ) {
     return SliverAppBar(
       automaticallyImplyLeading: false,
@@ -60,7 +55,7 @@ class HomePage extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               myFolderHeader(context, controller, ref),
-              myFolderListView(rootFoldersAsync, context),
+              myFolderListView(ref, context),
               viewAllButton(context),
             ],
           ),
@@ -100,9 +95,10 @@ class HomePage extends ConsumerWidget {
   }
 
   Container myFolderListView(
-    AsyncValue<List<FolderEntity>> rootFoldersAsync,
+    WidgetRef ref,
     BuildContext context,
   ) {
+    final rootFoldersAsync = ref.watch(rootFoldersProvider(limit: 3, offset: 0));
     return Container(
       color: Colors.transparent,
       height: 120,
