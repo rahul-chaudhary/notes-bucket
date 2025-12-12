@@ -75,8 +75,17 @@ class FolderButton extends ConsumerWidget {
           ),
           FilledButton(
             onPressed: () {
-              // TODO: Implement rename logic
-              Navigator.pop(context);
+              final newName = controller.text.trim();
+              try {
+                folderController.rename(folder, newName);
+                AppSnackBar.showSuccess(context, '"${folder.name}" renamed to "$newName" successfully!');
+              } catch(e,st) {
+                AppSnackBar.showError(context, 'Failed to rename folder: $e');
+                dbPrint('Failed to rename the folder',e: e, st: st);
+                rethrow;
+              } finally {
+                Navigator.pop(context);
+              }
             },
             child: const Text('Rename'),
           ),
