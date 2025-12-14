@@ -6,7 +6,7 @@ import 'package:notes_bucket/core/widgets/app_text_field.dart';
 import 'package:notes_bucket/features/notes/domain/entities/folder_entity.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
 
-Future<void> createFolderDialog(BuildContext context, WidgetRef ref, TextEditingController controller ) {
+Future<void> createFolderDialog(BuildContext context, WidgetRef ref, TextEditingController controller, int? parentId ) {
   return showDialog(
     context: context,
     builder: (context) => AppAlertDialog(
@@ -24,7 +24,7 @@ Future<void> createFolderDialog(BuildContext context, WidgetRef ref, TextEditing
           final newFolder = FolderEntity(
             id: 0,
             name: folderName,
-            parentId: null,
+            parentId: parentId,
             createdAt: DateTime.now(),
             updatedAt: DateTime.now(),
           );

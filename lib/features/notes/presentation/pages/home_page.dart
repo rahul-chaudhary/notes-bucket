@@ -141,7 +141,7 @@ class HomePage extends ConsumerWidget {
         const Spacer(),
         IconButton(
           onPressed: () async {
-            await createFolderDialog(context, ref, controller);
+            await createFolderDialog(context, ref, controller, null);
           },
           icon: const Icon(Icons.add_circle_rounded),
         ),

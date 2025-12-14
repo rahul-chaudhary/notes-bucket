@@ -89,15 +89,18 @@ class GetCurrentPath {
     if (parentId == null) return Right(path);
 
     int? id = parentId;
+    final List<String> paths = [];
     while(id != null) {
       final res = await repository.fetchFolderById(id!);
       res.fold(
               (l) => l,
               (folder) {
         id = folder.parentId;
-        path += '> ${folder.name}';
+        // path += ' > ${folder.name}';
+                paths.add(folder.name);
       });
     }
+    path = 'Root > ${paths.reversed.join(' > ')}';
     return Right(path);
   }
 }
