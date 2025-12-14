@@ -22,4 +22,6 @@ abstract interface class FolderRepository {
   Future<Either<Failure, void>> deleteFolder(int folderId);
 
   Future<Either<Failure, bool>> folderExists(int? folderParentID, String folderName);
+
+  Future<Either<Failure, FolderEntity>> fetchFolderById(int folderId);
 }

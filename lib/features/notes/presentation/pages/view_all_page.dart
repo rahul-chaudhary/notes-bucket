@@ -10,6 +10,7 @@ import 'package:notes_bucket/core/widgets/buttons/folder_button.dart';
 import 'package:notes_bucket/core/widgets/notes_app_bar.dart';
 import 'package:notes_bucket/core/widgets/skeletons/folder_grid_view_skeleton.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
+import 'package:notes_bucket/features/notes/presentation/providers/view_all_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/create_folder_dialog.dart';
 
 class ViewAllPage extends ConsumerWidget {
@@ -17,34 +18,76 @@ class ViewAllPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final rootFoldersAsync = ref.watch(
-      rootFoldersProvider(limit: AppConstants.folderPageLimit, offset: 0),
+    // take route arg once and seed the state provider if needed
+    final routeParentId = ModalRoute.of(context)?.settings.arguments as int?;
+    final selectedParentId = ref.watch(selectedParentIdProvider);
+    int pageOffset = 0;
+    if (selectedParentId == null && routeParentId != null) {
+      // set initial parent id after the first frame to avoid build loops
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(selectedParentIdProvider.notifier).setId(routeParentId);
+      });
+    }
+    AsyncValue currentPathAsync = ref.watch(
+      currentPathProvider(parentId: selectedParentId),
     );
+    AsyncValue folderAsync = ref.watch(
+      foldersByParentProvider(
+        parentId: selectedParentId,
+        limit: AppConstants.folderPageLimit,
+        offset: pageOffset,
+      ),
+    );
+
     final controller = TextEditingController();
     return Scaffold(
       body: CustomScrollView(
         slivers: [
           NotesAppBar('View All'),
+          SliverToBoxAdapter(child: Text('Path: ${currentPathAsync.value}')),
           SliverFillRemaining(
             child: Padding(
               padding: AppSpacing.paddingAllS,
-              child: rootFoldersAsync.when(
+              child: folderAsync.when(
                 data: (data) => data.isEmpty
-                ? InfoCard(message: 'No folders found!', primaryImage: AppImages.confusedCat)
-                : GridView.builder(
-                  scrollDirection: Axis.vertical,
-                  itemCount: data.length,
-                  physics: const BouncingScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 15,
-                  ),
-                  itemBuilder: (context, index) {
-                    final folder = data[index];
-                    return FolderButton(folder: folder);
-                  },
-                ),
+                    ? InfoCard(
+                        message: 'Nothing here!',
+                        primaryImage: AppImages.confusedCat,
+                      )
+                    : GridView.builder(
+                        scrollDirection: Axis.vertical,
+                        itemCount: data.length,
+                        physics: const BouncingScrollPhysics(),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 15,
+                            ),
+                        itemBuilder: (context, index) {
+                          final folder = data[index];
+                          return FolderButton(
+                            folder: folder,
+                            onTap: () {
+                              // update the selected parent id via the provider
+                              ref
+                                  .read(selectedParentIdProvider.notifier)
+                                  .setId(folder.id);
+                              // optionally invalidate dependent providers to force refresh
+                              ref.invalidate(
+                                currentPathProvider(parentId: folder.id),
+                              );
+                              ref.invalidate(
+                                foldersByParentProvider(
+                                  parentId: folder.id,
+                                  limit: AppConstants.folderPageLimit,
+                                  offset: 0,
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
                 error: (err, st) => AppErrorWidget(
                   onRetry: () => ref.refresh(
                     rootFoldersProvider(

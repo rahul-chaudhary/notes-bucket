@@ -21,6 +21,8 @@ abstract interface class FolderLocalDataSource {
   Future<void> deleteFolder(int folderId);
 
   Future<bool> folderExists(int? folderParentID, String folderName);
+
+  Future<Folder> fetchFolderById(int folderId);
 }
 
 class FolderLocalDataSourceImpl implements FolderLocalDataSource {
@@ -122,6 +124,21 @@ class FolderLocalDataSourceImpl implements FolderLocalDataSource {
         .getSingleOrNull();
 
     return row != null;
+  }
+
+  @override
+  Future<Folder> fetchFolderById(int folderId) async {
+    final row = await (database.select(database.folderItems)
+      ..where((tbl) => tbl.id.equals(folderId)))
+        .getSingle();
+
+    return Folder(
+      id: row.id,
+      parentId: row.parentID,
+      name: row.name,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    );
   }
 
 }

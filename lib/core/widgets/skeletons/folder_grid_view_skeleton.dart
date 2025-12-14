@@ -7,8 +7,11 @@ import 'package:skeletonizer/skeletonizer.dart';
 class FolderGridVewSkeleton extends StatelessWidget {
   final int crossAxisCount;
   final int itemCount;
+
   const FolderGridVewSkeleton({
-    super.key, this.crossAxisCount = 3, required this.itemCount,
+    super.key,
+    this.crossAxisCount = 3,
+    required this.itemCount,
   });
 
   @override
@@ -19,8 +22,7 @@ class FolderGridVewSkeleton extends StatelessWidget {
         scrollDirection: Axis.vertical,
         itemCount: itemCount,
         physics: const NeverScrollableScrollPhysics(),
-        gridDelegate:
-        SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: crossAxisCount,
           crossAxisSpacing: 10,
           mainAxisSpacing: 15,
@@ -33,8 +35,13 @@ class FolderGridVewSkeleton extends StatelessWidget {
             createdAt: DateTime.now(),
           );
           return SizedBox(
-              height: 100,
-              child: FolderButton(color: AppColors.shimmer, folder: folder));
+            height: 100,
+            child: FolderButton(
+              color: AppColors.shimmer,
+              folder: folder,
+              onTap: () {},
+            ),
+          );
         },
       ),
     );

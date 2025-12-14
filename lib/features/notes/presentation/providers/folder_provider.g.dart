@@ -320,6 +320,47 @@ final class RenameFolderProvider
 
 String _$renameFolderHash() => r'236476d6e462dac3ca92ae41b087f128d32d429a';
 
+@ProviderFor(getCurrentPath)
+const getCurrentPathProvider = GetCurrentPathProvider._();
+
+final class GetCurrentPathProvider
+    extends $FunctionalProvider<GetCurrentPath, GetCurrentPath, GetCurrentPath>
+    with $Provider<GetCurrentPath> {
+  const GetCurrentPathProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'getCurrentPathProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$getCurrentPathHash();
+
+  @$internal
+  @override
+  $ProviderElement<GetCurrentPath> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  GetCurrentPath create(Ref ref) {
+    return getCurrentPath(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GetCurrentPath value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GetCurrentPath>(value),
+    );
+  }
+}
+
+String _$getCurrentPathHash() => r'4c38ac3380c65adfe2c571470c6e41e8c298e203';
+
 /// Root folders provider
 
 @ProviderFor(RootFolders)
@@ -578,7 +619,7 @@ final class FolderControllerProvider
   }
 }
 
-String _$folderControllerHash() => r'd7855e344a0ad4a2964b8329dc16f8de701957e6';
+String _$folderControllerHash() => r'db358819906277a84d9e2647c9efee5a67e3a012';
 
 /// Controller for mutations (create/delete/rename)
 
@@ -598,5 +639,95 @@ abstract class _$FolderController extends $Notifier<void> {
               Object?
             >;
     element.handleValue(ref, null);
+  }
+}
+
+@ProviderFor(CurrentPath)
+const currentPathProvider = CurrentPathFamily._();
+
+final class CurrentPathProvider
+    extends $AsyncNotifierProvider<CurrentPath, String> {
+  const CurrentPathProvider._({
+    required CurrentPathFamily super.from,
+    required int? super.argument,
+  }) : super(
+         retry: null,
+         name: r'currentPathProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$currentPathHash();
+
+  @override
+  String toString() {
+    return r'currentPathProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  CurrentPath create() => CurrentPath();
+
+  @override
+  bool operator ==(Object other) {
+    return other is CurrentPathProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$currentPathHash() => r'dff6ad4d4e8045e91433079d537975c40eb27dba';
+
+final class CurrentPathFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          CurrentPath,
+          AsyncValue<String>,
+          String,
+          FutureOr<String>,
+          int?
+        > {
+  const CurrentPathFamily._()
+    : super(
+        retry: null,
+        name: r'currentPathProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  CurrentPathProvider call({required int? parentId}) =>
+      CurrentPathProvider._(argument: parentId, from: this);
+
+  @override
+  String toString() => r'currentPathProvider';
+}
+
+abstract class _$CurrentPath extends $AsyncNotifier<String> {
+  late final _$args = ref.$arg as int?;
+  int? get parentId => _$args;
+
+  FutureOr<String> build({required int? parentId});
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(parentId: _$args);
+    final ref = this.ref as $Ref<AsyncValue<String>, String>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<String>, String>,
+              AsyncValue<String>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
   }
 }

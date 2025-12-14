@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notes_bucket/core/constants/app_assets.dart';
+import 'package:notes_bucket/core/constants/app_routes.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
 import 'package:notes_bucket/core/widgets/app_snackbar.dart';
@@ -13,8 +14,9 @@ import '../../theme/app_text_style.dart';
 class FolderButton extends ConsumerWidget {
   final Color? color;
   final FolderEntity folder;
+  final VoidCallback onTap;
 
-  const FolderButton({this.color, super.key, required this.folder});
+  const FolderButton({this.color, super.key, required this.folder, required this.onTap});
 
   void _showOptionsBottomSheet(BuildContext context, FolderController folderController) {
     showModalBottomSheet(
@@ -135,7 +137,7 @@ class FolderButton extends ConsumerWidget {
     final folderController = ref.read(folderControllerProvider.notifier);
 
     return InkWell(
-      onTap: () {},
+      onTap: onTap,
       onLongPress: () => _showOptionsBottomSheet(context, folderController),
       splashColor: Theme.of(context).colorScheme.primary.withAlpha(100),
       borderRadius: BorderRadius.circular(12),

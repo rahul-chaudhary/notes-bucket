@@ -57,6 +57,10 @@ RenameFolder renameFolder(Ref ref) {
   return RenameFolder(ref.watch(folderRepositoryProvider));
 }
 
+@riverpod
+GetCurrentPath getCurrentPath(Ref ref) {
+  return GetCurrentPath(ref.watch(folderRepositoryProvider));
+}
 
 // ─────────────────────────────────────────────────────────────
 // PRESENTATION LAYER PROVIDERS (State Notifiers)
@@ -169,3 +173,26 @@ class FolderController extends _$FolderController {
     );
   }
 }
+
+@riverpod
+class CurrentPath extends _$CurrentPath {
+
+  @override
+  Future<String> build({required int? parentId}) async {
+    return _load(parentId);
+  }
+
+  Future<String> _load(int? parentId) async {
+    final usecase = ref.read(getCurrentPathProvider);
+
+    final result = await usecase.execute(parentId: parentId);
+
+    return result.fold(
+          (failure) => throw Exception(failure.message),
+          (path) => path
+    );
+
+  }
+}
+
+

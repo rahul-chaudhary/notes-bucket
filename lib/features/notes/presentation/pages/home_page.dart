@@ -118,7 +118,12 @@ class HomePage extends ConsumerWidget {
                 physics: const BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
                   final folder = data[index];
-                  return FolderButton(folder: folder);
+                  return FolderButton(
+                      folder: folder,
+                      onTap: (){
+                        Navigator.pushNamed(context, AppRoutes.viewAll, arguments: folder.id);
+                      },
+                  );
                 },
               ),
       ),

@@ -71,10 +71,33 @@ class RenameFolder {
   ) async {
     final exists = await repository.folderExists(folder.parentId, newName);
     return exists.fold(
-          (l) => Future.error(l.message),
-          (r) => r == true
+      (l) => Future.error(l.message),
+      (r) => r == true
           ? Future.error('Folder name already exists')
           : repository.renameFolder(folder.id, newName),
     );
+  }
+}
+
+class GetCurrentPath {
+  final FolderRepository repository;
+
+  GetCurrentPath(this.repository);
+
+  Future<Either<Failure, String>> execute({required int? parentId}) async {
+    String path = 'Root';
+    if (parentId == null) return Right(path);
+
+    int? id = parentId;
+    while(id != null) {
+      final res = await repository.fetchFolderById(id!);
+      res.fold(
+              (l) => l,
+              (folder) {
+        id = folder.parentId;
+        path += '> ${folder.name}';
+      });
+    }
+    return Right(path);
   }
 }
