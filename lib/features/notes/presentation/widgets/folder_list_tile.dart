@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 
 class FolderListTile extends StatelessWidget {
   final String title;
-  const FolderListTile({super.key, required this.title});
+  final VoidCallback onTap;
+  const FolderListTile({super.key, required this.title, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       splashColor: Theme.of(context).splashColor,
-      onTap: () {
-
-      },
+      onTap: onTap,
       child: ListTile(
         leading: Icon(
           Icons.folder,

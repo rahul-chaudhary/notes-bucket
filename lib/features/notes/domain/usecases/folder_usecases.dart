@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:notes_bucket/core/errors/failures.dart';
+import 'package:notes_bucket/core/usecases/use_case.dart';
 import '../entities/folder_entity.dart';
 import '../repositories/folder_repo.dart';
 
@@ -103,3 +104,15 @@ class GetCurrentPath {
     return Right(path);
   }
 }
+
+class FetchFolderById implements UseCase<FolderEntity, int> {
+  final FolderRepository repository;
+
+  FetchFolderById(this.repository);
+  @override
+  Future<Either<Failure, FolderEntity>> call(int id) async {
+    return repository.fetchFolderById(id);
+  }
+}
+
+

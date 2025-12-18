@@ -62,6 +62,11 @@ GetCurrentPath getCurrentPath(Ref ref) {
   return GetCurrentPath(ref.watch(folderRepositoryProvider));
 }
 
+@riverpod
+FetchFolderById fetchFolderById(Ref ref) {
+  return FetchFolderById(ref.watch(folderRepositoryProvider));
+}
+
 // ─────────────────────────────────────────────────────────────
 // PRESENTATION LAYER PROVIDERS (State Notifiers)
 // ─────────────────────────────────────────────────────────────
@@ -192,6 +197,27 @@ class CurrentPath extends _$CurrentPath {
           (path) => path
     );
 
+  }
+}
+
+
+/// Folder by Id provider
+@riverpod
+class FolderById extends _$FolderById {
+  @override
+  Future<FolderEntity> build(int folderId) async {
+    return _load(folderId);
+  }
+
+  Future<FolderEntity> _load(int folderId) async {
+    final usecase = ref.read(fetchFolderByIdProvider);
+
+    final result = await usecase.call(folderId);
+
+    return result.fold(
+          (failure) => throw Exception(failure.message),
+          (folder) => folder,
+    );
   }
 }
 

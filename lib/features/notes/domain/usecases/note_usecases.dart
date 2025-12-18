@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:notes_bucket/core/errors/failures.dart';
-import 'package:notes_bucket/core/usecases/usercase.dart';
+import 'package:notes_bucket/core/usecases/use_case.dart';
 
 import 'package:notes_bucket/features/notes/domain/entities/note_entity.dart';
 import 'package:notes_bucket/features/notes/domain/repositories/note_repo.dart';

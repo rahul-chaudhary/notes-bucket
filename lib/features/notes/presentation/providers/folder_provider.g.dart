@@ -361,6 +361,48 @@ final class GetCurrentPathProvider
 
 String _$getCurrentPathHash() => r'4c38ac3380c65adfe2c571470c6e41e8c298e203';
 
+@ProviderFor(fetchFolderById)
+const fetchFolderByIdProvider = FetchFolderByIdProvider._();
+
+final class FetchFolderByIdProvider
+    extends
+        $FunctionalProvider<FetchFolderById, FetchFolderById, FetchFolderById>
+    with $Provider<FetchFolderById> {
+  const FetchFolderByIdProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'fetchFolderByIdProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$fetchFolderByIdHash();
+
+  @$internal
+  @override
+  $ProviderElement<FetchFolderById> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  FetchFolderById create(Ref ref) {
+    return fetchFolderById(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(FetchFolderById value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<FetchFolderById>(value),
+    );
+  }
+}
+
+String _$fetchFolderByIdHash() => r'9b62f38656bc736f2e716448e0536559ce64f0e1';
+
 /// Root folders provider
 
 @ProviderFor(RootFolders)
@@ -725,6 +767,106 @@ abstract class _$CurrentPath extends $AsyncNotifier<String> {
             as $ClassProviderElement<
               AnyNotifier<AsyncValue<String>, String>,
               AsyncValue<String>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+/// Folder by Id provider
+
+@ProviderFor(FolderById)
+const folderByIdProvider = FolderByIdFamily._();
+
+/// Folder by Id provider
+final class FolderByIdProvider
+    extends $AsyncNotifierProvider<FolderById, FolderEntity> {
+  /// Folder by Id provider
+  const FolderByIdProvider._({
+    required FolderByIdFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'folderByIdProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$folderByIdHash();
+
+  @override
+  String toString() {
+    return r'folderByIdProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  FolderById create() => FolderById();
+
+  @override
+  bool operator ==(Object other) {
+    return other is FolderByIdProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$folderByIdHash() => r'a5f12fc0650fb6f961db00a2c33c0b8a1437604a';
+
+/// Folder by Id provider
+
+final class FolderByIdFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          FolderById,
+          AsyncValue<FolderEntity>,
+          FolderEntity,
+          FutureOr<FolderEntity>,
+          int
+        > {
+  const FolderByIdFamily._()
+    : super(
+        retry: null,
+        name: r'folderByIdProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Folder by Id provider
+
+  FolderByIdProvider call(int folderId) =>
+      FolderByIdProvider._(argument: folderId, from: this);
+
+  @override
+  String toString() => r'folderByIdProvider';
+}
+
+/// Folder by Id provider
+
+abstract class _$FolderById extends $AsyncNotifier<FolderEntity> {
+  late final _$args = ref.$arg as int;
+  int get folderId => _$args;
+
+  FutureOr<FolderEntity> build(int folderId);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(_$args);
+    final ref = this.ref as $Ref<AsyncValue<FolderEntity>, FolderEntity>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<FolderEntity>, FolderEntity>,
+              AsyncValue<FolderEntity>,
               Object?,
               Object?
             >;

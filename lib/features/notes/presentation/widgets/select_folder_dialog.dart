@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:notes_bucket/core/constants/app_constants.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
 import 'package:notes_bucket/core/widgets/app_text_field.dart';
@@ -48,15 +49,35 @@ class SelectFolderDialog extends ConsumerWidget {
     FolderEntity? selectedFolder;
     String warningText = '';
 
-    final rootFoldersAsync = ref.watch(
-      rootFoldersProvider(limit: 15, offset: 0),
+    final selectedParentId = ref.watch(selectedParentIdProvider);
+    int pageOffset = 0;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(selectedParentIdProvider.notifier).setId(selectedParentId);
+    });
+    AsyncValue currentPathAsync = ref.watch(
+      currentPathProvider(parentId: selectedParentId),
+    );
+    AsyncValue folderAsync = ref.watch(
+      foldersByParentProvider(
+        parentId: selectedParentId,
+        limit: AppConstants.folderPageLimit,
+        offset: pageOffset,
+      ),
     );
 
     return AppAlertDialog(
       dialogHeader: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          AppArrowButton(position: ArrowPosition.back,),
+          AppArrowButton(
+            position: ArrowPosition.back,
+            disabled: selectedParentId == null,
+            onTap: () {
+              if(selectedParentId != null) {
+                // final folder = ref.read()
+              }
+            },
+          ),
           Text('Select Folder'),
           AppArrowButton(position: ArrowPosition.forward,),
         ],
@@ -82,19 +103,25 @@ class SelectFolderDialog extends ConsumerWidget {
           SizedBox(
             height: getScreenHeight(context) / 2,
             width: double.maxFinite,
-            child: rootFoldersAsync.when(
+            child: folderAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, stack) => Center(child: Text('Error: $error')),
               data: (data) => ListView.builder(
                 itemCount: data.length,
                 itemBuilder: (context, index) {
                   final item = data[index];
-                  return FolderListTile(title: item.name);
+                  return FolderListTile(
+                      title: item.name,
+                      onTap: () {
+                        ref.read(selectedParentIdProvider.notifier).setId(item.id);
+                      }
+                  );
                 }
               ),
             ),
           ),
           const Divider(),
+          Text('Path: ${currentPathAsync.value}'),
           ListTile(
             leading: Icon(
               Icons.create_new_folder,
