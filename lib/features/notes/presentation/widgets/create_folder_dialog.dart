@@ -10,7 +10,7 @@ Future<void> createFolderDialog(BuildContext context, WidgetRef ref, TextEditing
   return showDialog(
     context: context,
     builder: (context) => AppAlertDialog(
-      dialogTitle: 'Create New Folder',
+      dialogHeader: Text('Create New Folder'),
       primaryButtonText: 'Create',
       primaryButtonColor: Theme.of(context).colorScheme.primary,
       content: AppTextField(

@@ -23,7 +23,7 @@ class NoteRepositoryImpl implements NoteRepository {
   }
 
   @override
-  Future<Either<Failure, List<NoteEntity>>> fetchNotesById(int folderId) async {
+  Future<Either<Failure, List<NoteEntity>>> fetchNotesByFolderId(int folderId) async {
     try {
       final notes = await noteLocalDataSource.fetchNotesByFolderId(folderId);
       final noteEntities = notes.map((note) => note.toEntity()).toList();
@@ -32,4 +32,35 @@ class NoteRepositoryImpl implements NoteRepository {
       return Left(DatabaseFailure(e.message));
     }
   }
+  @override
+  Future<Either<Failure, NoteEntity>> fetchNoteById(int noteId) async {
+    try {
+      final note = await noteLocalDataSource.fetchNoteById(noteId);
+      return Right(note.toEntity());
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, NoteEntity>> updateNote(NoteEntity note) async {
+    try {
+      final noteToUpdate = Note.fromEntity(note);
+      await noteLocalDataSource.updateNote(noteToUpdate);
+      return Right(noteToUpdate.toEntity());
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteNote(int noteId) async {
+    try {
+      await noteLocalDataSource.deleteNote(noteId);
+      return const Right(null);
+    } on DatabaseException catch (e) {
+      return Left(DatabaseFailure(e.message));
+    }
+  }
+
 }

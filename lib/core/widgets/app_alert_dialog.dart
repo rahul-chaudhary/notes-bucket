@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_text_style.dart';
 
 class AppAlertDialog extends StatelessWidget {
-  final String dialogTitle;
+  final Widget dialogHeader;
   final String primaryButtonText;
   final Color primaryButtonColor;
   final String secondaryButtonText;
@@ -13,7 +13,7 @@ class AppAlertDialog extends StatelessWidget {
 
   const AppAlertDialog({
     super.key,
-    required this.dialogTitle,
+    required this.dialogHeader,
     required this.primaryButtonText,
     required this.primaryButtonColor,
     required this.secondaryButtonText,
@@ -25,7 +25,7 @@ class AppAlertDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(dialogTitle),
+      title: dialogHeader,
       backgroundColor: Theme.of(context).cardColor,
       content: content,
       actions: [

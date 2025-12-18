@@ -96,7 +96,6 @@ class GetCurrentPath {
               (l) => l,
               (folder) {
         id = folder.parentId;
-        // path += ' > ${folder.name}';
                 paths.add(folder.name);
       });
     }

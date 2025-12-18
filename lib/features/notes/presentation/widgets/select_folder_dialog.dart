@@ -3,9 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
 import 'package:notes_bucket/core/widgets/app_text_field.dart';
+import 'package:notes_bucket/core/widgets/buttons/app_arrow_button.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
+import 'package:notes_bucket/features/notes/presentation/providers/view_all_provider.dart';
 
 import '../../domain/entities/folder_entity.dart';
+import 'folder_list_tile.dart';
 
 class SelectFolderDialog extends ConsumerWidget {
   const SelectFolderDialog({super.key});
@@ -17,7 +20,7 @@ class SelectFolderDialog extends ConsumerWidget {
       context: context,
       builder: (BuildContext context) {
         return AppAlertDialog(
-          dialogTitle: 'Create New Folder',
+          dialogHeader: Text('Create New Folder'),
           primaryButtonText: 'Create',
           primaryButtonColor: Theme.of(context).colorScheme.primary,
           secondaryButtonText: 'Cancel',
@@ -50,14 +53,21 @@ class SelectFolderDialog extends ConsumerWidget {
     );
 
     return AppAlertDialog(
-      dialogTitle: 'Select Folder',
+      dialogHeader: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          AppArrowButton(position: ArrowPosition.back,),
+          Text('Select Folder'),
+          AppArrowButton(position: ArrowPosition.forward,),
+        ],
+      ),
       primaryButtonText: 'Save Here',
       primaryButtonColor: selectedFolder != null
           ? Theme.of(context).colorScheme.primary
           : Theme.of(context).disabledColor,
       secondaryButtonText: 'Cancel',
       onPressPrimary: () {
-        if(selectedFolder == null) {
+        if (selectedFolder == null) {
           warningText = 'Please select a folder to save your note in.';
         } else {
           Navigator.of(context).pop(selectedFolder);
@@ -77,14 +87,10 @@ class SelectFolderDialog extends ConsumerWidget {
               error: (error, stack) => Center(child: Text('Error: $error')),
               data: (data) => ListView.builder(
                 itemCount: data.length,
-
-                itemBuilder: (context, index) => ListTile(
-                  leading: Icon(
-                    Icons.folder,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  title: Text(data[index].name),
-                ),
+                itemBuilder: (context, index) {
+                  final item = data[index];
+                  return FolderListTile(title: item.name);
+                }
               ),
             ),
           ),
@@ -103,9 +109,19 @@ class SelectFolderDialog extends ConsumerWidget {
             ),
             onTap: () => _showCreateFolderDialog(context, ref),
           ),
-          Text(warningText, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.red))
+          Text(
+            warningText,
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: Colors.red),
+          ),
         ],
       ),
     );
   }
+
+
 }
+
+
+

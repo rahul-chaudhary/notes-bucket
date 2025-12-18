@@ -9,6 +9,10 @@ class EditNotePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final notesId = ModalRoute.of(context)?.settings.arguments as int?;
+
+    final titleController = TextEditingController();
+    final bodyController = TextEditingController();
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
@@ -36,9 +40,9 @@ class EditNotePage extends ConsumerWidget {
         padding: AppSpacing.paddingAllM,
         child: Column(
           children: [
-            AppEditNoteTextField(hintText: 'Title',),
+            AppEditNoteTextField(hintText: 'Title', controller: titleController,),
             Divider(color: Theme.of(context).dividerColor,),
-            AppEditNoteTextField(hintText: 'Start writing your note here...'),
+            AppEditNoteTextField(hintText: 'Start writing your note here...', controller:  bodyController,),
           ],
         ),
       )
@@ -48,8 +52,10 @@ class EditNotePage extends ConsumerWidget {
 
 class AppEditNoteTextField extends StatelessWidget {
   final String hintText;
+  final TextEditingController controller;
   const AppEditNoteTextField({
     required this.hintText,
+    required this.controller,
     super.key,
   });
 
@@ -57,6 +63,7 @@ class AppEditNoteTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       maxLines: null,
+      controller: controller,
       decoration: InputDecoration(
         hintText: hintText,
         border: InputBorder.none,
