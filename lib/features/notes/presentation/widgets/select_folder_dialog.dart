@@ -68,11 +68,17 @@ class SelectFolderDialog extends ConsumerWidget {
           AppArrowButton(
             position: ArrowPosition.back,
             disabled: selectedParentId == null,
-            onTap: () {
-              if(selectedParentId != null) {
-                final folder = ref.read(folderByIdProvider(selectedParentId));
-                dbPrint('Folder ${folder.value?.toString()}');
-                ref.read(selectedParentIdProvider.notifier).setId(folder.value?.parentId);
+            onTap: () async {
+              if (selectedParentId != null) {
+                try {
+                  final folder = await ref.read(
+                      folderByIdProvider(selectedParentId).future
+                  );
+                  dbPrint('Folder ${folder?.toString()}');
+                  ref.read(selectedParentIdProvider.notifier).setId(folder?.parentId);
+                } catch (e) {
+                  dbPrint('Error fetching folder: $e');
+                }
               }
             },
           ),
