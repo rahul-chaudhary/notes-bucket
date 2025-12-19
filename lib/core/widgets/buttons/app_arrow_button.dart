@@ -17,7 +17,9 @@ class AppArrowButton extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: Theme.of(context).primaryColor,
+          color: disabled
+            ? Theme.of(context).disabledColor
+          : Theme.of(context).primaryColor,
         ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),

@@ -448,7 +448,7 @@ final class RootFoldersProvider
   }
 }
 
-String _$rootFoldersHash() => r'f0563858621fd61eaff17ba0dda2ef93a151fca2';
+String _$rootFoldersHash() => r'1bff8c320635969af983f563d1cf344998b442d8';
 
 /// Root folders provider
 
@@ -553,7 +553,7 @@ final class FoldersByParentProvider
   }
 }
 
-String _$foldersByParentHash() => r'c8bbb24470144e5be860c58384f6617b9c41aa16';
+String _$foldersByParentHash() => r'39198ad0c904d28279e40c8f0ec7230b8e641f3f';
 
 /// Folders by parent ID provider
 
@@ -661,7 +661,7 @@ final class FolderControllerProvider
   }
 }
 
-String _$folderControllerHash() => r'db358819906277a84d9e2647c9efee5a67e3a012';
+String _$folderControllerHash() => r'573e18f10c9f2f2e932f62c5ce74fc77f338cf97';
 
 /// Controller for mutations (create/delete/rename)
 
@@ -725,7 +725,7 @@ final class CurrentPathProvider
   }
 }
 
-String _$currentPathHash() => r'dff6ad4d4e8045e91433079d537975c40eb27dba';
+String _$currentPathHash() => r'eb3dcd59f484c5ca2e4dd266ba09429c5bd7bea0';
 
 final class CurrentPathFamily extends $Family
     with
@@ -781,7 +781,7 @@ const folderByIdProvider = FolderByIdFamily._();
 
 /// Folder by Id provider
 final class FolderByIdProvider
-    extends $AsyncNotifierProvider<FolderById, FolderEntity> {
+    extends $AsyncNotifierProvider<FolderById, FolderEntity?> {
   /// Folder by Id provider
   const FolderByIdProvider._({
     required FolderByIdFamily super.from,
@@ -819,7 +819,7 @@ final class FolderByIdProvider
   }
 }
 
-String _$folderByIdHash() => r'a5f12fc0650fb6f961db00a2c33c0b8a1437604a';
+String _$folderByIdHash() => r'11fdde6b102bbf17da07425d6548a98ec8c95233';
 
 /// Folder by Id provider
 
@@ -827,9 +827,9 @@ final class FolderByIdFamily extends $Family
     with
         $ClassFamilyOverride<
           FolderById,
-          AsyncValue<FolderEntity>,
-          FolderEntity,
-          FutureOr<FolderEntity>,
+          AsyncValue<FolderEntity?>,
+          FolderEntity?,
+          FutureOr<FolderEntity?>,
           int
         > {
   const FolderByIdFamily._()
@@ -852,21 +852,21 @@ final class FolderByIdFamily extends $Family
 
 /// Folder by Id provider
 
-abstract class _$FolderById extends $AsyncNotifier<FolderEntity> {
+abstract class _$FolderById extends $AsyncNotifier<FolderEntity?> {
   late final _$args = ref.$arg as int;
   int get folderId => _$args;
 
-  FutureOr<FolderEntity> build(int folderId);
+  FutureOr<FolderEntity?> build(int folderId);
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build(_$args);
-    final ref = this.ref as $Ref<AsyncValue<FolderEntity>, FolderEntity>;
+    final ref = this.ref as $Ref<AsyncValue<FolderEntity?>, FolderEntity?>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<FolderEntity>, FolderEntity>,
-              AsyncValue<FolderEntity>,
+              AnyNotifier<AsyncValue<FolderEntity?>, FolderEntity?>,
+              AsyncValue<FolderEntity?>,
               Object?,
               Object?
             >;

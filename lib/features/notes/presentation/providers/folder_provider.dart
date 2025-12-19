@@ -82,7 +82,7 @@ class RootFolders extends _$RootFolders {
   Future<List<FolderEntity>> _load(int limit, int offset) async {
     final usecase = ref.read(fetchRootFoldersProvider);
 
-    final result = await usecase.execute(limit: limit, offset: offset);
+    final result = await usecase.call(FetchRootFoldersParams(limit: limit, offset: offset));
     return result.fold(
           (failure) => throw Exception(failure.message),
           (folders) => folders,
@@ -107,7 +107,7 @@ class FoldersByParent extends _$FoldersByParent {
   Future<List<FolderEntity>> _load(int? parentId, int limit, int offset) async {
     final usecase = ref.read(fetchFoldersByParentProvider);
 
-    final result = await usecase.execute(parentId: parentId, limit: limit, offset: offset);
+    final result = await usecase.call(FetchFoldersByParentIdParams(parentId: parentId, limit: limit, offset: offset));
     return result.fold(
           (failure) => throw Exception(failure.message),
           (folders) => folders,
@@ -130,7 +130,7 @@ class FolderController extends _$FolderController {
   // CREATE
   Future<void> create(FolderEntity folder) async {
     final usecase = ref.read(createFolderProvider);
-    final result = await usecase.execute(folder);
+    final result = await usecase.call(CreateFolderParams(name: folder.name, parentId: folder.parentId));
 
     result.fold(
           (f) => throw Exception(f.message),
@@ -147,7 +147,7 @@ class FolderController extends _$FolderController {
   // DELETE
   Future<void> delete(int folderId, int? parentId) async {
     final usecase = ref.read(deleteFolderProvider);
-    final result = await usecase.execute(folderId);
+    final result = await usecase.call(folderId);
 
     result.fold(
           (f) => throw Exception(f.message),
@@ -164,7 +164,7 @@ class FolderController extends _$FolderController {
   // RENAME
   Future<void> rename(FolderEntity folder, String newName) async {
     final usecase = ref.read(renameFolderProvider);
-    final result = await usecase.execute(folder, newName);
+    final result = await usecase.call(RenameFolderParams(folder: folder, newName: newName));
 
     result.fold(
           (f) => throw Exception(f.message),
@@ -190,7 +190,7 @@ class CurrentPath extends _$CurrentPath {
   Future<String> _load(int? parentId) async {
     final usecase = ref.read(getCurrentPathProvider);
 
-    final result = await usecase.execute(parentId: parentId);
+    final result = await usecase.call(parentId);
 
     return result.fold(
           (failure) => throw Exception(failure.message),
@@ -205,11 +205,11 @@ class CurrentPath extends _$CurrentPath {
 @riverpod
 class FolderById extends _$FolderById {
   @override
-  Future<FolderEntity> build(int folderId) async {
+  Future<FolderEntity?> build(int folderId) async {
     return _load(folderId);
   }
 
-  Future<FolderEntity> _load(int folderId) async {
+  Future<FolderEntity?> _load(int folderId) async {
     final usecase = ref.read(fetchFolderByIdProvider);
 
     final result = await usecase.call(folderId);

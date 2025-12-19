@@ -4,7 +4,10 @@ import 'package:notes_bucket/core/errors/failures.dart';
 import '../entities/folder_entity.dart';
 
 abstract interface class FolderRepository {
-  Future<Either<Failure, FolderEntity>> createFolder(FolderEntity folder);
+  Future<Either<Failure, FolderEntity>> createFolder({
+    required int? parentId,
+    required String name,
+  });
 
   Future<Either<Failure, List<FolderEntity>>> fetchRootFolders({
     required int limit,
@@ -23,5 +26,5 @@ abstract interface class FolderRepository {
 
   Future<Either<Failure, bool>> folderExists(int? folderParentID, String folderName);
 
-  Future<Either<Failure, FolderEntity>> fetchFolderById(int folderId);
+  Future<Either<Failure, FolderEntity?>> fetchFolderById(int folderId);
 }

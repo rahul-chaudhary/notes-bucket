@@ -12,15 +12,23 @@ class FolderRepositoryImpl implements FolderRepository {
   const FolderRepositoryImpl({required this.folderLocalDataSource});
 
   @override
-  Future<Either<Failure, FolderEntity>> createFolder(
-    FolderEntity folder,
-  ) async {
+  Future<Either<Failure, FolderEntity>> createFolder({
+    required int? parentId,
+    required String name,
+}) async {
     try {
-      final folderToInsert = Folder.fromEntity(folder);
-      await folderLocalDataSource.createFolder(folderToInsert);
-      return Right(folderToInsert.toEntity());
-    } on DatabaseException catch (e) {
-      return Left(DatabaseFailure(e.message));
+      final folderToInsert = Folder(
+        id: 0,
+        parentId: parentId,
+        name: name,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+
+      );
+      final res = await folderLocalDataSource.createFolder(folderToInsert);
+      return Right(res.toEntity());
+    } on DatabaseException catch (e, st) {
+      return Left(DatabaseFailure(e.message, st));
     }
   }
 
@@ -40,8 +48,8 @@ class FolderRepositoryImpl implements FolderRepository {
           .map((folder) => folder.toEntity())
           .toList();
       return Right(folderEntities);
-    } on DatabaseException catch (e) {
-      return Left(DatabaseFailure(e.message));
+    } on DatabaseException catch (e, st) {
+      return Left(DatabaseFailure(e.message, st));
     }
   }
 
@@ -59,8 +67,8 @@ class FolderRepositoryImpl implements FolderRepository {
           .map((folder) => folder.toEntity())
           .toList();
       return Right(folderEntities);
-    } on DatabaseException catch (e) {
-      return Left(DatabaseFailure(e.message));
+    } on DatabaseException catch (e, st) {
+      return Left(DatabaseFailure(e.message, st));
     }
   }
 
@@ -72,8 +80,8 @@ class FolderRepositoryImpl implements FolderRepository {
     try {
       await folderLocalDataSource.renameFolder(folderId, newName);
       return const Right(null);
-    } on DatabaseException catch (e) {
-      return Left(DatabaseFailure(e.message));
+    } on DatabaseException catch (e, st) {
+      return Left(DatabaseFailure(e.message, st));
     }
   }
 
@@ -82,8 +90,8 @@ class FolderRepositoryImpl implements FolderRepository {
     try {
       await folderLocalDataSource.deleteFolder(folderId);
       return const Right(null);
-    } on DatabaseException catch (e) {
-      return Left(DatabaseFailure(e.message));
+    } on DatabaseException catch (e, st) {
+      return Left(DatabaseFailure(e.message, st));
     }
   }
 
@@ -98,18 +106,19 @@ class FolderRepositoryImpl implements FolderRepository {
         folderName,
       );
       return Right(res);
-    } on DatabaseException catch (e) {
-      return Left(DatabaseFailure(e.message));
+    } on DatabaseException catch (e, st) {
+      return Left(DatabaseFailure(e.message, st));
     }
   }
 
   @override
-  Future<Either<Failure, FolderEntity>> fetchFolderById(int folderId) async {
+  Future<Either<Failure, FolderEntity?>> fetchFolderById(int folderId) async {
     try {
       final folder = await folderLocalDataSource.fetchFolderById(folderId);
+      if(folder == null) return const Right(null);
       return Right(folder.toEntity());
     } catch (e, st) {
-      return Left(DatabaseFailure(e.toString()));
+      return Left(DatabaseFailure(e.toString(), st));
     }
   }
 }

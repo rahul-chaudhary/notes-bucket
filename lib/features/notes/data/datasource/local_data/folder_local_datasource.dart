@@ -22,7 +22,7 @@ abstract interface class FolderLocalDataSource {
 
   Future<bool> folderExists(int? folderParentID, String folderName);
 
-  Future<Folder> fetchFolderById(int folderId);
+  Future<Folder?> fetchFolderById(int folderId);
 }
 
 class FolderLocalDataSourceImpl implements FolderLocalDataSource {
@@ -127,10 +127,12 @@ class FolderLocalDataSourceImpl implements FolderLocalDataSource {
   }
 
   @override
-  Future<Folder> fetchFolderById(int folderId) async {
+  Future<Folder?> fetchFolderById(int folderId) async {
     final row = await (database.select(database.folderItems)
       ..where((tbl) => tbl.id.equals(folderId)))
-        .getSingle();
+        .getSingleOrNull();
+
+    if(row ==null) return null;
 
     return Folder(
       id: row.id,

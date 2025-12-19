@@ -9,7 +9,8 @@ abstract class Failure extends Equatable {
 }
 
 class DatabaseFailure extends Failure {
-  const DatabaseFailure(super.message);
+  final StackTrace? stackTrace;
+  const DatabaseFailure(super.message, this.stackTrace);
 }
 
 class ValidationFailure extends Failure {

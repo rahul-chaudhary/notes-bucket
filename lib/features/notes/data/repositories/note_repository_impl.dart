@@ -17,8 +17,8 @@ class NoteRepositoryImpl implements NoteRepository {
       final noteToInsert = Note.fromEntity(note);
       await noteLocalDataSource.addNote(noteToInsert);
       return Right(noteToInsert.toEntity());
-    } on DatabaseException catch (e) {
-      return Left(DatabaseFailure(e.message));
+    } on DatabaseException catch (e, st) {
+      return Left(DatabaseFailure(e.message, st));
     }
   }
 
@@ -28,8 +28,8 @@ class NoteRepositoryImpl implements NoteRepository {
       final notes = await noteLocalDataSource.fetchNotesByFolderId(folderId);
       final noteEntities = notes.map((note) => note.toEntity()).toList();
       return Right(noteEntities);
-    } on DatabaseException catch (e) {
-      return Left(DatabaseFailure(e.message));
+    } on DatabaseException catch (e, st) {
+      return Left(DatabaseFailure(e.message, st));
     }
   }
   @override
@@ -37,8 +37,8 @@ class NoteRepositoryImpl implements NoteRepository {
     try {
       final note = await noteLocalDataSource.fetchNoteById(noteId);
       return Right(note.toEntity());
-    } on DatabaseException catch (e) {
-      return Left(DatabaseFailure(e.message));
+    } on DatabaseException catch (e, st) {
+      return Left(DatabaseFailure(e.message, st));
     }
   }
 
@@ -48,8 +48,8 @@ class NoteRepositoryImpl implements NoteRepository {
       final noteToUpdate = Note.fromEntity(note);
       await noteLocalDataSource.updateNote(noteToUpdate);
       return Right(noteToUpdate.toEntity());
-    } on DatabaseException catch (e) {
-      return Left(DatabaseFailure(e.message));
+    } on DatabaseException catch (e, st) {
+      return Left(DatabaseFailure(e.message, st));
     }
   }
 
@@ -58,8 +58,8 @@ class NoteRepositoryImpl implements NoteRepository {
     try {
       await noteLocalDataSource.deleteNote(noteId);
       return const Right(null);
-    } on DatabaseException catch (e) {
-      return Left(DatabaseFailure(e.message));
+    } on DatabaseException catch (e, st) {
+      return Left(DatabaseFailure(e.message, st));
     }
   }
 

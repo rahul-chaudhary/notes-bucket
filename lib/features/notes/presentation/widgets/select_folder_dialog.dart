@@ -7,7 +7,6 @@ import 'package:notes_bucket/core/widgets/app_text_field.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_arrow_button.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/view_all_provider.dart';
-
 import '../../domain/entities/folder_entity.dart';
 import 'folder_list_tile.dart';
 
@@ -46,14 +45,11 @@ class SelectFolderDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    FolderEntity? selectedFolder;
     String warningText = '';
 
     final selectedParentId = ref.watch(selectedParentIdProvider);
+    dbPrint('selectedParentId: $selectedParentId');
     int pageOffset = 0;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(selectedParentIdProvider.notifier).setId(selectedParentId);
-    });
     AsyncValue currentPathAsync = ref.watch(
       currentPathProvider(parentId: selectedParentId),
     );
@@ -74,24 +70,26 @@ class SelectFolderDialog extends ConsumerWidget {
             disabled: selectedParentId == null,
             onTap: () {
               if(selectedParentId != null) {
-                // final folder = ref.read()
+                final folder = ref.read(folderByIdProvider(selectedParentId));
+                dbPrint('Folder ${folder.value?.toString()}');
+                ref.read(selectedParentIdProvider.notifier).setId(folder.value?.parentId);
               }
             },
           ),
           Text('Select Folder'),
-          AppArrowButton(position: ArrowPosition.forward,),
+          AppArrowButton(
+            disabled: true,
+            position: ArrowPosition.forward,),
         ],
       ),
       primaryButtonText: 'Save Here',
-      primaryButtonColor: selectedFolder != null
+      primaryButtonColor: selectedParentId != null
           ? Theme.of(context).colorScheme.primary
           : Theme.of(context).disabledColor,
       secondaryButtonText: 'Cancel',
       onPressPrimary: () {
-        if (selectedFolder == null) {
+        if (selectedParentId == null) {
           warningText = 'Please select a folder to save your note in.';
-        } else {
-          Navigator.of(context).pop(selectedFolder);
         }
       },
       onPressSecondary: () {
