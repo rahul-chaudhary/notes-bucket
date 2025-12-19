@@ -5,9 +5,9 @@ import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
 import 'package:notes_bucket/core/widgets/app_text_field.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_arrow_button.dart';
+import 'package:notes_bucket/features/notes/presentation/providers/edit_note_state_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/view_all_provider.dart';
-import '../../domain/entities/folder_entity.dart';
 import 'folder_list_tile.dart';
 
 class SelectFolderDialog extends ConsumerWidget {
@@ -45,8 +45,6 @@ class SelectFolderDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    String warningText = '';
-
     final selectedParentId = ref.watch(selectedParentIdProvider);
     dbPrint('selectedParentId: $selectedParentId');
     int pageOffset = 0;
@@ -72,20 +70,20 @@ class SelectFolderDialog extends ConsumerWidget {
               if (selectedParentId != null) {
                 try {
                   final folder = await ref.read(
-                      folderByIdProvider(selectedParentId).future
+                    folderByIdProvider(selectedParentId).future,
                   );
                   dbPrint('Folder ${folder?.toString()}');
-                  ref.read(selectedParentIdProvider.notifier).setId(folder?.parentId);
+                  ref
+                      .read(selectedParentIdProvider.notifier)
+                      .setId(folder?.parentId);
                 } catch (e) {
-                  dbPrint('Error fetching folder: $e');
+                  dbPrint('Error fetching folder:', e: e);
                 }
               }
             },
           ),
           Text('Select Folder'),
-          AppArrowButton(
-            disabled: true,
-            position: ArrowPosition.forward,),
+          AppArrowButton(disabled: true, position: ArrowPosition.forward),
         ],
       ),
       primaryButtonText: 'Save Here',
@@ -95,8 +93,10 @@ class SelectFolderDialog extends ConsumerWidget {
       secondaryButtonText: 'Cancel',
       onPressPrimary: () {
         if (selectedParentId == null) {
-          warningText = 'Please select a folder to save your note in.';
-        }
+          ref
+              .read(warningTextProvider.notifier)
+              .setWarningText('Please select a folder to save your note in.');
+        } else {}
       },
       onPressSecondary: () {
         Navigator.of(context).pop(null);
@@ -115,12 +115,15 @@ class SelectFolderDialog extends ConsumerWidget {
                 itemBuilder: (context, index) {
                   final item = data[index];
                   return FolderListTile(
-                      title: item.name,
-                      onTap: () {
-                        ref.read(selectedParentIdProvider.notifier).setId(item.id);
-                      }
+                    title: item.name,
+                    onTap: () {
+                      ref.read(warningTextProvider.notifier).setWarningText('');
+                      ref
+                          .read(selectedParentIdProvider.notifier)
+                          .setId(item.id);
+                    },
                   );
-                }
+                },
               ),
             ),
           ),
@@ -141,7 +144,7 @@ class SelectFolderDialog extends ConsumerWidget {
             onTap: () => _showCreateFolderDialog(context, ref),
           ),
           Text(
-            warningText,
+            ref.watch(warningTextProvider).toString(),
             style: Theme.of(
               context,
             ).textTheme.bodySmall?.copyWith(color: Colors.red),
@@ -150,9 +153,4 @@ class SelectFolderDialog extends ConsumerWidget {
       ),
     );
   }
-
-
 }
-
-
-
