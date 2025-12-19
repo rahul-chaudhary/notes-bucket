@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:notes_bucket/core/theme/app_spacing.dart';
@@ -26,26 +25,38 @@ class EditNotePage extends ConsumerWidget {
           },
         ),
         actions: [
-          TextButton(onPressed: (){
-            // Open select folder dialog
-           showDialog(
-               context: context,
-               builder: (BuildContext context) {
-                 return SelectFolderDialog();
-               });
-          }, child: const Text('Select Folder')),
+          IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return SelectFolderDialog();
+                },
+              );
+            },
+            icon: Icon(
+              Icons.save_rounded,
+              color: Theme.of(context).primaryColor,
+            ),
+          ),
         ],
       ),
       body: Padding(
         padding: AppSpacing.paddingAllM,
         child: Column(
           children: [
-            AppEditNoteTextField(hintText: 'Title', controller: titleController,),
-            Divider(color: Theme.of(context).dividerColor,),
-            AppEditNoteTextField(hintText: 'Start writing your note here...', controller:  bodyController,),
+            AppEditNoteTextField(
+              hintText: 'Title',
+              controller: titleController,
+            ),
+            Divider(color: Theme.of(context).dividerColor),
+            AppEditNoteTextField(
+              hintText: 'Start writing your note here...',
+              controller: bodyController,
+            ),
           ],
         ),
-      )
+      ),
     );
   }
 }
@@ -53,6 +64,7 @@ class EditNotePage extends ConsumerWidget {
 class AppEditNoteTextField extends StatelessWidget {
   final String hintText;
   final TextEditingController controller;
+
   const AppEditNoteTextField({
     required this.hintText,
     required this.controller,
