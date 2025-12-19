@@ -61,7 +61,6 @@ class SelectFolderDialog extends ConsumerWidget {
 
     return AppAlertDialog(
       dialogHeader: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           AppArrowButton(
             position: ArrowPosition.back,
@@ -82,8 +81,7 @@ class SelectFolderDialog extends ConsumerWidget {
               }
             },
           ),
-          Text('Select Folder'),
-          AppArrowButton(disabled: true, position: ArrowPosition.forward),
+          Expanded(child: Center(child: Text('Select Folder'))),
         ],
       ),
       primaryButtonText: 'Save Here',
