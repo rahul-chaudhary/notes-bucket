@@ -147,7 +147,7 @@ final class FetchRootFoldersProvider
   }
 }
 
-String _$fetchRootFoldersHash() => r'b0280e3f8f8a5c56323c846f90ad61594e19caab';
+String _$fetchRootFoldersHash() => r'111e8587ad77d6c632eae57a17c4454e4ed2b6ac';
 
 @ProviderFor(fetchFoldersByParent)
 const fetchFoldersByParentProvider = FetchFoldersByParentProvider._();
@@ -195,7 +195,7 @@ final class FetchFoldersByParentProvider
 }
 
 String _$fetchFoldersByParentHash() =>
-    r'aacf8751fbb37f45c4fc284487d3d207933e66c9';
+    r'188f056558b9c2d670dcf5c0e628dd9a98806b6e';
 
 @ProviderFor(createFolder)
 const createFolderProvider = CreateFolderProvider._();
@@ -236,7 +236,7 @@ final class CreateFolderProvider
   }
 }
 
-String _$createFolderHash() => r'4a49b8faf27f4bde6d86c3ae6a59b03175898bc8';
+String _$createFolderHash() => r'e9d3f204482cd3d6c29c2462e0f2b9e7787aa363';
 
 @ProviderFor(deleteFolder)
 const deleteFolderProvider = DeleteFolderProvider._();
@@ -277,7 +277,7 @@ final class DeleteFolderProvider
   }
 }
 
-String _$deleteFolderHash() => r'7a96b2fff92dd918808442a203364d803faf44f2';
+String _$deleteFolderHash() => r'd2115f036f5d1e3551a5f8cb6dd257955dcb7b21';
 
 @ProviderFor(renameFolder)
 const renameFolderProvider = RenameFolderProvider._();
@@ -318,7 +318,7 @@ final class RenameFolderProvider
   }
 }
 
-String _$renameFolderHash() => r'236476d6e462dac3ca92ae41b087f128d32d429a';
+String _$renameFolderHash() => r'a795de132933a78ce50fbe7008b05fa442b523a0';
 
 @ProviderFor(getCurrentPath)
 const getCurrentPathProvider = GetCurrentPathProvider._();
@@ -359,7 +359,7 @@ final class GetCurrentPathProvider
   }
 }
 
-String _$getCurrentPathHash() => r'4c38ac3380c65adfe2c571470c6e41e8c298e203';
+String _$getCurrentPathHash() => r'12663e998945369bdcc2e267f0016aeccfe7d471';
 
 @ProviderFor(fetchFolderById)
 const fetchFolderByIdProvider = FetchFolderByIdProvider._();
@@ -401,7 +401,7 @@ final class FetchFolderByIdProvider
   }
 }
 
-String _$fetchFolderByIdHash() => r'9b62f38656bc736f2e716448e0536559ce64f0e1';
+String _$fetchFolderByIdHash() => r'e6725ac664c1dab62dc268316a91afa4002e18f0';
 
 /// Root folders provider
 

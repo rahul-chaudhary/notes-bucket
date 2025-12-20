@@ -11,7 +11,7 @@ class RecentNotes extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notes = ref.watch(notesProvider);
+    // final notes = ref.watch();
     return MasonryGridView.count(
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 2,

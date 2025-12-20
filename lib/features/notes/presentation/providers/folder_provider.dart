@@ -10,7 +10,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'folder_provider.g.dart';
 
-
 // ─────────────────────────────────────────────────────────────
 // DATA LAYER PROVIDERS (Datasource + Repository)
 // ─────────────────────────────────────────────────────────────
@@ -27,45 +26,37 @@ FolderRepository folderRepository(Ref ref) {
   return FolderRepositoryImpl(folderLocalDataSource: ds);
 }
 
-
 // ─────────────────────────────────────────────────────────────
 // DOMAIN LAYER PROVIDERS (Use-Cases)
 // ─────────────────────────────────────────────────────────────
 
 @riverpod
-FetchRootFolders fetchRootFolders(Ref ref) {
-  return FetchRootFolders(ref.watch(folderRepositoryProvider));
-}
+FetchRootFolders fetchRootFolders(Ref ref) =>
+    FetchRootFolders(ref.watch(folderRepositoryProvider));
 
 @riverpod
-FetchFoldersByParentId fetchFoldersByParent(Ref ref) {
-  return FetchFoldersByParentId(ref.watch(folderRepositoryProvider));
-}
+FetchFoldersByParentId fetchFoldersByParent(Ref ref) =>
+    FetchFoldersByParentId(ref.watch(folderRepositoryProvider));
 
 @riverpod
-CreateFolder createFolder(Ref ref) {
-  return CreateFolder(ref.watch(folderRepositoryProvider));
-}
+CreateFolder createFolder(Ref ref) =>
+    CreateFolder(ref.watch(folderRepositoryProvider));
 
 @riverpod
-DeleteFolder deleteFolder(Ref ref) {
-  return DeleteFolder(ref.watch(folderRepositoryProvider));
-}
+DeleteFolder deleteFolder(Ref ref) =>
+    DeleteFolder(ref.watch(folderRepositoryProvider));
 
 @riverpod
-RenameFolder renameFolder(Ref ref) {
-  return RenameFolder(ref.watch(folderRepositoryProvider));
-}
+RenameFolder renameFolder(Ref ref) =>
+    RenameFolder(ref.watch(folderRepositoryProvider));
 
 @riverpod
-GetCurrentPath getCurrentPath(Ref ref) {
-  return GetCurrentPath(ref.watch(folderRepositoryProvider));
-}
+GetCurrentPath getCurrentPath(Ref ref) =>
+    GetCurrentPath(ref.watch(folderRepositoryProvider));
 
 @riverpod
-FetchFolderById fetchFolderById(Ref ref) {
-  return FetchFolderById(ref.watch(folderRepositoryProvider));
-}
+FetchFolderById fetchFolderById(Ref ref) =>
+    FetchFolderById(ref.watch(folderRepositoryProvider));
 
 // ─────────────────────────────────────────────────────────────
 // PRESENTATION LAYER PROVIDERS (State Notifiers)
@@ -75,17 +66,22 @@ FetchFolderById fetchFolderById(Ref ref) {
 @riverpod
 class RootFolders extends _$RootFolders {
   @override
-  Future<List<FolderEntity>> build({required int limit, required int offset}) async {
-    return _load(limit,offset);
+  Future<List<FolderEntity>> build({
+    required int limit,
+    required int offset,
+  }) async {
+    return _load(limit, offset);
   }
 
   Future<List<FolderEntity>> _load(int limit, int offset) async {
     final usecase = ref.read(fetchRootFoldersProvider);
 
-    final result = await usecase.call(FetchRootFoldersParams(limit: limit, offset: offset));
+    final result = await usecase.call(
+      FetchRootFoldersParams(limit: limit, offset: offset),
+    );
     return result.fold(
-          (failure) => throw Exception(failure.message),
-          (folders) => folders,
+      (failure) => throw Exception(failure.message),
+      (folders) => folders,
     );
   }
 
@@ -95,22 +91,31 @@ class RootFolders extends _$RootFolders {
   }
 }
 
-
 /// Folders by parent ID provider
 @riverpod
 class FoldersByParent extends _$FoldersByParent {
   @override
-  Future<List<FolderEntity>> build({required int? parentId, required int limit, required int offset}) async {
+  Future<List<FolderEntity>> build({
+    required int? parentId,
+    required int limit,
+    required int offset,
+  }) async {
     return _load(parentId, limit, offset);
   }
 
   Future<List<FolderEntity>> _load(int? parentId, int limit, int offset) async {
     final usecase = ref.read(fetchFoldersByParentProvider);
 
-    final result = await usecase.call(FetchFoldersByParentIdParams(parentId: parentId, limit: limit, offset: offset));
+    final result = await usecase.call(
+      FetchFoldersByParentIdParams(
+        parentId: parentId,
+        limit: limit,
+        offset: offset,
+      ),
+    );
     return result.fold(
-          (failure) => throw Exception(failure.message),
-          (folders) => folders,
+      (failure) => throw Exception(failure.message),
+      (folders) => folders,
     );
   }
 
@@ -119,7 +124,6 @@ class FoldersByParent extends _$FoldersByParent {
     state = await AsyncValue.guard(() => _load(parentId, limit, offset));
   }
 }
-
 
 /// Controller for mutations (create/delete/rename)
 @Riverpod(keepAlive: true)
@@ -130,18 +134,28 @@ class FolderController extends _$FolderController {
   // CREATE
   Future<void> create(FolderEntity folder) async {
     final usecase = ref.read(createFolderProvider);
-    final result = await usecase.call(CreateFolderParams(name: folder.name, parentId: folder.parentId));
-
-    result.fold(
-          (f) => throw Exception(f.message),
-          (_) {
-        if (!ref.mounted) return;
-
-        folder.parentId == null
-            ? ref.invalidate(rootFoldersProvider(limit: AppConstants.folderPageLimit, offset: 0))
-            : ref.invalidate(foldersByParentProvider(parentId: folder.parentId!, limit: AppConstants.folderPageLimit, offset: 0));
-      },
+    final result = await usecase.call(
+      CreateFolderParams(name: folder.name, parentId: folder.parentId),
     );
+
+    result.fold((f) => throw Exception(f.message), (_) {
+      if (!ref.mounted) return;
+
+      folder.parentId == null
+          ? ref.invalidate(
+              rootFoldersProvider(
+                limit: AppConstants.folderPageLimit,
+                offset: 0,
+              ),
+            )
+          : ref.invalidate(
+              foldersByParentProvider(
+                parentId: folder.parentId!,
+                limit: AppConstants.folderPageLimit,
+                offset: 0,
+              ),
+            );
+    });
   }
 
   // DELETE
@@ -149,39 +163,46 @@ class FolderController extends _$FolderController {
     final usecase = ref.read(deleteFolderProvider);
     final result = await usecase.call(folderId);
 
-    result.fold(
-          (f) => throw Exception(f.message),
-          (_) {
-        if (!ref.mounted) return;
+    result.fold((f) => throw Exception(f.message), (_) {
+      if (!ref.mounted) return;
 
-        parentId == null
-            ? ref.invalidate(rootFoldersProvider)
-            : ref.invalidate(foldersByParentProvider(parentId: parentId, limit: AppConstants.folderPageLimit, offset: 0));
-      },
-    );
+      parentId == null
+          ? ref.invalidate(rootFoldersProvider)
+          : ref.invalidate(
+              foldersByParentProvider(
+                parentId: parentId,
+                limit: AppConstants.folderPageLimit,
+                offset: 0,
+              ),
+            );
+    });
   }
 
   // RENAME
   Future<void> rename(FolderEntity folder, String newName) async {
     final usecase = ref.read(renameFolderProvider);
-    final result = await usecase.call(RenameFolderParams(folder: folder, newName: newName));
-
-    result.fold(
-          (f) => throw Exception(f.message),
-          (_) {
-        if (!ref.mounted) return;
-
-        folder.parentId == null
-            ? ref.invalidate(rootFoldersProvider)
-            : ref.invalidate(foldersByParentProvider(parentId: folder.parentId!, limit: AppConstants.folderPageLimit, offset: 0));
-      },
+    final result = await usecase.call(
+      RenameFolderParams(folder: folder, newName: newName),
     );
+
+    result.fold((f) => throw Exception(f.message), (_) {
+      if (!ref.mounted) return;
+
+      folder.parentId == null
+          ? ref.invalidate(rootFoldersProvider)
+          : ref.invalidate(
+              foldersByParentProvider(
+                parentId: folder.parentId!,
+                limit: AppConstants.folderPageLimit,
+                offset: 0,
+              ),
+            );
+    });
   }
 }
 
 @riverpod
 class CurrentPath extends _$CurrentPath {
-
   @override
   Future<String> build({required int? parentId}) async {
     return _load(parentId);
@@ -193,13 +214,11 @@ class CurrentPath extends _$CurrentPath {
     final result = await usecase.call(parentId);
 
     return result.fold(
-          (failure) => throw Exception(failure.message),
-          (path) => path
+      (failure) => throw Exception(failure.message),
+      (path) => path,
     );
-
   }
 }
-
 
 /// Folder by Id provider
 @riverpod
@@ -215,10 +234,8 @@ class FolderById extends _$FolderById {
     final result = await usecase.call(folderId);
 
     return result.fold(
-          (failure) => throw Exception(failure.message),
-          (folder) => folder,
+      (failure) => throw Exception(failure.message),
+      (folder) => folder,
     );
   }
 }
-
-

@@ -1,5 +1,4 @@
 import 'package:notes_bucket/core/db/database_provider.dart';
-import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/features/notes/data/datasource/local_data/note_local_datasource.dart';
 import 'package:notes_bucket/features/notes/data/repositories/note_repository_impl.dart';
 import 'package:notes_bucket/features/notes/domain/entities/note_entity.dart';
@@ -9,36 +8,9 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'notes_provider.g.dart';
 
-
-@Riverpod(keepAlive: true)
-class Notes extends _$Notes {
-  @override
-  Future<void> build() async {
-    return;
-  }
-
-  Future<void> addNote(NoteEntity note) async {
-    state = const AsyncValue.loading();
-
-    try {
-      final addNoteUseCase = ref.read(addNoteProvider);
-      final result = await addNoteUseCase.call(note);
-
-      result.fold(
-            (failure) {
-          state = AsyncValue.error(failure.message, StackTrace.current);
-        },
-            (_) {
-          state = const AsyncValue.data(null);
-        },
-      );
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-      dbPrint('Failed to add note', e: e, st: st);
-    }
-  }
-}
-
+// ─────────────────────────────────────────────────────────────
+// DATA LAYER PROVIDERS (Datasource + Repository)
+// ─────────────────────────────────────────────────────────────
 @riverpod
 NoteLocalDataSource noteLocalDataSource(Ref ref) {
   final db = ref.watch(appDatabaseProvider);
@@ -51,10 +23,91 @@ NoteRepository noteRepository(Ref ref) {
   return NoteRepositoryImpl(noteLocalDataSource: dataSource);
 }
 
+// ─────────────────────────────────────────────────────────────
+// DOMAIN LAYER PROVIDERS (Use-Cases)
+// ─────────────────────────────────────────────────────────────
+
 @riverpod
-AddNote addNote(Ref ref) {
-  final repository = ref.watch(noteRepositoryProvider);
-  return AddNote(repository);
+AddNote addNote(Ref ref) => AddNote(ref.watch(noteRepositoryProvider));
+
+@riverpod
+FetchNotesByFolderId fetchNotesByFolderIdUseCase(Ref ref) =>
+    FetchNotesByFolderId(ref.watch(noteRepositoryProvider));
+
+@riverpod
+FetchNoteById fetchNoteByIdUseCase(Ref ref) =>
+    FetchNoteById(ref.watch(noteRepositoryProvider));
+
+@riverpod
+UpdateNote updateNote(Ref ref) => UpdateNote(ref.watch(noteRepositoryProvider));
+
+@riverpod
+DeleteNote deleteNote(Ref ref) => DeleteNote(ref.watch(noteRepositoryProvider));
+
+// ─────────────────────────────────────────────────────────────
+// PRESENTATION LAYER PROVIDERS (State Notifiers)
+// ─────────────────────────────────────────────────────────────
+
+@riverpod
+class NoteController extends _$NoteController {
+  @override
+  void build() {}
+
+    Future<NoteEntity> addNote(NoteEntity note) async {
+    final usecase = ref.read(addNoteProvider);
+    final result = await usecase.call(note);
+    return result.fold(
+            (failure) => throw Exception(failure.message),
+            (note) => note);
+    }
+
+    Future<NoteEntity> updateNote(NoteEntity note) async {
+    final usecase = ref.read(updateNoteProvider);
+    final result = await usecase.call(note);
+    return result.fold(
+            (failure) => throw Exception(failure.message),
+            (note) => note);
+    }
+
+    Future<void> deleteNote(int noteId) async {
+    final usecase = ref.read(deleteNoteProvider);
+    final result = await usecase.call(noteId);
+    return result.fold(
+            (failure) => throw Exception(failure.message),
+            (_) => null);
+    }
+}
+
+@riverpod
+class FetchNotesByFolderIdNotifier extends _$FetchNotesByFolderIdNotifier {
+  @override
+  Future<List<NoteEntity>> build(int folderId) async => _load(folderId);
+
+  Future<List<NoteEntity>> _load(int folderId) async {
+    final usecase = ref.read(fetchNotesByFolderIdUseCaseProvider);
+    final result = await usecase.call(folderId);
+
+    return result.fold(
+          (failure) => throw Exception(failure.message),
+          (notes) => notes,
+    );
+  }
+}
+
+@riverpod
+class FetchNoteByIdNotifier extends _$FetchNoteByIdNotifier {
+  @override
+  Future<NoteEntity?> build(int noteId) async => _load(noteId);
+
+  Future<NoteEntity?> _load(int noteId) async {
+    final usecase = ref.read(fetchNoteByIdUseCaseProvider);
+    final result = await usecase.call(noteId);
+
+    return result.fold(
+          (failure) => throw Exception(failure.message),
+          (note) => note,
+    );
+  }
 }
 
 

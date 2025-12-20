@@ -21,7 +21,7 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       routes: {
         AppRoutes.home: (context) => const HomePage(),
-        AppRoutes.editNotes: (context) => const EditNotePage(),
+        AppRoutes.editNotes: (context) => const EditNotePage(noteId: null),
         AppRoutes.viewAll: (context) => const ViewAllPage(),
       },
     );

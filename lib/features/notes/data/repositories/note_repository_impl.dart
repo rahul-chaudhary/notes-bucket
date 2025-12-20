@@ -33,9 +33,11 @@ class NoteRepositoryImpl implements NoteRepository {
     }
   }
   @override
-  Future<Either<Failure, NoteEntity>> fetchNoteById(int noteId) async {
+  Future<Either<Failure, NoteEntity?>> fetchNoteById(int noteId) async {
     try {
       final note = await noteLocalDataSource.fetchNoteById(noteId);
+      if (note == null) return const Right(null);
+
       return Right(note.toEntity());
     } on DatabaseException catch (e, st) {
       return Left(DatabaseFailure(e.message, st));

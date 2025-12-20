@@ -9,50 +9,6 @@ part of 'notes_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(Notes)
-const notesProvider = NotesProvider._();
-
-final class NotesProvider extends $AsyncNotifierProvider<Notes, void> {
-  const NotesProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'notesProvider',
-        isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$notesHash();
-
-  @$internal
-  @override
-  Notes create() => Notes();
-}
-
-String _$notesHash() => r'11510323bc83a77b855c07bb5c4a916dd829aaa0';
-
-abstract class _$Notes extends $AsyncNotifier<void> {
-  FutureOr<void> build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    build();
-    final ref = this.ref as $Ref<AsyncValue<void>, void>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<AsyncValue<void>, void>,
-              AsyncValue<void>,
-              Object?,
-              Object?
-            >;
-    element.handleValue(ref, null);
-  }
-}
-
 @ProviderFor(noteLocalDataSource)
 const noteLocalDataSourceProvider = NoteLocalDataSourceProvider._();
 
@@ -181,4 +137,416 @@ final class AddNoteProvider
   }
 }
 
-String _$addNoteHash() => r'444d84fa503d424475036c6e72b1168afc656f62';
+String _$addNoteHash() => r'9bbc7489d30edcd168ae52a0459ab1e47d8663b2';
+
+@ProviderFor(fetchNotesByFolderIdUseCase)
+const fetchNotesByFolderIdUseCaseProvider =
+    FetchNotesByFolderIdUseCaseProvider._();
+
+final class FetchNotesByFolderIdUseCaseProvider
+    extends
+        $FunctionalProvider<
+          FetchNotesByFolderId,
+          FetchNotesByFolderId,
+          FetchNotesByFolderId
+        >
+    with $Provider<FetchNotesByFolderId> {
+  const FetchNotesByFolderIdUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'fetchNotesByFolderIdUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$fetchNotesByFolderIdUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<FetchNotesByFolderId> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  FetchNotesByFolderId create(Ref ref) {
+    return fetchNotesByFolderIdUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(FetchNotesByFolderId value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<FetchNotesByFolderId>(value),
+    );
+  }
+}
+
+String _$fetchNotesByFolderIdUseCaseHash() =>
+    r'1e35f5c4555c03149df2708f5e0fb4c26416b5ed';
+
+@ProviderFor(fetchNoteByIdUseCase)
+const fetchNoteByIdUseCaseProvider = FetchNoteByIdUseCaseProvider._();
+
+final class FetchNoteByIdUseCaseProvider
+    extends $FunctionalProvider<FetchNoteById, FetchNoteById, FetchNoteById>
+    with $Provider<FetchNoteById> {
+  const FetchNoteByIdUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'fetchNoteByIdUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$fetchNoteByIdUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<FetchNoteById> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  FetchNoteById create(Ref ref) {
+    return fetchNoteByIdUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(FetchNoteById value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<FetchNoteById>(value),
+    );
+  }
+}
+
+String _$fetchNoteByIdUseCaseHash() =>
+    r'67e468aa0dbb21c0bb0d29a3db7599cbc46b0d36';
+
+@ProviderFor(updateNote)
+const updateNoteProvider = UpdateNoteProvider._();
+
+final class UpdateNoteProvider
+    extends $FunctionalProvider<UpdateNote, UpdateNote, UpdateNote>
+    with $Provider<UpdateNote> {
+  const UpdateNoteProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'updateNoteProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$updateNoteHash();
+
+  @$internal
+  @override
+  $ProviderElement<UpdateNote> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  UpdateNote create(Ref ref) {
+    return updateNote(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(UpdateNote value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<UpdateNote>(value),
+    );
+  }
+}
+
+String _$updateNoteHash() => r'0894648c2b565501199a617215951d2edc0c7d35';
+
+@ProviderFor(deleteNote)
+const deleteNoteProvider = DeleteNoteProvider._();
+
+final class DeleteNoteProvider
+    extends $FunctionalProvider<DeleteNote, DeleteNote, DeleteNote>
+    with $Provider<DeleteNote> {
+  const DeleteNoteProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'deleteNoteProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$deleteNoteHash();
+
+  @$internal
+  @override
+  $ProviderElement<DeleteNote> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  DeleteNote create(Ref ref) {
+    return deleteNote(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DeleteNote value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DeleteNote>(value),
+    );
+  }
+}
+
+String _$deleteNoteHash() => r'117cb8bb696d514abd41df8da47263d67b04d06d';
+
+@ProviderFor(NoteController)
+const noteControllerProvider = NoteControllerProvider._();
+
+final class NoteControllerProvider
+    extends $NotifierProvider<NoteController, void> {
+  const NoteControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'noteControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$noteControllerHash();
+
+  @$internal
+  @override
+  NoteController create() => NoteController();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(void value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<void>(value),
+    );
+  }
+}
+
+String _$noteControllerHash() => r'4a9bc32d3379bea7ebbff8a69e86b2ba3759a385';
+
+abstract class _$NoteController extends $Notifier<void> {
+  void build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    build();
+    final ref = this.ref as $Ref<void, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<void, void>,
+              void,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, null);
+  }
+}
+
+@ProviderFor(FetchNotesByFolderIdNotifier)
+const fetchNotesByFolderIdProvider = FetchNotesByFolderIdNotifierFamily._();
+
+final class FetchNotesByFolderIdNotifierProvider
+    extends
+        $AsyncNotifierProvider<FetchNotesByFolderIdNotifier, List<NoteEntity>> {
+  const FetchNotesByFolderIdNotifierProvider._({
+    required FetchNotesByFolderIdNotifierFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'fetchNotesByFolderIdProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$fetchNotesByFolderIdNotifierHash();
+
+  @override
+  String toString() {
+    return r'fetchNotesByFolderIdProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  FetchNotesByFolderIdNotifier create() => FetchNotesByFolderIdNotifier();
+
+  @override
+  bool operator ==(Object other) {
+    return other is FetchNotesByFolderIdNotifierProvider &&
+        other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$fetchNotesByFolderIdNotifierHash() =>
+    r'09ad7a6c8f0274bed2463123187244fb21337250';
+
+final class FetchNotesByFolderIdNotifierFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          FetchNotesByFolderIdNotifier,
+          AsyncValue<List<NoteEntity>>,
+          List<NoteEntity>,
+          FutureOr<List<NoteEntity>>,
+          int
+        > {
+  const FetchNotesByFolderIdNotifierFamily._()
+    : super(
+        retry: null,
+        name: r'fetchNotesByFolderIdProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  FetchNotesByFolderIdNotifierProvider call(int folderId) =>
+      FetchNotesByFolderIdNotifierProvider._(argument: folderId, from: this);
+
+  @override
+  String toString() => r'fetchNotesByFolderIdProvider';
+}
+
+abstract class _$FetchNotesByFolderIdNotifier
+    extends $AsyncNotifier<List<NoteEntity>> {
+  late final _$args = ref.$arg as int;
+  int get folderId => _$args;
+
+  FutureOr<List<NoteEntity>> build(int folderId);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(_$args);
+    final ref =
+        this.ref as $Ref<AsyncValue<List<NoteEntity>>, List<NoteEntity>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<NoteEntity>>, List<NoteEntity>>,
+              AsyncValue<List<NoteEntity>>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(FetchNoteByIdNotifier)
+const fetchNoteByIdProvider = FetchNoteByIdNotifierFamily._();
+
+final class FetchNoteByIdNotifierProvider
+    extends $AsyncNotifierProvider<FetchNoteByIdNotifier, NoteEntity?> {
+  const FetchNoteByIdNotifierProvider._({
+    required FetchNoteByIdNotifierFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'fetchNoteByIdProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$fetchNoteByIdNotifierHash();
+
+  @override
+  String toString() {
+    return r'fetchNoteByIdProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  FetchNoteByIdNotifier create() => FetchNoteByIdNotifier();
+
+  @override
+  bool operator ==(Object other) {
+    return other is FetchNoteByIdNotifierProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$fetchNoteByIdNotifierHash() =>
+    r'73227a1d9f4b07d131d34e0cbaddffd613ee5389';
+
+final class FetchNoteByIdNotifierFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          FetchNoteByIdNotifier,
+          AsyncValue<NoteEntity?>,
+          NoteEntity?,
+          FutureOr<NoteEntity?>,
+          int
+        > {
+  const FetchNoteByIdNotifierFamily._()
+    : super(
+        retry: null,
+        name: r'fetchNoteByIdProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  FetchNoteByIdNotifierProvider call(int noteId) =>
+      FetchNoteByIdNotifierProvider._(argument: noteId, from: this);
+
+  @override
+  String toString() => r'fetchNoteByIdProvider';
+}
+
+abstract class _$FetchNoteByIdNotifier extends $AsyncNotifier<NoteEntity?> {
+  late final _$args = ref.$arg as int;
+  int get noteId => _$args;
+
+  FutureOr<NoteEntity?> build(int noteId);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(_$args);
+    final ref = this.ref as $Ref<AsyncValue<NoteEntity?>, NoteEntity?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<NoteEntity?>, NoteEntity?>,
+              AsyncValue<NoteEntity?>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

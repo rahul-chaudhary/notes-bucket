@@ -15,13 +15,24 @@ class AddNote implements UseCase<NoteEntity, NoteEntity> {
   }
 }
 
-class FetchNoteByFolderId implements UseCase<List<NoteEntity>, int> {
+class FetchNotesByFolderId implements UseCase<List<NoteEntity>, int> {
   final NoteRepository repository;
-  FetchNoteByFolderId(this.repository);
+  FetchNotesByFolderId(this.repository);
 
   @override
   Future<Either<Failure, List<NoteEntity>>> call(int folderID) async {
     return await repository.fetchNotesByFolderId(folderID);
+  }
+}
+
+class FetchNoteById implements UseCase<NoteEntity?, int> {
+  final NoteRepository repository;
+
+  FetchNoteById(this.repository);
+
+  @override
+  Future<Either<Failure, NoteEntity?>> call(int noteId) async {
+    return await repository.fetchNoteById(noteId);
   }
 }
 

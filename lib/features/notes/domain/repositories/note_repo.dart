@@ -7,6 +7,6 @@ abstract interface class NoteRepository{
   Future<Either<Failure, List<NoteEntity>>> fetchNotesByFolderId(int folderId);
   Future<Either<Failure, NoteEntity>> updateNote(NoteEntity note);
   Future<Either<Failure, void>> deleteNote(int noteId);
-  Future<Either<Failure, NoteEntity>> fetchNoteById(int noteId);
+  Future<Either<Failure, NoteEntity?>> fetchNoteById(int noteId);
 
 }

@@ -5,6 +5,7 @@ import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
 import 'package:notes_bucket/core/widgets/app_text_field.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_arrow_button.dart';
+import 'package:notes_bucket/features/notes/domain/entities/note_entity.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/edit_note_state_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/view_all_provider.dart';
@@ -94,7 +95,9 @@ class SelectFolderDialog extends ConsumerWidget {
           ref
               .read(warningTextProvider.notifier)
               .setWarningText('Please select a folder to save your note in.');
-        } else {}
+        } else {
+          Navigator.of(context).pop(selectedParentId);
+        }
       },
       onPressSecondary: () {
         Navigator.of(context).pop(null);

@@ -7,7 +7,7 @@ abstract interface class NoteLocalDataSource {
 
   Future<List<Note>> fetchNotesByFolderId(int folderId);
 
-  Future<Note> fetchNoteById(int noteId);
+  Future<Note?> fetchNoteById(int noteId);
 
   Future<void> updateNote(Note note);
 
@@ -59,11 +59,12 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
   }
 
   @override
-  Future<Note> fetchNoteById(int noteId) async {
+  Future<Note?> fetchNoteById(int noteId) async {
     final queryResult = await (database.select(
       database.notesItems,
     )
-      ..where((tbl) => tbl.id.equals(noteId))).getSingle();
+      ..where((tbl) => tbl.id.equals(noteId))).getSingleOrNull();
+    if (queryResult == null) return null;
     final note = Note(
       id: queryResult.id,
       folderId: queryResult.folderID,
