@@ -312,6 +312,48 @@ final class DeleteNoteProvider
 
 String _$deleteNoteHash() => r'117cb8bb696d514abd41df8da47263d67b04d06d';
 
+@ProviderFor(fetchAllNotesUseCase)
+const fetchAllNotesUseCaseProvider = FetchAllNotesUseCaseProvider._();
+
+final class FetchAllNotesUseCaseProvider
+    extends $FunctionalProvider<FetchAllNotes, FetchAllNotes, FetchAllNotes>
+    with $Provider<FetchAllNotes> {
+  const FetchAllNotesUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'fetchAllNotesUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$fetchAllNotesUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<FetchAllNotes> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  FetchAllNotes create(Ref ref) {
+    return fetchAllNotesUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(FetchAllNotes value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<FetchAllNotes>(value),
+    );
+  }
+}
+
+String _$fetchAllNotesUseCaseHash() =>
+    r'743795adf8204e254207ce96e5ea7d81598390e5';
+
 @ProviderFor(NoteController)
 const noteControllerProvider = NoteControllerProvider._();
 
@@ -323,7 +365,7 @@ final class NoteControllerProvider
         argument: null,
         retry: null,
         name: r'noteControllerProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -344,7 +386,7 @@ final class NoteControllerProvider
   }
 }
 
-String _$noteControllerHash() => r'4a9bc32d3379bea7ebbff8a69e86b2ba3759a385';
+String _$noteControllerHash() => r'f5fcc70545b88111738dcfb689b4be441317122b';
 
 abstract class _$NoteController extends $Notifier<void> {
   void build();
@@ -544,6 +586,99 @@ abstract class _$FetchNoteByIdNotifier extends $AsyncNotifier<NoteEntity?> {
             as $ClassProviderElement<
               AnyNotifier<AsyncValue<NoteEntity?>, NoteEntity?>,
               AsyncValue<NoteEntity?>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(FetchAllNotesNotifier)
+const fetchAllNotesProvider = FetchAllNotesNotifierFamily._();
+
+final class FetchAllNotesNotifierProvider
+    extends $AsyncNotifierProvider<FetchAllNotesNotifier, List<NoteEntity>> {
+  const FetchAllNotesNotifierProvider._({
+    required FetchAllNotesNotifierFamily super.from,
+    required FetchAllNotesParams super.argument,
+  }) : super(
+         retry: null,
+         name: r'fetchAllNotesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$fetchAllNotesNotifierHash();
+
+  @override
+  String toString() {
+    return r'fetchAllNotesProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  FetchAllNotesNotifier create() => FetchAllNotesNotifier();
+
+  @override
+  bool operator ==(Object other) {
+    return other is FetchAllNotesNotifierProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$fetchAllNotesNotifierHash() =>
+    r'e8a44dfac87bcd5e0927838386c015c6f33e52bf';
+
+final class FetchAllNotesNotifierFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          FetchAllNotesNotifier,
+          AsyncValue<List<NoteEntity>>,
+          List<NoteEntity>,
+          FutureOr<List<NoteEntity>>,
+          FetchAllNotesParams
+        > {
+  const FetchAllNotesNotifierFamily._()
+    : super(
+        retry: null,
+        name: r'fetchAllNotesProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  FetchAllNotesNotifierProvider call(FetchAllNotesParams params) =>
+      FetchAllNotesNotifierProvider._(argument: params, from: this);
+
+  @override
+  String toString() => r'fetchAllNotesProvider';
+}
+
+abstract class _$FetchAllNotesNotifier
+    extends $AsyncNotifier<List<NoteEntity>> {
+  late final _$args = ref.$arg as FetchAllNotesParams;
+  FetchAllNotesParams get params => _$args;
+
+  FutureOr<List<NoteEntity>> build(FetchAllNotesParams params);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(_$args);
+    final ref =
+        this.ref as $Ref<AsyncValue<List<NoteEntity>>, List<NoteEntity>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<NoteEntity>>, List<NoteEntity>>,
+              AsyncValue<List<NoteEntity>>,
               Object?,
               Object?
             >;

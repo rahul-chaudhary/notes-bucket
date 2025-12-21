@@ -13,6 +13,8 @@ abstract interface class NoteLocalDataSource {
 
   Future<void> deleteNote(int noteId);
 
+  Future<List<Note>> fetchAllNotes({required int limit,required int offset});
+
 }
 
 class NoteLocalDataSourceImpl implements NoteLocalDataSource {
@@ -97,6 +99,26 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
     await (database.delete(
         database.notesItems,
     )..where((tbl) => tbl.id.equals(noteId))).go();
+  }
+
+  @override
+  Future<List<Note>> fetchAllNotes({required int limit,required int offset}) async {
+    final queryResult = await (database.select(
+      database.notesItems,
+    )..limit(limit, offset: offset)).get();
+
+    final notes = queryResult.map((row) => Note(
+      id: row.id,
+      folderId: row.folderID,
+      title: row.title,
+      content: row.content,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    )).toList();
+
+    return notes;
+
+
   }
 
 }

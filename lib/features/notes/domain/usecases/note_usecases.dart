@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:notes_bucket/core/errors/failures.dart';
 import 'package:notes_bucket/core/usecases/use_case.dart';
@@ -55,4 +56,33 @@ class DeleteNote implements UseCase<void, int> {
   Future<Either<Failure, void>> call(int noteId) async {
     return await repository.deleteNote(noteId);
   }
+}
+
+
+class FetchAllNotes implements UseCase<List<NoteEntity>, FetchAllNotesParams> {
+  final NoteRepository repository;
+
+  FetchAllNotes(this.repository);
+
+  @override
+  Future<Either<Failure, List<NoteEntity>>> call(FetchAllNotesParams params) async {
+    return await repository.fetchAllNotes(
+      limit: params.limit,
+      offset: params.offset,
+    );
+  }
+}
+
+
+class FetchAllNotesParams extends Equatable {
+  final int limit;
+  final int offset;
+
+  const FetchAllNotesParams({
+    required this.limit,
+    required this.offset,
+  });
+  @override
+  List<Object?> get props => [limit, offset];
+
 }

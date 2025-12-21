@@ -9,23 +9,3 @@ class WarningText extends _$WarningText {
   String build() => '';
   void setWarningText(String text) => state = text;
 }
-
-@riverpod
-class EditNoteLoadingState extends _$EditNoteLoadingState {
-  @override
-  bool build() => false;
-
-  Future<void> set(bool isLoading) async {
-    state = isLoading;
-  }
-}
-
-@riverpod
-class EditNoteState extends _$EditNoteState {
-  @override
-  NoteEntity? build() => null;
-
-  void set(NoteEntity? note)  {
-    state = note;
-  }
-}

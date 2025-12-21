@@ -44,11 +44,15 @@ UpdateNote updateNote(Ref ref) => UpdateNote(ref.watch(noteRepositoryProvider));
 @riverpod
 DeleteNote deleteNote(Ref ref) => DeleteNote(ref.watch(noteRepositoryProvider));
 
+@riverpod
+FetchAllNotes fetchAllNotesUseCase(Ref ref) => FetchAllNotes(ref.watch(noteRepositoryProvider));
+
+
 // ─────────────────────────────────────────────────────────────
 // PRESENTATION LAYER PROVIDERS (State Notifiers)
 // ─────────────────────────────────────────────────────────────
 
-@riverpod
+@Riverpod(keepAlive: true)
 class NoteController extends _$NoteController {
   @override
   void build() {}
@@ -106,6 +110,22 @@ class FetchNoteByIdNotifier extends _$FetchNoteByIdNotifier {
     return result.fold(
           (failure) => throw Exception(failure.message),
           (note) => note,
+    );
+  }
+}
+
+@riverpod
+class FetchAllNotesNotifier extends _$FetchAllNotesNotifier {
+  @override
+  Future<List<NoteEntity>> build(FetchAllNotesParams params) async =>
+      _load(params);
+
+  Future<List<NoteEntity>> _load(FetchAllNotesParams params) async {
+    final usecase = ref.read(fetchAllNotesUseCaseProvider);
+    final result = await usecase.call(params);
+    return result.fold(
+          (failure) => throw Exception(failure.message),
+          (notes) => notes,
     );
   }
 }
