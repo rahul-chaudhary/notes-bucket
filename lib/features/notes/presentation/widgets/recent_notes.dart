@@ -74,7 +74,7 @@ class NoteItemWidget extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    note.title ?? 'Untitled',
+                    (note.title?.trim().isEmpty ?? true) ? 'Untitled' : note.title!,
                     maxLines: 1,
                     style: AppTextStyles.headlineSmall(context),
                   ),
