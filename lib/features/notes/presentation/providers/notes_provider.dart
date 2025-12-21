@@ -85,9 +85,10 @@ class NoteController extends _$NoteController {
 @riverpod
 class FetchNotesByFolderIdNotifier extends _$FetchNotesByFolderIdNotifier {
   @override
-  Future<List<NoteEntity>> build(int folderId) async => _load(folderId);
+  Future<List<NoteEntity>> build(int? folderId) async => _load(folderId);
 
-  Future<List<NoteEntity>> _load(int folderId) async {
+  Future<List<NoteEntity>> _load(int? folderId) async {
+    if(folderId == null) return [];
     final usecase = ref.read(fetchNotesByFolderIdUseCaseProvider);
     final result = await usecase.call(folderId);
 

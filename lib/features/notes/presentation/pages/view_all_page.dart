@@ -10,6 +10,7 @@ import 'package:notes_bucket/core/widgets/buttons/folder_button.dart';
 import 'package:notes_bucket/core/widgets/notes_app_bar.dart';
 import 'package:notes_bucket/core/widgets/skeletons/folder_grid_view_skeleton.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
+import 'package:notes_bucket/features/notes/presentation/providers/notes_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/view_all_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/create_folder_dialog.dart';
 
@@ -38,8 +39,8 @@ class ViewAllPage extends ConsumerWidget {
         offset: pageOffset,
       ),
     );
+    final notesAsync = ref.watch(fetchNotesByFolderIdProvider(selectedParentId));
 
-    final controller = TextEditingController();
     return Scaffold(
       body: CustomScrollView(
         slivers: [
