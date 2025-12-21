@@ -106,6 +106,14 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
         IconButton(
           onPressed: () async {
             try {
+              final isNoteEmpty = titleController.text.trim().isEmpty && bodyController.text.trim().isEmpty;
+
+              if(isNoteEmpty) {
+                if (mounted) {
+                  AppSnackBar.showWarning(context, 'Empty note cannot be saved');
+                }
+                return;
+              }
               if (note != null) {
                 final updatedNote = note!.copyWith(
                   title: titleController.text,
@@ -158,6 +166,8 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
               rethrow;
             }
           },
+          disabledColor: Theme.of(context).disabledColor,
+          tooltip: 'Save Note',
           icon: Icon(Icons.save_rounded, color: Theme.of(context).primaryColor),
         ),
       ],
