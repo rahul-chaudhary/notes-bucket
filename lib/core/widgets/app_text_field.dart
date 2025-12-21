@@ -6,6 +6,7 @@ class AppTextField extends StatelessWidget {
   final bool obscureText;
   final TextInputType keyboardType;
   final String? errorText;
+  final int? maxChar;
 
 
 
@@ -16,6 +17,7 @@ class AppTextField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.errorText,
+    this.maxChar,
   });
 
   @override
@@ -24,10 +26,11 @@ class AppTextField extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
+      maxLength: maxChar,
       decoration: InputDecoration(
         hintText: hintText,
         border: const OutlineInputBorder(),
-        errorText: errorText
+        errorText: errorText,
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:notes_bucket/core/constants/app_constants.dart';
 import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
 import 'package:notes_bucket/core/widgets/app_snackbar.dart';
 import 'package:notes_bucket/core/widgets/app_text_field.dart';
@@ -32,6 +33,7 @@ class CreateFolderDialog extends HookConsumerWidget {
           : Theme.of(context).colorScheme.primary,
       content: AppTextField(
         controller: controller,
+        maxChar: AppConstants.maxFolderNameLength,
         hintText: 'Folder Name',
         errorText: showError.value && textEmpty
             ? 'Folder name cannot be empty'
