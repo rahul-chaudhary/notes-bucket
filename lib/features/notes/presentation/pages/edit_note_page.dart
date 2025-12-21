@@ -27,6 +27,13 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
     super.initState();
     _init();
   }
+  @override
+  void dispose() {
+    titleController.dispose();
+    bodyController.dispose();
+    super.dispose();
+  }
+
 
   Future<void> _init() async {
     if (widget.noteId != null) {
@@ -36,6 +43,23 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
         bodyController.text = note!.content ?? '';
       }
     }
+  }
+
+  void _discardChangesDialog() {
+    showDialog(
+      context: context,
+      builder:(context) => AppAlertDialog(
+        dialogHeader: Text('Discard Changes?',) ,
+        primaryButtonText: 'Discard',
+        primaryButtonColor: Theme.of(context).primaryColor,
+        secondaryButtonText: 'Cancel',
+        onPressPrimary: () {
+          Navigator.of(context).pop();
+          Navigator.of(context).pop();
+        },
+        onPressSecondary: ()=> Navigator.of(context).pop(),
+        content: Text('Are you sure you want to discard the changes?'),
+      ),);
   }
 
   @override
@@ -52,25 +76,12 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
           onPressed: () {
             if(note != null) {
               if(note!.title != titleController.text || note!.content != bodyController.text) {
-                showDialog(
-                    context: context,
-                    builder:(context) => AppAlertDialog(
-                        dialogHeader: Text('Discard Changes?',) ,
-                        primaryButtonText: 'Discard',
-                        primaryButtonColor: Theme.of(context).primaryColor,
-                        secondaryButtonText: 'Cancel',
-                        onPressPrimary: () {
-                          Navigator.of(context).pop();
-                          Navigator.of(context).pop();
-                        },
-                        onPressSecondary: ()=> Navigator.of(context).pop(),
-                        content: Text('Are you sure you want to discard the changes?'),
-                      ),);
+                _discardChangesDialog();
               } else {
                 Navigator.of(context).pop();
               }
-            } else {
-              Navigator.of(context).pop();
+            } else if(note == null){
+              _discardChangesDialog();
             }
 
           },
@@ -92,7 +103,7 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
                   }
                   await noteController.updateNote(updatedNote);
                   note = updatedNote;
-                  dbPrint('Is note and update note equal ${note  == updateNote}');
+                  dbPrint('Is note and update note equal ${note.hashCode  == updateNote.hashCode}');
                   if(mounted) {
                     AppSnackBar.showSuccess(context, 'Note saved successfully');
                     ref.invalidate(fetchAllNotesProvider);
