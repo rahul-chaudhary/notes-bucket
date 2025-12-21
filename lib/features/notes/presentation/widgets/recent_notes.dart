@@ -15,9 +15,9 @@ class RecentNotes extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notesAsync = ref.watch(fetchAllNotesProvider(
-      const FetchAllNotesParams(limit: 20, offset: 0),
-    ));
+    final notesAsync = ref.watch(
+      fetchAllNotesProvider(const FetchAllNotesParams(limit: 20, offset: 0)),
+    );
 
     return notesAsync.when(
       data: (notes) => MasonryGridView.count(
@@ -41,9 +41,8 @@ class RecentNotes extends ConsumerWidget {
         },
       ),
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(
-        child: Text('Error: ${error.toString()}'),
-      ),
+      error: (error, stack) =>
+          Center(child: Text('Error: ${error.toString()}')),
     );
   }
 }
@@ -52,15 +51,11 @@ class NoteItemWidget extends ConsumerWidget {
   final NoteEntity note;
   final VoidCallback onTap;
 
-  const NoteItemWidget({
-    super.key,
-    required this.note,
-    required this.onTap,
-  });
+  const NoteItemWidget({super.key, required this.note, required this.onTap});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final noteFolderAsync = ref.read(folderByIdProvider(note.folderId));
+    final noteFolderAsync = ref.watch(folderByIdProvider(note.folderId));
     return Material(
       color: Theme.of(context).cardColor,
       borderRadius: BorderRadius.circular(12),
@@ -73,7 +68,7 @@ class NoteItemWidget extends ConsumerWidget {
         child: Stack(
           children: [
             Container(
-              height: (note.content?.length?? 0) > 100 ? 150 : 100,
+              height: (note.content?.length ?? 0) > 100 ? 150 : 100,
               padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,9 +94,10 @@ class NoteItemWidget extends ConsumerWidget {
               bottom: 0,
               right: 0,
               child: noteFolderAsync.when(
-                  data: (folder) => FolderTag(folderName: folder!.name),
-                  error: (error, stack) => const SizedBox.shrink(),
-                  loading: () => const SizedBox.shrink()),
+                data: (folder) => FolderTag(folderName: folder!.name),
+                error: (error, stack) => Text(error.toString()),
+                loading: () => Text('Loading...'),
+              ),
             ),
           ],
         ),
@@ -112,10 +108,8 @@ class NoteItemWidget extends ConsumerWidget {
 
 class FolderTag extends StatelessWidget {
   final String folderName;
-  const FolderTag({
-    super.key,
-    required this.folderName,
-  });
+
+  const FolderTag({super.key, required this.folderName});
 
   @override
   Widget build(BuildContext context) {
@@ -128,9 +122,18 @@ class FolderTag extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(Icons.folder_open_rounded, size: 10, color: Theme.of(context).colorScheme.onSecondary,),
+          Icon(
+            Icons.folder_open_rounded,
+            size: 10,
+            color: Theme.of(context).colorScheme.onSecondary,
+          ),
           AppSpacing.gapXS,
-          Text('Homework', style: AppTextStyles.bodyXSmall(context).copyWith(color: Theme.of(context).colorScheme.onSecondary),),
+          Text(
+            folderName,
+            style: AppTextStyles.bodyXSmall(
+              context,
+            ).copyWith(color: Theme.of(context).colorScheme.onSecondary),
+          ),
         ],
       ),
     );
