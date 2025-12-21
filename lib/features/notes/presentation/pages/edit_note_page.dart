@@ -122,7 +122,7 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
                 dbPrint(
                   'Is note and update note equal ${note.hashCode == updateNote.hashCode}',
                 );
-                if (mounted) {
+                if (context.mounted) {
                   AppSnackBar.showSuccess(context, 'Note saved successfully');
                   ref.invalidate(fetchAllNotesProvider);
                 }
@@ -143,16 +143,18 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
                     createdAt: DateTime.now(),
                     updatedAt: DateTime.now(),
                   );
-                  await noteController.addNote(newNote);
+                  note = await noteController.addNote(newNote);
                   ref.invalidate(fetchAllNotesProvider);
-                  if (mounted) {
+                  if (context.mounted) {
                     AppSnackBar.showSuccess(context, 'Note saved successfully');
                   }
                 }
               }
             } catch (e, s) {
               dbPrint('Failed to save the note', e: e, st: s);
-              AppSnackBar.showError(context, 'Failed to save the note: $e');
+              if (context.mounted) {
+                AppSnackBar.showError(context, 'Failed to save the note: $e');
+              }
               rethrow;
             }
           },
