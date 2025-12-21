@@ -5,7 +5,6 @@ import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
 import 'package:notes_bucket/core/widgets/app_snackbar.dart';
 import 'package:notes_bucket/features/notes/domain/entities/note_entity.dart';
-import 'package:notes_bucket/features/notes/presentation/providers/edit_note_state_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/notes_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/select_folder_dialog.dart';
 
@@ -66,7 +65,7 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
                         },
                         onPressSecondary: ()=> Navigator.of(context).pop(),
                         content: Text('Are you sure you want to discard the changes?'),
-                      ) , );
+                      ),);
               } else {
                 Navigator.of(context).pop();
               }
@@ -81,13 +80,18 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
             onPressed: () async {
               try{
                 if (note != null) {
-                  dbPrint('Note is not null');
-                  final updateNote = note!.copyWith(
+                  final updatedNote = note!.copyWith(
                     title: titleController.text,
                     content: bodyController.text,
                   );
-                  await noteController.updateNote(updateNote);
-                  note = updateNote;
+                  if(note == updatedNote) {
+                    if(mounted) {
+                      AppSnackBar.showInfo(context, 'No changes to save');
+                    }
+                    return;
+                  }
+                  await noteController.updateNote(updatedNote);
+                  note = updatedNote;
                   dbPrint('Is note and update note equal ${note  == updateNote}');
                   if(mounted) {
                     AppSnackBar.showSuccess(context, 'Note saved successfully');
