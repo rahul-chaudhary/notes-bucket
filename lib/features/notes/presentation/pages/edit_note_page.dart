@@ -81,11 +81,14 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
             onPressed: () async {
               try{
                 if (note != null) {
+                  dbPrint('Note is not null');
                   final updateNote = note!.copyWith(
                     title: titleController.text,
                     content: bodyController.text,
                   );
                   await noteController.updateNote(updateNote);
+                  note = updateNote;
+                  dbPrint('Is note and update note equal ${note  == updateNote}');
                   if(mounted) {
                     AppSnackBar.showSuccess(context, 'Note saved successfully');
                     ref.invalidate(fetchAllNotesProvider);
