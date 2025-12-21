@@ -9,29 +9,32 @@ import 'package:notes_bucket/core/widgets/errors/app_error_widget.dart';
 import 'package:notes_bucket/core/widgets/buttons/folder_button.dart';
 import 'package:notes_bucket/core/widgets/notes_app_bar.dart';
 import 'package:notes_bucket/core/widgets/skeletons/folder_grid_view_skeleton.dart';
+import 'package:notes_bucket/features/notes/presentation/pages/edit_note_page.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/notes_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/view_all_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/create_folder_dialog.dart';
+import 'package:notes_bucket/features/notes/presentation/widgets/recent_notes.dart';
 
 class ViewAllPage extends ConsumerWidget {
   const ViewAllPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // take route arg once and seed the state provider if needed
     final routeParentId = ModalRoute.of(context)?.settings.arguments as int?;
     final selectedParentId = ref.watch(selectedParentIdProvider);
     int pageOffset = 0;
+
     if (selectedParentId == null && routeParentId != null) {
-      // set initial parent id after the first frame to avoid build loops
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ref.read(selectedParentIdProvider.notifier).setId(routeParentId);
       });
     }
+
     AsyncValue currentPathAsync = ref.watch(
       currentPathProvider(parentId: selectedParentId),
     );
+
     AsyncValue folderAsync = ref.watch(
       foldersByParentProvider(
         parentId: selectedParentId,
@@ -39,6 +42,7 @@ class ViewAllPage extends ConsumerWidget {
         offset: pageOffset,
       ),
     );
+
     final notesAsync = ref.watch(fetchNotesByFolderIdProvider(selectedParentId));
 
     return Scaffold(
@@ -49,56 +53,7 @@ class ViewAllPage extends ConsumerWidget {
           SliverFillRemaining(
             child: Padding(
               padding: AppSpacing.paddingAllS,
-              child: folderAsync.when(
-                data: (data) => data.isEmpty
-                    ? InfoCard(
-                        message: 'Nothing here!',
-                        primaryImage: AppImages.confusedCat,
-                      )
-                    : GridView.builder(
-                        scrollDirection: Axis.vertical,
-                        itemCount: data.length,
-                        physics: const BouncingScrollPhysics(),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 15,
-                            ),
-                        itemBuilder: (context, index) {
-                          final folder = data[index];
-                          return FolderButton(
-                            folder: folder,
-                            onTap: () {
-                              // update the selected parent id via the provider
-                              ref
-                                  .read(selectedParentIdProvider.notifier)
-                                  .setId(folder.id);
-                              // optionally invalidate dependent providers to force refresh
-                              ref.invalidate(
-                                currentPathProvider(parentId: folder.id),
-                              );
-                              ref.invalidate(
-                                foldersByParentProvider(
-                                  parentId: folder.id,
-                                  limit: AppConstants.folderPageLimit,
-                                  offset: 0,
-                                ),
-                              );
-                            },
-                          );
-                        },
-                      ),
-                error: (err, st) => AppErrorWidget(
-                  onRetry: () => ref.refresh(
-                    rootFoldersProvider(
-                      limit: AppConstants.folderPageLimit,
-                      offset: 0,
-                    ),
-                  ),
-                ),
-                loading: () => FolderGridVewSkeleton(itemCount: 20),
-              ),
+              child: _buildCombinedGrid(folderAsync, notesAsync, ref, selectedParentId),
             ),
           ),
         ],
@@ -107,11 +62,86 @@ class ViewAllPage extends ConsumerWidget {
         onPressed: () async {
           await showDialog(
             context: context,
-            builder: (context) =>
-                CreateFolderDialog(parentId: selectedParentId),
+            builder: (context) => CreateFolderDialog(parentId: selectedParentId),
           );
         },
       ),
     );
   }
+
+  Widget _buildCombinedGrid(
+      AsyncValue folderAsync,
+      AsyncValue notesAsync,
+      WidgetRef ref,
+      int? selectedParentId,
+      ) {
+    if (folderAsync.isLoading || notesAsync.isLoading) {
+      return FolderGridVewSkeleton(itemCount: 20);
+    }
+
+    if (folderAsync.hasError) {
+      return AppErrorWidget(
+        onRetry: () => ref.refresh(
+          rootFoldersProvider(
+            limit: AppConstants.folderPageLimit,
+            offset: 0,
+          ),
+        ),
+      );
+    }
+
+    final folders = folderAsync.value ?? [];
+    final notes = notesAsync.value ?? [];
+    final totalItems = folders.length + notes.length;
+
+    if (totalItems == 0) {
+      return InfoCard(
+        message: 'Nothing here!',
+        primaryImage: AppImages.confusedCat,
+      );
+    }
+
+    return GridView.builder(
+      scrollDirection: Axis.vertical,
+      itemCount: totalItems,
+      physics: const BouncingScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 15,
+      ),
+      itemBuilder: (context, index) {
+        // Show folders first, then notes
+        if (index < folders.length) {
+          final folder = folders[index];
+          return FolderButton(
+            folder: folder,
+            onTap: () {
+              ref.read(selectedParentIdProvider.notifier).setId(folder.id);
+              ref.invalidate(currentPathProvider(parentId: folder.id));
+              ref.invalidate(
+                foldersByParentProvider(
+                  parentId: folder.id,
+                  limit: AppConstants.folderPageLimit,
+                  offset: 0,
+                ),
+              );
+            },
+          );
+        } else {
+          final note = notes[index - folders.length];
+          return NoteItemWidget(
+            note: note,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EditNotePage(noteId: note.id),
+              ),
+            ),
+          );
+        }
+      },
+    );
+  }
+
 }

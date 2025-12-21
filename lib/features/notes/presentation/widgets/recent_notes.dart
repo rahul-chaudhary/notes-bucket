@@ -70,6 +70,13 @@ class NoteItemWidget extends ConsumerWidget {
             Container(
               height: (note.content?.length ?? 0) > 100 ? 150 : 100,
               padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline.withAlpha(50),
+                  width: 1,
+                ),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
