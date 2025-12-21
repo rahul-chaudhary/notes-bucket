@@ -63,6 +63,20 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
     );
   }
 
+  void _handleBackNavigation() {
+    final bool hasUnsavedChanges = note != null
+        ? (note!.title != titleController.text ||
+        note!.content != bodyController.text)
+        : (titleController.text.isNotEmpty ||
+        bodyController.text.isNotEmpty);
+
+    if (hasUnsavedChanges) {
+      _discardChangesDialog();
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final noteController = ref.read(noteControllerProvider.notifier);
@@ -72,18 +86,7 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
       body: PopScope(
         canPop: false,
         onPopInvokedWithResult: (didPop, result) {
-          //show dialog to ask user if they want to discard changes
-          if (!didPop) {
-            final bool hasUnsavedChanges = note != null
-                ? (note!.title != titleController.text ||
-                note!.content != bodyController.text)
-                : (titleController.text.isNotEmpty ||
-                bodyController.text.isNotEmpty);
-
-            hasUnsavedChanges
-                ? _discardChangesDialog()
-                : Navigator.of(context).pop();
-          }
+          if (!didPop) _handleBackNavigation();
         },
         child: _buildBody(context),
       ),
@@ -97,17 +100,7 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
       automaticallyImplyLeading: false,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios_new_rounded),
-        onPressed: () {
-          final bool hasUnsavedChanges = note != null
-              ? (note!.title != titleController.text ||
-                    note!.content != bodyController.text)
-              : (titleController.text.isNotEmpty ||
-                    bodyController.text.isNotEmpty);
-
-          hasUnsavedChanges
-              ? _discardChangesDialog()
-              : Navigator.of(context).pop();
-        },
+        onPressed: () => _handleBackNavigation(),
       ),
       actions: [
         IconButton(
