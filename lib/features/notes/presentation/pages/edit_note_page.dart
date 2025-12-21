@@ -27,13 +27,13 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
     super.initState();
     _init();
   }
+
   @override
   void dispose() {
     titleController.dispose();
     bodyController.dispose();
     super.dispose();
   }
-
 
   Future<void> _init() async {
     if (widget.noteId != null) {
@@ -48,8 +48,8 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
   void _discardChangesDialog() {
     showDialog(
       context: context,
-      builder:(context) => AppAlertDialog(
-        dialogHeader: Text('Discard Changes?',) ,
+      builder: (context) => AppAlertDialog(
+        dialogHeader: Text('Discard Changes?'),
         primaryButtonText: 'Discard',
         primaryButtonColor: Theme.of(context).primaryColor,
         secondaryButtonText: 'Cancel',
@@ -57,9 +57,10 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
           Navigator.of(context).pop();
           Navigator.of(context).pop();
         },
-        onPressSecondary: ()=> Navigator.of(context).pop(),
+        onPressSecondary: () => Navigator.of(context).pop(),
         content: Text('Are you sure you want to discard the changes?'),
-      ),);
+      ),
+    );
   }
 
   @override
@@ -67,85 +68,104 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
     final noteController = ref.read(noteControllerProvider.notifier);
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: const Text('Edit Note'),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
-          onPressed: () {
-            if(note != null) {
-              if(note!.title != titleController.text || note!.content != bodyController.text) {
-                _discardChangesDialog();
-              } else {
-                Navigator.of(context).pop();
-              }
-            } else if(note == null){
-              _discardChangesDialog();
-            }
+      appBar: _buildAppBar(context, noteController),
+      body: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          //show dialog to ask user if they want to discard changes
+          if (!didPop) {
+            final bool hasUnsavedChanges = note != null
+                ? (note!.title != titleController.text ||
+                note!.content != bodyController.text)
+                : (titleController.text.isNotEmpty ||
+                bodyController.text.isNotEmpty);
 
-          },
-        ),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              try{
-                if (note != null) {
-                  final updatedNote = note!.copyWith(
+            hasUnsavedChanges
+                ? _discardChangesDialog()
+                : Navigator.of(context).pop();
+          }
+        },
+        child: _buildBody(context),
+      ),
+    );
+  }
+
+  AppBar _buildAppBar(BuildContext context, NoteController noteController) {
+    return AppBar(
+      title: const Text('Edit Note'),
+      centerTitle: true,
+      automaticallyImplyLeading: false,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios_new_rounded),
+        onPressed: () {
+          final bool hasUnsavedChanges = note != null
+              ? (note!.title != titleController.text ||
+                    note!.content != bodyController.text)
+              : (titleController.text.isNotEmpty ||
+                    bodyController.text.isNotEmpty);
+
+          hasUnsavedChanges
+              ? _discardChangesDialog()
+              : Navigator.of(context).pop();
+        },
+      ),
+      actions: [
+        IconButton(
+          onPressed: () async {
+            try {
+              if (note != null) {
+                final updatedNote = note!.copyWith(
+                  title: titleController.text,
+                  content: bodyController.text,
+                );
+                if (note == updatedNote) {
+                  if (mounted) {
+                    AppSnackBar.showInfo(context, 'No changes to save');
+                  }
+                  return;
+                }
+                await noteController.updateNote(updatedNote);
+                note = updatedNote;
+                dbPrint(
+                  'Is note and update note equal ${note.hashCode == updateNote.hashCode}',
+                );
+                if (mounted) {
+                  AppSnackBar.showSuccess(context, 'Note saved successfully');
+                  ref.invalidate(fetchAllNotesProvider);
+                }
+              } else {
+                final selectedFolderId = await showDialog<int?>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const SelectFolderDialog();
+                  },
+                );
+                dbPrint('Selected folder id is $selectedFolderId');
+                if (selectedFolderId != null) {
+                  final newNote = NoteEntity(
+                    id: 0,
+                    folderId: selectedFolderId,
                     title: titleController.text,
                     content: bodyController.text,
+                    createdAt: DateTime.now(),
+                    updatedAt: DateTime.now(),
                   );
-                  if(note == updatedNote) {
-                    if(mounted) {
-                      AppSnackBar.showInfo(context, 'No changes to save');
-                    }
-                    return;
-                  }
-                  await noteController.updateNote(updatedNote);
-                  note = updatedNote;
-                  dbPrint('Is note and update note equal ${note.hashCode  == updateNote.hashCode}');
-                  if(mounted) {
+                  await noteController.addNote(newNote);
+                  ref.invalidate(fetchAllNotesProvider);
+                  if (mounted) {
                     AppSnackBar.showSuccess(context, 'Note saved successfully');
-                    ref.invalidate(fetchAllNotesProvider);
-                  }
-                } else {
-                  final selectedFolderId = await showDialog<int?>(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return const SelectFolderDialog();
-                    },
-                  );
-                  dbPrint('Selected folder id is $selectedFolderId');
-                  if (selectedFolderId != null) {
-                    final newNote = NoteEntity(
-                      id: 0,
-                      folderId: selectedFolderId,
-                      title: titleController.text,
-                      content: bodyController.text,
-                      createdAt: DateTime.now(),
-                      updatedAt: DateTime.now(),
-                    );
-                    await noteController.addNote(newNote);
-                    ref.invalidate(fetchAllNotesProvider);
-                    if(mounted) {
-                      AppSnackBar.showSuccess(context, 'Note saved successfully');
-                    }
                   }
                 }
-              } catch(e,s) {
-                dbPrint('Failed to save the note', e: e, st: s);
-                AppSnackBar.showError(context, 'Failed to save the note: $e');
-                rethrow;
               }
-            },
-            icon: Icon(
-              Icons.save_rounded,
-              color: Theme.of(context).primaryColor,
-            ),
-          ),
-        ],
-      ),
-      body: _buildBody(context),
+            } catch (e, s) {
+              dbPrint('Failed to save the note', e: e, st: s);
+              AppSnackBar.showError(context, 'Failed to save the note: $e');
+              rethrow;
+            }
+          },
+          icon: Icon(Icons.save_rounded, color: Theme.of(context).primaryColor),
+        ),
+      ],
     );
   }
 
