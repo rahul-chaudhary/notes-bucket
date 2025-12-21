@@ -21,12 +21,11 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final TextEditingController controller = TextEditingController();
     return Scaffold(
       body: CustomScrollView(
         slivers: [
           NotesAppBar('Notes Bucket',isBackButtonVisible: false),
-          myFoldersSliverAppBar(context, controller, ref),
+          myFoldersSliverAppBar(context, ref),
           recentNoteSliverBox(context),
         ],
       ),
@@ -36,11 +35,7 @@ class HomePage extends ConsumerWidget {
     );
   }
 
-  SliverAppBar myFoldersSliverAppBar(
-    BuildContext context,
-    TextEditingController controller,
-    WidgetRef ref,
-  ) {
+  SliverAppBar myFoldersSliverAppBar(BuildContext context, WidgetRef ref) {
     return SliverAppBar(
       automaticallyImplyLeading: false,
       pinned: false,
@@ -54,7 +49,7 @@ class HomePage extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              myFolderHeader(context, controller, ref),
+              myFolderHeader(context),
               myFolderListView(ref, context),
               viewAllButton(context),
             ],
@@ -94,10 +89,7 @@ class HomePage extends ConsumerWidget {
     );
   }
 
-  Container myFolderListView(
-    WidgetRef ref,
-    BuildContext context,
-  ) {
+  Container myFolderListView(WidgetRef ref, BuildContext context) {
     final rootFoldersAsync = ref.watch(rootFoldersProvider(limit: 3, offset: 0));
     return Container(
       color: Colors.transparent,
@@ -130,18 +122,17 @@ class HomePage extends ConsumerWidget {
     );
   }
 
-  Row myFolderHeader(
-    BuildContext context,
-    TextEditingController controller,
-    WidgetRef ref,
-  ) {
+  Row myFolderHeader(BuildContext context) {
     return Row(
       children: [
         HomePageHeader(title: 'My Folders'),
         const Spacer(),
         IconButton(
           onPressed: () async {
-            await createFolderDialog(context, ref, controller, null);
+            await showDialog(
+              context: context,
+              builder: (context) => CreateFolderDialog(parentId: null),
+            );
           },
           icon: const Icon(Icons.add_circle_rounded),
         ),

@@ -5,6 +5,8 @@ class AppTextField extends StatelessWidget {
   final String? hintText;
   final bool obscureText;
   final TextInputType keyboardType;
+  final String? errorText;
+
 
 
   const AppTextField({
@@ -13,6 +15,7 @@ class AppTextField extends StatelessWidget {
     required this.hintText,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
+    this.errorText,
   });
 
   @override
@@ -24,6 +27,7 @@ class AppTextField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hintText,
         border: const OutlineInputBorder(),
+        errorText: errorText
       ),
     );
   }

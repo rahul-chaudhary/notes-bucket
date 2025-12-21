@@ -104,7 +104,11 @@ class ViewAllPage extends ConsumerWidget {
       ),
       floatingActionButton: AppFab(
         onPressed: () async {
-          await createFolderDialog(context, ref, controller, selectedParentId);
+          await showDialog(
+            context: context,
+            builder: (context) =>
+                CreateFolderDialog(parentId: selectedParentId),
+          );
         },
       ),
     );

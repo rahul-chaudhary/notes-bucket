@@ -39,10 +39,7 @@ class $FolderItemsTable extends FolderItems
     'name',
     aliasedName,
     false,
-    additionalChecks: GeneratedColumn.checkTextLength(
-      minTextLength: 1,
-      maxTextLength: 32,
-    ),
+    additionalChecks: GeneratedColumn.checkTextLength(),
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
@@ -396,10 +393,7 @@ class $NotesItemsTable extends NotesItems
     'title',
     aliasedName,
     true,
-    additionalChecks: GeneratedColumn.checkTextLength(
-      minTextLength: 1,
-      maxTextLength: 128,
-    ),
+    additionalChecks: GeneratedColumn.checkTextLength(),
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
