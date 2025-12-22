@@ -7,7 +7,6 @@ import 'package:notes_bucket/features/notes/domain/usecases/note_usecases.dart';
 import 'package:notes_bucket/features/notes/presentation/pages/edit_note_page.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/notes_provider.dart';
-import '../../../../core/constants/app_routes.dart';
 import '../../../../core/theme/app_text_style.dart';
 
 class RecentNotes extends ConsumerWidget {
@@ -56,45 +55,38 @@ class NoteItemWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final noteFolderAsync = ref.watch(folderByIdProvider(note.folderId));
-    return Material(
-      color: Theme.of(context).cardColor,
-      borderRadius: BorderRadius.circular(12),
-      elevation: 4,
-      shadowColor: Theme.of(context).splashColor,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12), // Match container radius
-        splashColor: Colors.amber.withAlpha(100),
+    return InkWell(
+      onTap: onTap,
+      splashColor: Colors.amber.withAlpha(100),
+      child: Container(
+        height: (note.content?.length ?? 0) > 100 ? 150 : 100,
+        padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline.withAlpha(50),
+            width: 1,
+          ),
+        ),
         child: Stack(
           children: [
-            Container(
-              height: (note.content?.length ?? 0) > 100 ? 150 : 100,
-              padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.outline.withAlpha(50),
-                  width: 1,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  (note.title?.trim().isEmpty ?? true) ? 'Untitled' : note.title!,
+                  maxLines: 1,
+                  style: AppTextStyles.headlineSmall(context),
                 ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    (note.title?.trim().isEmpty ?? true) ? 'Untitled' : note.title!,
-                    maxLines: 1,
-                    style: AppTextStyles.headlineSmall(context),
+                Flexible(
+                  child: Text(
+                    note.content ?? '',
+                    maxLines: 100,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.bodySmall(context),
                   ),
-                  Flexible(
-                    child: Text(
-                      note.content ?? '',
-                      maxLines: 100,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.bodySmall(context),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
 
             Positioned(
