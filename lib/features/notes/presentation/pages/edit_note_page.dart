@@ -177,7 +177,8 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
   Widget _buildBody(BuildContext context) {
     return Padding(
       padding: AppSpacing.paddingAllM,
-      child: Column(
+      child: ListView(
+        physics: const BouncingScrollPhysics(),
         children: [
           AppEditNoteTextField(hintText: 'Title', controller: titleController),
           Divider(color: Theme.of(context).dividerColor),
