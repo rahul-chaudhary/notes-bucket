@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:notes_bucket/core/constants/app_constants.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_arrow_button.dart';
-import 'package:notes_bucket/features/notes/presentation/providers/edit_note_state_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
-import 'package:notes_bucket/features/notes/presentation/providers/view_all_provider.dart';
 import 'create_folder_dialog.dart';
 import 'folder_list_tile.dart';
 
-class SelectFolderDialog extends ConsumerWidget {
+class SelectFolderDialog extends HookConsumerWidget {
   const SelectFolderDialog({super.key});
 
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedParentId = ref.watch(selectedParentIdProvider);
-    dbPrint('selectedParentId: $selectedParentId');
+    final currentFolderId = useState<int?>(null);
+    final warningText = useState<String>('');
     int pageOffset = 0;
     AsyncValue currentPathAsync = ref.watch(
-      currentPathProvider(parentId: selectedParentId),
+      currentPathProvider(folderParentId: currentFolderId.value),
     );
     AsyncValue folderAsync = ref.watch(
       foldersByParentProvider(
-        parentId: selectedParentId,
+        parentId: currentFolderId.value,
         limit: AppConstants.folderPageLimit,
         offset: pageOffset,
       ),
@@ -35,17 +35,15 @@ class SelectFolderDialog extends ConsumerWidget {
         children: [
           AppArrowButton(
             position: ArrowPosition.back,
-            disabled: selectedParentId == null,
+            disabled: currentFolderId.value == null,
             onTap: () async {
-              if (selectedParentId != null) {
+              if (currentFolderId.value != null) {
                 try {
                   final folder = await ref.read(
-                    folderByIdProvider(selectedParentId).future,
+                    folderByIdProvider(currentFolderId.value!).future,
                   );
                   dbPrint('Folder ${folder?.toString()}');
-                  ref
-                      .read(selectedParentIdProvider.notifier)
-                      .setId(folder?.parentId);
+                  currentFolderId.value = folder?.parentId;
                 } catch (e) {
                   dbPrint('Error fetching folder:', e: e);
                 }
@@ -56,17 +54,15 @@ class SelectFolderDialog extends ConsumerWidget {
         ],
       ),
       primaryButtonText: 'Save Here',
-      primaryButtonColor: selectedParentId != null
+      primaryButtonColor: currentFolderId.value != null
           ? Theme.of(context).colorScheme.primary
           : Theme.of(context).disabledColor,
       secondaryButtonText: 'Cancel',
       onPressPrimary: () {
-        if (selectedParentId == null) {
-          ref
-              .read(warningTextProvider.notifier)
-              .setWarningText('Please select a folder to save your note in.');
+        if (currentFolderId.value == null) {
+          warningText.value = 'Please select a folder to save your note in.';
         } else {
-          Navigator.of(context).pop(selectedParentId);
+          Navigator.of(context).pop(currentFolderId.value);
         }
       },
       onPressSecondary: () {
@@ -88,10 +84,8 @@ class SelectFolderDialog extends ConsumerWidget {
                   return FolderListTile(
                     title: item.name,
                     onTap: () {
-                      ref.read(warningTextProvider.notifier).setWarningText('');
-                      ref
-                          .read(selectedParentIdProvider.notifier)
-                          .setId(item.id);
+                      warningText.value = '';
+                      currentFolderId.value = item.id;
                     },
                   );
                 },
@@ -114,11 +108,11 @@ class SelectFolderDialog extends ConsumerWidget {
             ),
             onTap: () async => await showDialog(
               context: context,
-              builder: (context) => CreateFolderDialog(parentId: selectedParentId),
+              builder: (context) => CreateFolderDialog(parentId: currentFolderId.value),
             ),
           ),
           Text(
-            ref.watch(warningTextProvider).toString(),
+            warningText.value,
             style: Theme.of(
               context,
             ).textTheme.bodySmall?.copyWith(color: Colors.red),

@@ -11,6 +11,7 @@ import 'package:notes_bucket/core/widgets/buttons/folder_button.dart';
 import 'package:notes_bucket/core/widgets/cards/info_card.dart';
 import 'package:notes_bucket/core/widgets/notes_app_bar.dart';
 import 'package:notes_bucket/core/widgets/skeletons/folder_grid_view_skeleton.dart';
+import 'package:notes_bucket/features/notes/presentation/pages/view_all_page.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/create_folder_dialog.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/home_page_header.dart';
@@ -24,13 +25,14 @@ class HomePage extends ConsumerWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          NotesAppBar('Notes Bucket',isBackButtonVisible: false),
+          NotesAppBar(title: 'Notes Bucket',isBackButtonVisible: false),
           myFoldersSliverAppBar(context, ref),
           recentNoteSliverBox(context),
         ],
       ),
       floatingActionButton: AppFab(
         onPressed: () => Navigator.pushNamed(context, AppRoutes.editNotes),
+        child: Text('Add Note'),
       ),
     );
   }
@@ -113,7 +115,12 @@ class HomePage extends ConsumerWidget {
                   return FolderButton(
                       folder: folder,
                       onTap: (){
-                        Navigator.pushNamed(context, AppRoutes.viewAll, arguments: folder.id);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ViewAllPage(folderId: folder.id),
+                          ),
+                        );
                       },
                   );
                 },

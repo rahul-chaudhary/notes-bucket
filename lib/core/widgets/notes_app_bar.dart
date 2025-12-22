@@ -5,7 +5,8 @@ import 'package:notes_bucket/core/theme/app_text_style.dart';
 class NotesAppBar extends ConsumerWidget {
   final String title;
   final bool isBackButtonVisible;
-  const NotesAppBar(this.title,{this.isBackButtonVisible = true, super.key});
+  final VoidCallback? onBackButtonPressed;
+  const NotesAppBar({super.key, required this.title, this.isBackButtonVisible = true, this.onBackButtonPressed });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -16,7 +17,7 @@ class NotesAppBar extends ConsumerWidget {
       leading: isBackButtonVisible
           ? IconButton(
         icon: const Icon(Icons.arrow_back),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: onBackButtonPressed ?? () => Navigator.of(context).pop(),
       )
           : null,
       flexibleSpace: FlexibleSpaceBar(

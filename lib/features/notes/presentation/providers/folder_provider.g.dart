@@ -725,7 +725,7 @@ final class CurrentPathProvider
   }
 }
 
-String _$currentPathHash() => r'eb3dcd59f484c5ca2e4dd266ba09429c5bd7bea0';
+String _$currentPathHash() => r'7d0c029e73e08f5fd88ae336c707fedbd4fbfeae';
 
 final class CurrentPathFamily extends $Family
     with
@@ -745,8 +745,8 @@ final class CurrentPathFamily extends $Family
         isAutoDispose: true,
       );
 
-  CurrentPathProvider call({required int? parentId}) =>
-      CurrentPathProvider._(argument: parentId, from: this);
+  CurrentPathProvider call({required int? folderParentId}) =>
+      CurrentPathProvider._(argument: folderParentId, from: this);
 
   @override
   String toString() => r'currentPathProvider';
@@ -754,13 +754,13 @@ final class CurrentPathFamily extends $Family
 
 abstract class _$CurrentPath extends $AsyncNotifier<String> {
   late final _$args = ref.$arg as int?;
-  int? get parentId => _$args;
+  int? get folderParentId => _$args;
 
-  FutureOr<String> build({required int? parentId});
+  FutureOr<String> build({required int? folderParentId});
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(parentId: _$args);
+    final created = build(folderParentId: _$args);
     final ref = this.ref as $Ref<AsyncValue<String>, String>;
     final element =
         ref.element

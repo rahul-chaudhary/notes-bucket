@@ -204,14 +204,14 @@ class FolderController extends _$FolderController {
 @riverpod
 class CurrentPath extends _$CurrentPath {
   @override
-  Future<String> build({required int? parentId}) async {
-    return _load(parentId);
+  Future<String> build({required int? folderParentId}) async {
+    return _load(folderParentId);
   }
 
-  Future<String> _load(int? parentId) async {
+  Future<String> _load(int? folderParentId) async {
     final usecase = ref.read(getCurrentPathProvider);
 
-    final result = await usecase.call(parentId);
+    final result = await usecase.call(folderParentId);
 
     return result.fold(
       (failure) => throw Exception(failure.message),
