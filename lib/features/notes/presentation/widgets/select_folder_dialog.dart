@@ -3,45 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:notes_bucket/core/constants/app_constants.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
-import 'package:notes_bucket/core/widgets/app_text_field.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_arrow_button.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/edit_note_state_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/view_all_provider.dart';
+import 'create_folder_dialog.dart';
 import 'folder_list_tile.dart';
 
 class SelectFolderDialog extends ConsumerWidget {
   const SelectFolderDialog({super.key});
 
-  void _showCreateFolderDialog(BuildContext context, WidgetRef ref) {
-    final TextEditingController folderNameController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AppAlertDialog(
-          dialogHeader: Text('Create New Folder'),
-          primaryButtonText: 'Create',
-          primaryButtonColor: Theme.of(context).colorScheme.primary,
-          secondaryButtonText: 'Cancel',
-          onPressPrimary: () {
-            if (folderNameController.text.isNotEmpty) {
-              var selectedFolder = folderNameController.text;
-
-              Navigator.of(context).pop();
-            }
-          },
-          onPressSecondary: () {
-            Navigator.of(context).pop();
-          },
-          content: AppTextField(
-            controller: folderNameController,
-            hintText: 'Folder Name',
-          ),
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -141,7 +112,10 @@ class SelectFolderDialog extends ConsumerWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            onTap: () => _showCreateFolderDialog(context, ref),
+            onTap: () async => await showDialog(
+              context: context,
+              builder: (context) => CreateFolderDialog(parentId: selectedParentId),
+            ),
           ),
           Text(
             ref.watch(warningTextProvider).toString(),
