@@ -1,6 +1,5 @@
 import 'package:notes_bucket/core/constants/app_constants.dart';
 import 'package:notes_bucket/core/db/database_provider.dart';
-import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/features/notes/data/datasource/local_data/folder_local_datasource.dart';
 import 'package:notes_bucket/features/notes/data/repositories/folder_repository_impl.dart';
 import 'package:notes_bucket/features/notes/domain/entities/folder_entity.dart';
