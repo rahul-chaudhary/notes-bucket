@@ -71,24 +71,26 @@ class SelectFolderDialog extends HookConsumerWidget {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
-            height: getScreenHeight(context) / 2,
-            width: double.maxFinite,
-            child: folderAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stack) => Center(child: Text('Error: $error')),
-              data: (data) => ListView.builder(
-                itemCount: data.length,
-                itemBuilder: (context, index) {
-                  final item = data[index];
-                  return FolderListTile(
-                    title: item.name,
-                    onTap: () {
-                      warningText.value = '';
-                      currentFolderId.value = item.id;
-                    },
-                  );
-                },
+          Flexible(
+            child: SizedBox(
+              height: getScreenHeight(context) / 2,
+              width: double.maxFinite,
+              child: folderAsync.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, stack) => Center(child: Text('Error: $error')),
+                data: (data) => ListView.builder(
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    final item = data[index];
+                    return FolderListTile(
+                      title: item.name,
+                      onTap: () {
+                        warningText.value = '';
+                        currentFolderId.value = item.id;
+                      },
+                    );
+                  },
+                ),
               ),
             ),
           ),
