@@ -18,29 +18,33 @@ class PathNavigationWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 50,
-      child: ListView.separated(
-        itemCount: folders.length + 1,
+      child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return _buildPathButton(
+        child: Row(
+          children: [
+            // Home button
+            _buildPathButton(
               context: context,
               label: 'Home',
               folderId: null,
               onPressed: () => onPathSelected(null),
-            );
-          }
+            ),
 
-          final folder = folders[index - 1];
-          return _buildPathButton(
-            context: context,
-            label: folder.name,
-            folderId: folder.id,
-            onPressed: () => onPathSelected(folder.id),
-          );
-        },
-        separatorBuilder: (context, index) =>
-        const Icon(Icons.arrow_forward_ios_rounded, size: 12),
+            // Folders in path
+            ...folders.expand((folder) => [
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.0),
+                child: Icon(Icons.arrow_forward_ios_rounded, size: 12),
+              ),
+              _buildPathButton(
+                context: context,
+                label: folder.name,
+                folderId: folder.id,
+                onPressed: () => onPathSelected(folder.id),
+              ),
+            ]),
+          ],
+        ),
       ),
     );
   }
@@ -55,6 +59,9 @@ class PathNavigationWidget extends StatelessWidget {
 
     return TextButton(
       onPressed: onPressed,
+      style: TextButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      ),
       child: Text(
         label,
         style: AppTextStyles.bodyMedium(context).copyWith(

@@ -29,7 +29,7 @@ class ViewAllPage extends HookConsumerWidget {
     final currentFolderID = useState(folderId);
     final pageOffset = useState(0);
 
-    AsyncValue currentPathAsync = ref.watch(
+    final currentPathAsync = ref.watch(
       currentPathProvider(folderParentId: currentFolderID.value),
     );
 

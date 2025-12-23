@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:notes_bucket/core/constants/app_constants.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_arrow_button.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
+import 'package:notes_bucket/features/notes/presentation/widgets/path_navigation_widget.dart';
 import 'create_folder_dialog.dart';
 import 'folder_list_tile.dart';
 
@@ -18,15 +18,15 @@ class SelectFolderDialog extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentFolderId = useState<int?>(null);
     final warningText = useState<String>('');
-    int pageOffset = 0;
-    AsyncValue currentPathAsync = ref.watch(
+    final pageOffset = useState(0);
+    final currentPathAsync = ref.watch(
       currentPathProvider(folderParentId: currentFolderId.value),
     );
     AsyncValue folderAsync = ref.watch(
       foldersByParentProvider(
         parentId: currentFolderId.value,
         limit: AppConstants.folderPageLimit,
-        offset: pageOffset,
+        offset: pageOffset.value,
       ),
     );
 
@@ -95,7 +95,13 @@ class SelectFolderDialog extends HookConsumerWidget {
             ),
           ),
           const Divider(),
-          Text('Path: ${currentPathAsync.value}'),
+          PathNavigationWidget(
+            folders: currentPathAsync.value ?? [],
+            selectedFolderId: currentFolderId.value,
+            onPathSelected: (id) {
+              currentFolderId.value = id;
+            },
+          ),
           ListTile(
             leading: Icon(
               Icons.create_new_folder,
