@@ -5,6 +5,7 @@ import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
 import 'package:notes_bucket/core/widgets/app_snackbar.dart';
 import 'package:notes_bucket/features/notes/domain/entities/note_entity.dart';
+import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/notes_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/select_folder_dialog.dart';
 
@@ -238,6 +239,7 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
           );
           note = await noteController.addNote(newNote);
           ref.invalidate(fetchAllNotesProvider);
+          ref.invalidate(totalItemsCountProvider);
           if (context.mounted) {
             AppSnackBar.showSuccess(context, 'Note saved successfully');
           }
