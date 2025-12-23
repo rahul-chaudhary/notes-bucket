@@ -16,3 +16,15 @@ class DatabaseFailure extends Failure {
 class ValidationFailure extends Failure {
   const ValidationFailure(super.message);
 }
+
+class CacheFailure extends Failure {
+  const CacheFailure(super.message);
+}
+
+class ServerFailure extends Failure {
+  const ServerFailure(super.message);
+}
+
+class NoInternetFailure extends Failure {
+  const NoInternetFailure(super.message);
+}

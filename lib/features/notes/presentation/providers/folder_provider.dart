@@ -1,6 +1,7 @@
 import 'package:notes_bucket/core/constants/app_constants.dart';
 import 'package:notes_bucket/core/db/database_provider.dart';
 import 'package:notes_bucket/features/notes/data/datasource/local_data/folder_local_datasource.dart';
+import 'package:notes_bucket/features/notes/data/models/folder.dart';
 import 'package:notes_bucket/features/notes/data/repositories/folder_repository_impl.dart';
 import 'package:notes_bucket/features/notes/domain/entities/folder_entity.dart';
 import 'package:notes_bucket/features/notes/domain/repositories/folder_repo.dart';
@@ -213,17 +214,17 @@ class FolderController extends _$FolderController {
 @riverpod
 class CurrentPath extends _$CurrentPath {
   @override
-  Future<String> build({required int? folderParentId}) async =>
+  Future<List<FolderEntity>> build({required int? folderParentId}) async =>
       _load(folderParentId);
 
-  Future<String> _load(int? folderParentId) async {
+  Future<List<FolderEntity>> _load(int? folderParentId) async {
     final usecase = ref.read(getCurrentPathProvider);
 
     final result = await usecase.call(folderParentId);
 
     return result.fold(
       (failure) => throw Exception(failure.message),
-      (path) => path,
+      (folders) => folders
     );
   }
 }

@@ -785,7 +785,7 @@ abstract class _$FolderController extends $Notifier<void> {
 const currentPathProvider = CurrentPathFamily._();
 
 final class CurrentPathProvider
-    extends $AsyncNotifierProvider<CurrentPath, String> {
+    extends $AsyncNotifierProvider<CurrentPath, List<FolderEntity>> {
   const CurrentPathProvider._({
     required CurrentPathFamily super.from,
     required int? super.argument,
@@ -822,15 +822,15 @@ final class CurrentPathProvider
   }
 }
 
-String _$currentPathHash() => r'80c5aa289ddbddb8009207e7457ea722228c816a';
+String _$currentPathHash() => r'a62dd0b0bc1ec6764af1146962b6f0f34456c213';
 
 final class CurrentPathFamily extends $Family
     with
         $ClassFamilyOverride<
           CurrentPath,
-          AsyncValue<String>,
-          String,
-          FutureOr<String>,
+          AsyncValue<List<FolderEntity>>,
+          List<FolderEntity>,
+          FutureOr<List<FolderEntity>>,
           int?
         > {
   const CurrentPathFamily._()
@@ -849,21 +849,22 @@ final class CurrentPathFamily extends $Family
   String toString() => r'currentPathProvider';
 }
 
-abstract class _$CurrentPath extends $AsyncNotifier<String> {
+abstract class _$CurrentPath extends $AsyncNotifier<List<FolderEntity>> {
   late final _$args = ref.$arg as int?;
   int? get folderParentId => _$args;
 
-  FutureOr<String> build({required int? folderParentId});
+  FutureOr<List<FolderEntity>> build({required int? folderParentId});
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build(folderParentId: _$args);
-    final ref = this.ref as $Ref<AsyncValue<String>, String>;
+    final ref =
+        this.ref as $Ref<AsyncValue<List<FolderEntity>>, List<FolderEntity>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<String>, String>,
-              AsyncValue<String>,
+              AnyNotifier<AsyncValue<List<FolderEntity>>, List<FolderEntity>>,
+              AsyncValue<List<FolderEntity>>,
               Object?,
               Object?
             >;

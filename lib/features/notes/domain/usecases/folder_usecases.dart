@@ -111,34 +111,40 @@ class RenameFolder implements UseCase<void, RenameFolderParams> {
   }
 }
 
-class GetCurrentPath implements UseCase<String, int?> {
+class GetCurrentPath implements UseCase<List<FolderEntity>, int?> {
   final FolderRepository repository;
 
   GetCurrentPath(this.repository);
 
   @override
-  Future<Either<Failure, String>> call(int? folderParentId) async {
-    if (folderParentId == null) return const Right('Root');
+  Future<Either<Failure, List<FolderEntity>>> call(int? folderParentId) async {
+    if (folderParentId == null) return const Right([]);
 
     int? id = folderParentId;
-    final paths = <String>[];
+    final folders = <FolderEntity>[];
 
     while (id != null) {
       final res = await repository.fetchFolderById(id);
 
-      final result = res.fold<Either<Failure, FolderEntity?>>(
-            (failure) => Left(failure),
-            (folder) => Right(folder),
+      // Directly handle the Either result
+      final folder = res.fold(
+            (failure) => null,
+            (folder) => folder,
       );
 
-      if (result.isLeft()) return result.map((_) => '');
+      if (folder == null) {
+        // Return error immediately if folder not found
+        return res.fold(
+              (failure) => Left(failure),
+              (_) => Left(CacheFailure('Folder not found')),
+        );
+      }
 
-      final folder = result.getRight().toNullable()!;
-      paths.add(folder.name);
+      folders.add(folder);
       id = folder.parentId;
     }
 
-    return Right('Root > ${paths.reversed.join(' > ')}');
+    return Right(folders.reversed.toList());
   }
 }
 

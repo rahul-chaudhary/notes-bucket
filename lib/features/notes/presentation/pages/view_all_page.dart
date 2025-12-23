@@ -16,6 +16,7 @@ import 'package:notes_bucket/features/notes/presentation/pages/edit_note_page.da
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/notes_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/create_folder_dialog.dart';
+import 'package:notes_bucket/features/notes/presentation/widgets/path_navigation_widget.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/recent_notes.dart';
 
 class ViewAllPage extends HookConsumerWidget {
@@ -61,7 +62,16 @@ class ViewAllPage extends HookConsumerWidget {
               }
             },
           ),
-          SliverToBoxAdapter(child: Text('Path: ${currentPathAsync.value}')),
+          // SliverToBoxAdapter(child: Text('Path: ${currentPathAsync.value}')),
+          SliverToBoxAdapter(
+            child: PathNavigationWidget(
+              folders: currentPathAsync.value ?? [],
+              selectedFolderId: currentFolderID.value,
+              onPathSelected: (id) {
+                currentFolderID.value = id;
+              },
+            ),
+          ),
           SliverFillRemaining(
             child: Padding(
               padding: AppSpacing.paddingAllS,
@@ -160,3 +170,5 @@ class ViewAllPage extends HookConsumerWidget {
     );
   }
 }
+
+
