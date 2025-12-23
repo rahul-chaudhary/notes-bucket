@@ -66,9 +66,8 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
   void _handleBackNavigation() {
     final bool hasUnsavedChanges = note != null
         ? (note!.title != titleController.text ||
-        note!.content != bodyController.text)
-        : (titleController.text.isNotEmpty ||
-        bodyController.text.isNotEmpty);
+              note!.content != bodyController.text)
+        : (titleController.text.isNotEmpty || bodyController.text.isNotEmpty);
 
     if (hasUnsavedChanges) {
       _discardChangesDialog();
@@ -104,72 +103,12 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
       ),
       actions: [
         IconButton(
-          onPressed: () async {
-            try {
-              final isNoteEmpty = titleController.text.trim().isEmpty && bodyController.text.trim().isEmpty;
-
-              if(isNoteEmpty) {
-                if (mounted) {
-                  AppSnackBar.showWarning(context, 'Empty note cannot be saved');
-                }
-                return;
-              }
-              if (note != null) {
-                final updatedNote = note!.copyWith(
-                  title: titleController.text,
-                  content: bodyController.text,
-                );
-                if (note == updatedNote) {
-                  if (mounted) {
-                    AppSnackBar.showInfo(context, 'No changes to save');
-                  }
-                  return;
-                }
-                await noteController.updateNote(updatedNote);
-                note = updatedNote;
-                dbPrint(
-                  'Is note and update note equal ${note.hashCode == updateNote.hashCode}',
-                );
-                if (context.mounted) {
-                  AppSnackBar.showSuccess(context, 'Note saved successfully');
-                  ref.invalidate(fetchAllNotesProvider);
-                }
-              } else {
-                final selectedFolderId = await showDialog<int?>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return const SelectFolderDialog();
-                  },
-                );
-                dbPrint('Selected folder id is $selectedFolderId');
-                if (selectedFolderId != null) {
-                  final newNote = NoteEntity(
-                    id: 0,
-                    folderId: selectedFolderId,
-                    title: titleController.text,
-                    content: bodyController.text,
-                    createdAt: DateTime.now(),
-                    updatedAt: DateTime.now(),
-                  );
-                  note = await noteController.addNote(newNote);
-                  ref.invalidate(fetchAllNotesProvider);
-                  if (context.mounted) {
-                    AppSnackBar.showSuccess(context, 'Note saved successfully');
-                  }
-                }
-              }
-            } catch (e, s) {
-              dbPrint('Failed to save the note', e: e, st: s);
-              if (context.mounted) {
-                AppSnackBar.showError(context, 'Failed to save the note: $e');
-              }
-              rethrow;
-            }
-          },
+          onPressed: () async => await _handleSaveNote(noteController),
           disabledColor: Theme.of(context).disabledColor,
           tooltip: 'Save Note',
           icon: Icon(Icons.save_rounded, color: Theme.of(context).primaryColor),
         ),
+        _buildPopUpMenu(noteController),
       ],
     );
   }
@@ -189,6 +128,128 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
         ],
       ),
     );
+  }
+
+  Widget _buildPopUpMenu(NoteController noteController) {
+    return PopupMenuButton<EditNoteMenuOptions>(
+      icon: const Icon(Icons.more_vert_rounded),
+      onSelected: (value) async {
+        switch(value) {
+          case EditNoteMenuOptions.delete:
+            if (note != null) {
+              final confirmed = await showDialog<bool>(
+                context: context,
+                builder: (context) => AppAlertDialog(
+                  dialogHeader: const Text('Delete Note?'),
+                  primaryButtonText: 'Delete',
+                  primaryButtonColor: Colors.red,
+                  secondaryButtonText: 'Cancel',
+                  onPressPrimary: () => Navigator.of(context).pop(true),
+                  onPressSecondary: () => Navigator.of(context).pop(false),
+                  content: const Text(
+                    'Are you sure you want to delete this note? This action cannot be undone.',
+                  ),
+                ),
+              );
+
+              if (confirmed == true && context.mounted) {
+                try {
+                  await noteController.deleteNote(note!.id);
+                  ref.invalidate(fetchAllNotesProvider);
+                  if (context.mounted) {
+                    AppSnackBar.showSuccess(context, 'Note deleted successfully');
+                    Navigator.of(context).pop();
+                  }
+                } catch (e) {
+                  dbPrint('Failed to delete note', e: e);
+                  if (context.mounted) {
+                    AppSnackBar.showError(context, 'Failed to delete note');
+                  }
+                }
+              }
+            }
+            break;
+        }
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: EditNoteMenuOptions.delete,
+          enabled: note != null,
+          child: const Row(
+            children: [
+              Icon(Icons.delete_rounded, color: Colors.red),
+              SizedBox(width: 8),
+              Text('Delete Note'),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _handleSaveNote(NoteController noteController) async {
+    try {
+      final isNoteEmpty =
+          titleController.text.trim().isEmpty &&
+          bodyController.text.trim().isEmpty;
+
+      if (isNoteEmpty) {
+        if (mounted) {
+          AppSnackBar.showWarning(context, 'Empty note cannot be saved');
+        }
+        return;
+      }
+      if (note != null) {
+        final updatedNote = note!.copyWith(
+          title: titleController.text,
+          content: bodyController.text,
+        );
+        if (note == updatedNote) {
+          if (mounted) {
+            AppSnackBar.showInfo(context, 'No changes to save');
+          }
+          return;
+        }
+        await noteController.updateNote(updatedNote);
+        note = updatedNote;
+        dbPrint(
+          'Is note and update note equal ${note.hashCode == updateNote.hashCode}',
+        );
+        if (context.mounted) {
+          AppSnackBar.showSuccess(context, 'Note saved successfully');
+          ref.invalidate(fetchAllNotesProvider);
+        }
+      } else {
+        final selectedFolderId = await showDialog<int?>(
+          context: context,
+          builder: (BuildContext context) {
+            return const SelectFolderDialog();
+          },
+        );
+        dbPrint('Selected folder id is $selectedFolderId');
+        if (selectedFolderId != null) {
+          final newNote = NoteEntity(
+            id: 0,
+            folderId: selectedFolderId,
+            title: titleController.text,
+            content: bodyController.text,
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          );
+          note = await noteController.addNote(newNote);
+          ref.invalidate(fetchAllNotesProvider);
+          if (context.mounted) {
+            AppSnackBar.showSuccess(context, 'Note saved successfully');
+          }
+        }
+      }
+    } catch (e, s) {
+      dbPrint('Failed to save the note', e: e, st: s);
+      if (context.mounted) {
+        AppSnackBar.showError(context, 'Failed to save the note: $e');
+      }
+      rethrow;
+    }
   }
 }
 
@@ -214,4 +275,12 @@ class AppEditNoteTextField extends StatelessWidget {
       ),
     );
   }
+}
+
+enum EditNoteMenuOptions {
+  delete('Delete');
+  final String value;
+  const EditNoteMenuOptions(this.value);
+
+
 }
