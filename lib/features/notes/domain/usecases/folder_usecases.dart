@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:notes_bucket/core/errors/failures.dart';
 import 'package:notes_bucket/core/usecases/use_case.dart';
+import 'package:notes_bucket/features/notes/domain/repositories/note_repo.dart';
 import '../entities/folder_entity.dart';
 import '../repositories/folder_repo.dart';
 
@@ -161,5 +162,28 @@ class FetchFoldersCountByFolderId implements UseCase<int,int> {
   @override
   Future<Either<Failure, int>> call(int folderId) async {
     return repository.fetchFoldersCountByFolderId(folderId: folderId);
+  }
+}
+
+class FetchTotalItemsCount {
+  final FolderRepository folderRepository;
+  final NoteRepository noteRepository;
+
+  FetchTotalItemsCount({
+    required this.folderRepository,
+    required this.noteRepository,
+  });
+
+  Future<Either<Failure, int>> call(int folderId) async {
+    final foldersResult = await folderRepository.fetchFoldersCountByFolderId(folderId: folderId);
+    final notesResult = await noteRepository.fetchNotesCountByFolderId(folderId: folderId);
+
+    return foldersResult.fold(
+          (failure) => Left(failure),
+          (foldersCount) => notesResult.fold(
+            (failure) => Left(failure),
+            (notesCount) => Right(foldersCount + notesCount),
+      ),
+    );
   }
 }

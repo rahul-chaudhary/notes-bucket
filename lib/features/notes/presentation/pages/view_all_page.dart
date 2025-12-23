@@ -129,7 +129,7 @@ class ViewAllPage extends HookConsumerWidget {
         // Show folders first, then notes
         if (index < folders.length) {
           final FolderEntity folder = folders[index];
-          final count = ref.watch(fetchNotesCountByFolderIdProvider(folder.id));
+          final count = ref.watch(totalItemsCountProvider(folder.id));
           return count.when(
             loading: () => const SizedBox(
               width: 100,

@@ -452,6 +452,54 @@ final class FetchFoldersCountByFolderIdProvider
 String _$fetchFoldersCountByFolderIdHash() =>
     r'b9cc394f818b49ce801c8ca49ce5604499ae41b2';
 
+@ProviderFor(fetchTotalItemsCount)
+const fetchTotalItemsCountProvider = FetchTotalItemsCountProvider._();
+
+final class FetchTotalItemsCountProvider
+    extends
+        $FunctionalProvider<
+          FetchTotalItemsCount,
+          FetchTotalItemsCount,
+          FetchTotalItemsCount
+        >
+    with $Provider<FetchTotalItemsCount> {
+  const FetchTotalItemsCountProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'fetchTotalItemsCountProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$fetchTotalItemsCountHash();
+
+  @$internal
+  @override
+  $ProviderElement<FetchTotalItemsCount> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  FetchTotalItemsCount create(Ref ref) {
+    return fetchTotalItemsCount(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(FetchTotalItemsCount value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<FetchTotalItemsCount>(value),
+    );
+  }
+}
+
+String _$fetchTotalItemsCountHash() =>
+    r'72e2f9d4df0257bd159b1e0fc5e574237ccbdbf8';
+
 /// Root folders provider
 
 @ProviderFor(RootFolders)
@@ -994,6 +1042,96 @@ final class FoldersCountByFolderIdFamily extends $Family
 }
 
 abstract class _$FoldersCountByFolderId extends $AsyncNotifier<int> {
+  late final _$args = ref.$arg as int;
+  int get folderId => _$args;
+
+  FutureOr<int> build(int folderId);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(_$args);
+    final ref = this.ref as $Ref<AsyncValue<int>, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<int>, int>,
+              AsyncValue<int>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(TotalItemsCount)
+const totalItemsCountProvider = TotalItemsCountFamily._();
+
+final class TotalItemsCountProvider
+    extends $AsyncNotifierProvider<TotalItemsCount, int> {
+  const TotalItemsCountProvider._({
+    required TotalItemsCountFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'totalItemsCountProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$totalItemsCountHash();
+
+  @override
+  String toString() {
+    return r'totalItemsCountProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  TotalItemsCount create() => TotalItemsCount();
+
+  @override
+  bool operator ==(Object other) {
+    return other is TotalItemsCountProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$totalItemsCountHash() => r'7befc7f14157498f08384cc04fc687d31dce0ca2';
+
+final class TotalItemsCountFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          TotalItemsCount,
+          AsyncValue<int>,
+          int,
+          FutureOr<int>,
+          int
+        > {
+  const TotalItemsCountFamily._()
+    : super(
+        retry: null,
+        name: r'totalItemsCountProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  TotalItemsCountProvider call(int folderId) =>
+      TotalItemsCountProvider._(argument: folderId, from: this);
+
+  @override
+  String toString() => r'totalItemsCountProvider';
+}
+
+abstract class _$TotalItemsCount extends $AsyncNotifier<int> {
   late final _$args = ref.$arg as int;
   int get folderId => _$args;
 

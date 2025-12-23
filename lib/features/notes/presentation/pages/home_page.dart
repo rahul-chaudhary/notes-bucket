@@ -114,9 +114,7 @@ class HomePage extends ConsumerWidget {
                 physics: const BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
                   final folder = data[index];
-                  final count = ref.watch(
-                    fetchNotesCountByFolderIdProvider(folder.id),
-                  );
+                  final count = ref.watch(totalItemsCountProvider(folder.id));
 
                   return count.when(
                     loading: () => const SizedBox(width: 100,
