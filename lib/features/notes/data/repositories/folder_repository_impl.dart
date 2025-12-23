@@ -121,4 +121,14 @@ class FolderRepositoryImpl implements FolderRepository {
       return Left(DatabaseFailure(e.toString(), st));
     }
   }
+
+  @override
+  Future<Either<Failure, int>> fetchFoldersCountByFolderId({required int folderId}) async {
+    try {
+      final count = await folderLocalDataSource.fetchFoldersCountByFolderId(folderId: folderId);
+      return Right(count);
+    } catch (e, st) {
+      return Left(DatabaseFailure(e.toString(), st));
+    }
+  }
 }

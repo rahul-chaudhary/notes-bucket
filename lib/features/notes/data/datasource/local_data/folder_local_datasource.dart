@@ -23,6 +23,8 @@ abstract interface class FolderLocalDataSource {
   Future<bool> folderExists(int? folderParentID, String folderName);
 
   Future<Folder?> fetchFolderById(int folderId);
+
+  Future<int> fetchFoldersCountByFolderId({required int folderId});
 }
 
 class FolderLocalDataSourceImpl implements FolderLocalDataSource {
@@ -141,6 +143,13 @@ class FolderLocalDataSourceImpl implements FolderLocalDataSource {
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     );
+  }
+
+  @override
+  Future<int> fetchFoldersCountByFolderId({required int folderId}) async {
+    final queryResult = await (database.select(database.folderItems)
+        ..where((tbl) => tbl.parentID.equals(folderId))).get();
+    return queryResult.length;
   }
 
 }

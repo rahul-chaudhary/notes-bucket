@@ -58,6 +58,11 @@ GetCurrentPath getCurrentPath(Ref ref) =>
 FetchFolderById fetchFolderById(Ref ref) =>
     FetchFolderById(ref.watch(folderRepositoryProvider));
 
+@riverpod
+FetchFoldersCountByFolderId fetchFoldersCountByFolderId(Ref ref) =>
+    FetchFoldersCountByFolderId(ref.watch(folderRepositoryProvider));
+
+
 // ─────────────────────────────────────────────────────────────
 // PRESENTATION LAYER PROVIDERS (State Notifiers)
 // ─────────────────────────────────────────────────────────────
@@ -99,9 +104,8 @@ class FoldersByParent extends _$FoldersByParent {
     required int? parentId,
     required int limit,
     required int offset,
-  }) async {
-    return _load(parentId, limit, offset);
-  }
+  }) async => _load(parentId, limit, offset);
+
 
   Future<List<FolderEntity>> _load(int? parentId, int limit, int offset) async {
     final usecase = ref.read(fetchFoldersByParentProvider);
@@ -204,9 +208,8 @@ class FolderController extends _$FolderController {
 @riverpod
 class CurrentPath extends _$CurrentPath {
   @override
-  Future<String> build({required int? folderParentId}) async {
-    return _load(folderParentId);
-  }
+  Future<String> build({required int? folderParentId}) async => _load(folderParentId);
+
 
   Future<String> _load(int? folderParentId) async {
     final usecase = ref.read(getCurrentPathProvider);
@@ -224,9 +227,8 @@ class CurrentPath extends _$CurrentPath {
 @riverpod
 class FolderById extends _$FolderById {
   @override
-  Future<FolderEntity?> build(int folderId) async {
-    return _load(folderId);
-  }
+  Future<FolderEntity?> build(int folderId) async => _load(folderId);
+
 
   Future<FolderEntity?> _load(int folderId) async {
     final usecase = ref.read(fetchFolderByIdProvider);
@@ -236,6 +238,22 @@ class FolderById extends _$FolderById {
     return result.fold(
       (failure) => throw Exception(failure.message),
       (folder) => folder,
+    );
+  }
+}
+
+@riverpod
+class FoldersCountByFolderId extends _$FoldersCountByFolderId {
+  @override
+  Future<int> build(int folderId) async => _load(folderId);
+
+
+  Future<int> _load(int folderId) async {
+    final usecase = ref.read(fetchFoldersCountByFolderIdProvider);
+    final result = await usecase.call(folderId);
+    return result.fold(
+      (failure) => throw Exception(failure.message),
+      (count) => count,
     );
   }
 }

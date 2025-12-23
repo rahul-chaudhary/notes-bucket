@@ -403,6 +403,55 @@ final class FetchFolderByIdProvider
 
 String _$fetchFolderByIdHash() => r'e6725ac664c1dab62dc268316a91afa4002e18f0';
 
+@ProviderFor(fetchFoldersCountByFolderId)
+const fetchFoldersCountByFolderIdProvider =
+    FetchFoldersCountByFolderIdProvider._();
+
+final class FetchFoldersCountByFolderIdProvider
+    extends
+        $FunctionalProvider<
+          FetchFoldersCountByFolderId,
+          FetchFoldersCountByFolderId,
+          FetchFoldersCountByFolderId
+        >
+    with $Provider<FetchFoldersCountByFolderId> {
+  const FetchFoldersCountByFolderIdProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'fetchFoldersCountByFolderIdProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$fetchFoldersCountByFolderIdHash();
+
+  @$internal
+  @override
+  $ProviderElement<FetchFoldersCountByFolderId> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  FetchFoldersCountByFolderId create(Ref ref) {
+    return fetchFoldersCountByFolderId(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(FetchFoldersCountByFolderId value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<FetchFoldersCountByFolderId>(value),
+    );
+  }
+}
+
+String _$fetchFoldersCountByFolderIdHash() =>
+    r'b9cc394f818b49ce801c8ca49ce5604499ae41b2';
+
 /// Root folders provider
 
 @ProviderFor(RootFolders)
@@ -553,7 +602,7 @@ final class FoldersByParentProvider
   }
 }
 
-String _$foldersByParentHash() => r'39198ad0c904d28279e40c8f0ec7230b8e641f3f';
+String _$foldersByParentHash() => r'009c21202bb60180dfa2de072054f263fd35a697';
 
 /// Folders by parent ID provider
 
@@ -725,7 +774,7 @@ final class CurrentPathProvider
   }
 }
 
-String _$currentPathHash() => r'7d0c029e73e08f5fd88ae336c707fedbd4fbfeae';
+String _$currentPathHash() => r'80c5aa289ddbddb8009207e7457ea722228c816a';
 
 final class CurrentPathFamily extends $Family
     with
@@ -819,7 +868,7 @@ final class FolderByIdProvider
   }
 }
 
-String _$folderByIdHash() => r'11fdde6b102bbf17da07425d6548a98ec8c95233';
+String _$folderByIdHash() => r'df410a58ecca13458a91c0d8b60e2cd8436de427';
 
 /// Folder by Id provider
 
@@ -867,6 +916,98 @@ abstract class _$FolderById extends $AsyncNotifier<FolderEntity?> {
             as $ClassProviderElement<
               AnyNotifier<AsyncValue<FolderEntity?>, FolderEntity?>,
               AsyncValue<FolderEntity?>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(FoldersCountByFolderId)
+const foldersCountByFolderIdProvider = FoldersCountByFolderIdFamily._();
+
+final class FoldersCountByFolderIdProvider
+    extends $AsyncNotifierProvider<FoldersCountByFolderId, int> {
+  const FoldersCountByFolderIdProvider._({
+    required FoldersCountByFolderIdFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'foldersCountByFolderIdProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$foldersCountByFolderIdHash();
+
+  @override
+  String toString() {
+    return r'foldersCountByFolderIdProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  FoldersCountByFolderId create() => FoldersCountByFolderId();
+
+  @override
+  bool operator ==(Object other) {
+    return other is FoldersCountByFolderIdProvider &&
+        other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$foldersCountByFolderIdHash() =>
+    r'dc21f1d8b668c28a8429197550b58f3785d7ef2f';
+
+final class FoldersCountByFolderIdFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          FoldersCountByFolderId,
+          AsyncValue<int>,
+          int,
+          FutureOr<int>,
+          int
+        > {
+  const FoldersCountByFolderIdFamily._()
+    : super(
+        retry: null,
+        name: r'foldersCountByFolderIdProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  FoldersCountByFolderIdProvider call(int folderId) =>
+      FoldersCountByFolderIdProvider._(argument: folderId, from: this);
+
+  @override
+  String toString() => r'foldersCountByFolderIdProvider';
+}
+
+abstract class _$FoldersCountByFolderId extends $AsyncNotifier<int> {
+  late final _$args = ref.$arg as int;
+  int get folderId => _$args;
+
+  FutureOr<int> build(int folderId);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(_$args);
+    final ref = this.ref as $Ref<AsyncValue<int>, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<int>, int>,
+              AsyncValue<int>,
               Object?,
               Object?
             >;

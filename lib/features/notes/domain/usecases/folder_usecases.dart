@@ -152,3 +152,14 @@ class FetchFolderById implements UseCase<FolderEntity?, int> {
     return repository.fetchFolderById(folderParentId);
   }
 }
+
+class FetchFoldersCountByFolderId implements UseCase<int,int> {
+  final FolderRepository repository;
+
+  FetchFoldersCountByFolderId(this.repository);
+
+  @override
+  Future<Either<Failure, int>> call(int folderId) async {
+    return repository.fetchFoldersCountByFolderId(folderId: folderId);
+  }
+}

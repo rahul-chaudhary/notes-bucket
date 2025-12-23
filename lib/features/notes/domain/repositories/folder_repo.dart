@@ -27,4 +27,6 @@ abstract interface class FolderRepository {
   Future<Either<Failure, bool>> folderExists(int? folderParentID, String folderName);
 
   Future<Either<Failure, FolderEntity?>> fetchFolderById(int folderId);
+
+  Future<Either<Failure, int>> fetchFoldersCountByFolderId({required int folderId});
 }
