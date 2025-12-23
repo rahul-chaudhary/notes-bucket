@@ -47,6 +47,10 @@ DeleteNote deleteNote(Ref ref) => DeleteNote(ref.watch(noteRepositoryProvider));
 @riverpod
 FetchAllNotes fetchAllNotesUseCase(Ref ref) => FetchAllNotes(ref.watch(noteRepositoryProvider));
 
+@riverpod
+FetchNotesCountByFolderId fetchNotesCountByFolderIdUseCase(Ref ref) => FetchNotesCountByFolderId(ref.watch(noteRepositoryProvider));
+
+
 
 // ─────────────────────────────────────────────────────────────
 // PRESENTATION LAYER PROVIDERS (State Notifiers)
@@ -127,6 +131,22 @@ class FetchAllNotesNotifier extends _$FetchAllNotesNotifier {
     return result.fold(
           (failure) => throw Exception(failure.message),
           (notes) => notes,
+    );
+  }
+}
+
+@riverpod
+class FetchNotesCountByFolderIdNotifier extends _$FetchNotesCountByFolderIdNotifier {
+
+  @override
+  Future<int> build(int folderId) async => _load(folderId);
+
+  Future<int> _load(int folderId) async {
+    final usecase = ref.read(fetchNotesCountByFolderIdUseCaseProvider);
+    final result = await usecase.call(folderId);
+    return result.fold(
+          (failure) => throw Exception(failure.message),
+          (count) => count,
     );
   }
 }

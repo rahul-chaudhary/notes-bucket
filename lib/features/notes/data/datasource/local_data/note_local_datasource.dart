@@ -15,6 +15,8 @@ abstract interface class NoteLocalDataSource {
 
   Future<List<Note>> fetchAllNotes({required int limit,required int offset});
 
+  Future<int> fetchNotesCountByFolderId(int folderId);
+
 }
 
 class NoteLocalDataSourceImpl implements NoteLocalDataSource {
@@ -117,8 +119,14 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
     )).toList();
 
     return notes;
+  }
 
-
+  @override
+  Future<int> fetchNotesCountByFolderId(int folderId) async {
+    final queryResult = await (database.select(
+      database.notesItems,
+    )..where((tbl) => tbl.folderID.equals(folderId))).get();
+    return queryResult.length;
   }
 
 }

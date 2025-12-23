@@ -9,5 +9,6 @@ abstract interface class NoteRepository{
   Future<Either<Failure, void>> deleteNote(int noteId);
   Future<Either<Failure, NoteEntity?>> fetchNoteById(int noteId);
   Future<Either<Failure, List<NoteEntity>>> fetchAllNotes({required int limit,required int offset});
+  Future<Either<Failure, int>> fetchNotesCountByFolderId({required int folderId});
 
 }

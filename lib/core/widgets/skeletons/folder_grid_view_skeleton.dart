@@ -39,6 +39,7 @@ class FolderGridVewSkeleton extends StatelessWidget {
             child: FolderButton(
               color: AppColors.shimmer,
               folder: folder,
+              itemCount: 0,
               onTap: () {},
             ),
           );

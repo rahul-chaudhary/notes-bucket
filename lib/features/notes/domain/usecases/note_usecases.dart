@@ -73,6 +73,18 @@ class FetchAllNotes implements UseCase<List<NoteEntity>, FetchAllNotesParams> {
   }
 }
 
+class FetchNotesCountByFolderId implements UseCase<int, int> {
+  final NoteRepository repository;
+
+  FetchNotesCountByFolderId(this.repository);
+
+  @override
+  Future<Either<Failure, int>> call(int folderParentId) async {
+    return await repository.fetchNotesCountByFolderId(folderId: folderParentId);
+  }
+}
+
+
 
 class FetchAllNotesParams extends Equatable {
   final int limit;

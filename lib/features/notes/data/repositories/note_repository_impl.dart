@@ -84,4 +84,14 @@ class NoteRepositoryImpl implements NoteRepository {
       return Left(DatabaseFailure(e.message, st));
     }
   }
+
+  @override
+  Future<Either<Failure, int>> fetchNotesCountByFolderId({required int folderId}) async {
+    try {
+      final count = await noteLocalDataSource.fetchNotesCountByFolderId(folderId);
+      return Right(count);
+      } on DatabaseException catch (e, st) {
+      return Left(DatabaseFailure(e.message, st));
+    }
+  }
 }

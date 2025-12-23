@@ -14,9 +14,10 @@ import '../../theme/app_text_style.dart';
 class FolderButton extends ConsumerWidget {
   final Color? color;
   final FolderEntity folder;
+  final int itemCount;
   final VoidCallback onTap;
 
-  const FolderButton({this.color, super.key, required this.folder, required this.onTap});
+  const FolderButton({this.color, super.key, required this.folder, required this.onTap, required this.itemCount});
 
   void _showOptionsBottomSheet(BuildContext context, FolderController folderController) {
     showModalBottomSheet(
@@ -180,7 +181,7 @@ class FolderButton extends ConsumerWidget {
                 shape: BoxShape.circle,
                 color: Theme.of(context).colorScheme.onPrimary.withAlpha(200),
               ),
-              child: const Text('2'),
+              child: Text('$itemCount'),
             ),
           ),
         ],

@@ -20,13 +20,13 @@ import 'package:notes_bucket/features/notes/presentation/widgets/recent_notes.da
 
 class ViewAllPage extends HookConsumerWidget {
   final int? folderId;
+
   const ViewAllPage({super.key, this.folderId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentFolderID = useState(folderId);
     final pageOffset = useState(0);
-
 
     AsyncValue currentPathAsync = ref.watch(
       currentPathProvider(folderParentId: currentFolderID.value),
@@ -40,30 +40,37 @@ class ViewAllPage extends HookConsumerWidget {
       ),
     );
 
-    final notesAsync = ref.watch(fetchNotesByFolderIdProvider(currentFolderID.value));
+    final notesAsync = ref.watch(
+      fetchNotesByFolderIdProvider(currentFolderID.value),
+    );
 
     return Scaffold(
       body: CustomScrollView(
         slivers: [
           NotesAppBar(
-              title: 'View All',
-              onBackButtonPressed: () async {
-
-                if(currentFolderID.value == null){
-                  Navigator.of(context).pop();
-                  return;
-                } else {
-                  final selectedFolder = await ref.read(
-                      folderByIdProvider(currentFolderID.value!).future);
-                  currentFolderID.value = selectedFolder?.parentId;
-
-                }
-              }),
+            title: 'View All',
+            onBackButtonPressed: () async {
+              if (currentFolderID.value == null) {
+                Navigator.of(context).pop();
+                return;
+              } else {
+                final selectedFolder = await ref.read(
+                  folderByIdProvider(currentFolderID.value!).future,
+                );
+                currentFolderID.value = selectedFolder?.parentId;
+              }
+            },
+          ),
           SliverToBoxAdapter(child: Text('Path: ${currentPathAsync.value}')),
           SliverFillRemaining(
             child: Padding(
               padding: AppSpacing.paddingAllS,
-              child: _buildCombinedGrid(folderAsync, notesAsync, ref, currentFolderID),
+              child: _buildCombinedGrid(
+                folderAsync,
+                notesAsync,
+                ref,
+                currentFolderID,
+              ),
             ),
           ),
         ],
@@ -72,7 +79,8 @@ class ViewAllPage extends HookConsumerWidget {
         onPressed: () async {
           await showDialog(
             context: context,
-            builder: (context) => CreateFolderDialog(parentId: currentFolderID.value),
+            builder: (context) =>
+                CreateFolderDialog(parentId: currentFolderID.value),
           );
         },
       ),
@@ -80,11 +88,11 @@ class ViewAllPage extends HookConsumerWidget {
   }
 
   Widget _buildCombinedGrid(
-      AsyncValue folderAsync,
-      AsyncValue notesAsync,
-      WidgetRef ref,
-      ValueNotifier<int?> currentFolderId,
-      ) {
+    AsyncValue folderAsync,
+    AsyncValue notesAsync,
+    WidgetRef ref,
+    ValueNotifier<int?> currentFolderId,
+  ) {
     if (folderAsync.isLoading || notesAsync.isLoading) {
       return FolderGridVewSkeleton(itemCount: 20);
     }
@@ -92,10 +100,7 @@ class ViewAllPage extends HookConsumerWidget {
     if (folderAsync.hasError) {
       return AppErrorWidget(
         onRetry: () => ref.refresh(
-          rootFoldersProvider(
-            limit: AppConstants.folderPageLimit,
-            offset: 0,
-          ),
+          rootFoldersProvider(limit: AppConstants.folderPageLimit, offset: 0),
         ),
       );
     }
@@ -124,11 +129,20 @@ class ViewAllPage extends HookConsumerWidget {
         // Show folders first, then notes
         if (index < folders.length) {
           final FolderEntity folder = folders[index];
-          return FolderButton(
-            folder: folder,
-            onTap: () {
-              currentFolderId.value = folder.id;
-            },
+          final count = ref.watch(fetchNotesCountByFolderIdProvider(folder.id));
+          return count.when(
+            loading: () => const SizedBox(
+              width: 100,
+              child: Center(child: CircularProgressIndicator()),
+            ),
+            error: (error, stack) => ErrorWidget(error),
+            data: (value) => FolderButton(
+              folder: folder,
+              itemCount: value,
+              onTap: () {
+                currentFolderId.value = folder.id;
+              },
+            ),
           );
         } else {
           final NoteEntity note = notes[index - folders.length];
@@ -145,5 +159,4 @@ class ViewAllPage extends HookConsumerWidget {
       },
     );
   }
-
 }

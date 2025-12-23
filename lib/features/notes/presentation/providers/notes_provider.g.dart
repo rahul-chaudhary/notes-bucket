@@ -354,6 +354,55 @@ final class FetchAllNotesUseCaseProvider
 String _$fetchAllNotesUseCaseHash() =>
     r'743795adf8204e254207ce96e5ea7d81598390e5';
 
+@ProviderFor(fetchNotesCountByFolderIdUseCase)
+const fetchNotesCountByFolderIdUseCaseProvider =
+    FetchNotesCountByFolderIdUseCaseProvider._();
+
+final class FetchNotesCountByFolderIdUseCaseProvider
+    extends
+        $FunctionalProvider<
+          FetchNotesCountByFolderId,
+          FetchNotesCountByFolderId,
+          FetchNotesCountByFolderId
+        >
+    with $Provider<FetchNotesCountByFolderId> {
+  const FetchNotesCountByFolderIdUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'fetchNotesCountByFolderIdUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$fetchNotesCountByFolderIdUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<FetchNotesCountByFolderId> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  FetchNotesCountByFolderId create(Ref ref) {
+    return fetchNotesCountByFolderIdUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(FetchNotesCountByFolderId value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<FetchNotesCountByFolderId>(value),
+    );
+  }
+}
+
+String _$fetchNotesCountByFolderIdUseCaseHash() =>
+    r'45c3610bb922364ef097e788581a346f30f45142';
+
 @ProviderFor(NoteController)
 const noteControllerProvider = NoteControllerProvider._();
 
@@ -679,6 +728,104 @@ abstract class _$FetchAllNotesNotifier
             as $ClassProviderElement<
               AnyNotifier<AsyncValue<List<NoteEntity>>, List<NoteEntity>>,
               AsyncValue<List<NoteEntity>>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(FetchNotesCountByFolderIdNotifier)
+const fetchNotesCountByFolderIdProvider =
+    FetchNotesCountByFolderIdNotifierFamily._();
+
+final class FetchNotesCountByFolderIdNotifierProvider
+    extends $AsyncNotifierProvider<FetchNotesCountByFolderIdNotifier, int> {
+  const FetchNotesCountByFolderIdNotifierProvider._({
+    required FetchNotesCountByFolderIdNotifierFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'fetchNotesCountByFolderIdProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() =>
+      _$fetchNotesCountByFolderIdNotifierHash();
+
+  @override
+  String toString() {
+    return r'fetchNotesCountByFolderIdProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  FetchNotesCountByFolderIdNotifier create() =>
+      FetchNotesCountByFolderIdNotifier();
+
+  @override
+  bool operator ==(Object other) {
+    return other is FetchNotesCountByFolderIdNotifierProvider &&
+        other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$fetchNotesCountByFolderIdNotifierHash() =>
+    r'8099dd0ba9cd5793a316f13bc7631221b7120823';
+
+final class FetchNotesCountByFolderIdNotifierFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          FetchNotesCountByFolderIdNotifier,
+          AsyncValue<int>,
+          int,
+          FutureOr<int>,
+          int
+        > {
+  const FetchNotesCountByFolderIdNotifierFamily._()
+    : super(
+        retry: null,
+        name: r'fetchNotesCountByFolderIdProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  FetchNotesCountByFolderIdNotifierProvider call(int folderId) =>
+      FetchNotesCountByFolderIdNotifierProvider._(
+        argument: folderId,
+        from: this,
+      );
+
+  @override
+  String toString() => r'fetchNotesCountByFolderIdProvider';
+}
+
+abstract class _$FetchNotesCountByFolderIdNotifier extends $AsyncNotifier<int> {
+  late final _$args = ref.$arg as int;
+  int get folderId => _$args;
+
+  FutureOr<int> build(int folderId);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(_$args);
+    final ref = this.ref as $Ref<AsyncValue<int>, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<int>, int>,
+              AsyncValue<int>,
               Object?,
               Object?
             >;

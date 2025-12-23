@@ -14,6 +14,7 @@ import 'package:notes_bucket/core/widgets/notes_app_bar.dart';
 import 'package:notes_bucket/core/widgets/skeletons/folder_grid_view_skeleton.dart';
 import 'package:notes_bucket/features/notes/presentation/pages/view_all_page.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
+import 'package:notes_bucket/features/notes/presentation/providers/notes_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/create_folder_dialog.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/home_page_header.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/recent_notes.dart';
@@ -93,9 +94,7 @@ class HomePage extends ConsumerWidget {
   }
 
   Container myFolderListView(WidgetRef ref, BuildContext context) {
-    final rootFoldersAsync = ref.watch(
-      rootFoldersProvider(limit: 3, offset: 0),
-    );
+    final rootFoldersAsync = ref.watch(rootFoldersProvider(limit: 3, offset: 0));
     return Container(
       color: Colors.transparent,
       height: 120,
@@ -115,20 +114,31 @@ class HomePage extends ConsumerWidget {
                 physics: const BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
                   final folder = data[index];
-                  return FolderButton(
-                    folder: folder,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              ViewAllPage(folderId: folder.id),
-                        ),
-                      );
-                    },
+                  final count = ref.watch(
+                    fetchNotesCountByFolderIdProvider(folder.id),
                   );
-                },
-              ),
+
+                  return count.when(
+                    loading: () => const SizedBox(width: 100,
+                        child: Center(child: CircularProgressIndicator())),
+                    error: (error, stack) => ErrorWidget(error),
+                    data: (value) =>
+                        FolderButton(
+                          itemCount: value,
+                          folder: folder,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ViewAllPage(folderId: folder.id),
+                              ),
+                            );
+                          },
+                        ),
+                  );
+                }
+              )
       ),
     );
   }
