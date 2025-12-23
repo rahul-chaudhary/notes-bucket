@@ -5,6 +5,7 @@ import 'package:notes_bucket/core/constants/app_assets.dart';
 import 'package:notes_bucket/core/constants/app_routes.dart';
 import 'package:notes_bucket/core/theme/app_spacing.dart';
 import 'package:notes_bucket/core/theme/app_text_style.dart';
+import 'package:notes_bucket/core/widgets/buttons/app_elevated_button.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_fab.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_text_button.dart';
 import 'package:notes_bucket/core/widgets/buttons/folder_button.dart';
@@ -25,15 +26,12 @@ class HomePage extends ConsumerWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          NotesAppBar(title: 'Notes Bucket',isBackButtonVisible: false),
+          NotesAppBar(title: 'Notes Bucket', isBackButtonVisible: false),
           myFoldersSliverAppBar(context, ref),
           recentNoteSliverBox(context),
         ],
       ),
-      floatingActionButton: AppFab(
-        onPressed: () => Navigator.pushNamed(context, AppRoutes.editNotes),
-        child: Text('Add Note'),
-      ),
+      floatingActionButton: AppElevatedButton(),
     );
   }
 
@@ -84,7 +82,10 @@ class HomePage extends ConsumerWidget {
               height: MediaQuery.of(context).size.height * 1,
               child: const RecentNotes(),
             ),
-        InfoCard(message: 'You have reached the void\n\n', primaryImage: AppImages.playfulCat),
+            InfoCard(
+              message: 'You have reached the void\n\n',
+              primaryImage: AppImages.playfulCat,
+            ),
           ],
         ),
       ),
@@ -92,7 +93,9 @@ class HomePage extends ConsumerWidget {
   }
 
   Container myFolderListView(WidgetRef ref, BuildContext context) {
-    final rootFoldersAsync = ref.watch(rootFoldersProvider(limit: 3, offset: 0));
+    final rootFoldersAsync = ref.watch(
+      rootFoldersProvider(limit: 3, offset: 0),
+    );
     return Container(
       color: Colors.transparent,
       height: 120,
@@ -113,15 +116,16 @@ class HomePage extends ConsumerWidget {
                 itemBuilder: (context, index) {
                   final folder = data[index];
                   return FolderButton(
-                      folder: folder,
-                      onTap: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ViewAllPage(folderId: folder.id),
-                          ),
-                        );
-                      },
+                    folder: folder,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ViewAllPage(folderId: folder.id),
+                        ),
+                      );
+                    },
                   );
                 },
               ),

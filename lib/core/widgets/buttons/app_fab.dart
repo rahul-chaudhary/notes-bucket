@@ -10,6 +10,7 @@ class AppFab extends StatelessWidget {
     return FloatingActionButton(
       backgroundColor: Theme.of(context).colorScheme.secondary,
       onPressed: onPressed,
+      
       child: child ?? Icon(
         Icons.add,
         color: Theme.of(context).colorScheme.onSecondary,
