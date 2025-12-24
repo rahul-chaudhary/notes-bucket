@@ -164,8 +164,8 @@ class HomePage extends ConsumerWidget {
           icon: AppContainer(
               outerPadding: const EdgeInsets.all(0),
               innerPadding: const EdgeInsets.all(2),
-              borderRadius: 20,
-              child: const Icon(Icons.add_rounded)),
+              borderRadius: 12,
+              child: Icon(Icons.add_rounded, color: Theme.of(context).colorScheme.onSurface,)),
         ),
       ],
     );

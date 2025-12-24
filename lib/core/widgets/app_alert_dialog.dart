@@ -24,9 +24,10 @@ class AppAlertDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return AlertDialog(
       title: dialogHeader,
-      backgroundColor: Theme.of(context).cardColor,
+      backgroundColor: theme.cardColor,
       content: content,
       actions: [
         TextButton(

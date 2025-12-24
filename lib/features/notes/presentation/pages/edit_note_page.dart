@@ -115,7 +115,7 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
           borderRadius: BorderRadius.circular(20),
           onTap: () async => await _handleSaveNote(noteController),
           child: AppContainer(
-            borderRadius: 20,
+            borderRadius: 12,
             child: Icon(Icons.save_rounded, color: Theme.of(context).colorScheme.secondary),
           ),
         ),
@@ -143,7 +143,7 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
 
   Widget _buildPopUpMenu(NoteController noteController) {
     return PopupMenuButton<EditNoteMenuOptions>(
-      icon: const Icon(Icons.more_vert_rounded),
+      icon: Icon(Icons.more_vert_rounded, color: Theme.of(context).colorScheme.onSurface,),
       onSelected: (value) async {
         switch(value) {
           case EditNoteMenuOptions.delete:

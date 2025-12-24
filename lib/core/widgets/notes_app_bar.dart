@@ -6,17 +6,26 @@ class NotesAppBar extends ConsumerWidget {
   final String title;
   final bool isBackButtonVisible;
   final VoidCallback? onBackButtonPressed;
-  const NotesAppBar({super.key, required this.title, this.isBackButtonVisible = true, this.onBackButtonPressed });
+  const NotesAppBar({
+    super.key,
+    required this.title,
+    this.isBackButtonVisible = true,
+    this.onBackButtonPressed,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     return SliverAppBar(
       automaticallyImplyLeading: false,
       pinned: false,
       backgroundColor: Colors.transparent,
       leading: isBackButtonVisible
           ? IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new_rounded),
+        icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+          color: theme.colorScheme.onSurface,
+        ),
         onPressed: onBackButtonPressed ?? () => Navigator.of(context).pop(),
       )
           : null,
