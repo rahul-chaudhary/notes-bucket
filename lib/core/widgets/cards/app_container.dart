@@ -23,7 +23,7 @@ class AppContainer extends StatelessWidget {
       child: Container(
         padding: innerPadding,
         decoration: BoxDecoration(
-          color: color,
+          color: Colors.white10.withAlpha(10),
           borderRadius: BorderRadius.circular(borderRadius),
           border: Border.all(
             color: Colors.white24,
