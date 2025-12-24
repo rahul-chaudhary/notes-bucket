@@ -115,10 +115,11 @@ class FolderTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondary,
+        color: theme.colorScheme.secondary,
         borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
@@ -127,14 +128,14 @@ class FolderTag extends StatelessWidget {
           Icon(
             Icons.folder_open_rounded,
             size: 10,
-            color: Theme.of(context).colorScheme.onSecondary,
+            color: theme.colorScheme.onSecondary,
           ),
           AppSpacing.gapXS,
           Text(
             folderName,
             style: AppTextStyles.bodyXSmall(
               context,
-            ).copyWith(color: Theme.of(context).colorScheme.onSecondary),
+            ).copyWith(color: theme.colorScheme.onSecondary),
           ),
         ],
       ),

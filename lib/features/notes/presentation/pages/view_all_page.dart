@@ -129,7 +129,6 @@ class ViewAllPage extends HookConsumerWidget {
     if (totalItems == 0) {
       return InfoCard(
         message: 'Nothing here!',
-        primaryImage: AppImages.confusedCat,
       );
     }
 

@@ -7,10 +7,11 @@ class AppElevatedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: theme.colorScheme.primary,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(12)),
         ),
@@ -18,7 +19,7 @@ class AppElevatedButton extends StatelessWidget {
       onPressed: () => Navigator.pushNamed(context, AppRoutes.editNotes),
       child: Text(
         'Create Note',
-        style: AppTextStyles.button(context).copyWith(color: Theme.of(context).colorScheme.onSecondary),
+        style: AppTextStyles.button(context).copyWith(color: theme.colorScheme.onPrimary),
       ),
     );
   }

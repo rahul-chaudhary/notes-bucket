@@ -4,12 +4,12 @@ import 'package:notes_bucket/core/theme/app_text_style.dart';
 
 class InfoCard extends StatelessWidget {
   final String message;
-  final String primaryImage;
+  final String? primaryImage;
 
   const InfoCard({
     super.key,
     required this.message,
-    required this.primaryImage,
+    this.primaryImage,
   });
 
   @override
@@ -18,9 +18,10 @@ class InfoCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
+        if (primaryImage != null)
         Padding(
           padding: AppSpacing.paddingAllM,
-          child: Image.asset(primaryImage, height: 150),
+          child: Image.asset(primaryImage!, height: 150),
         ),
         Text(message, style: AppTextStyles.headlineSmall(context)),
       ],

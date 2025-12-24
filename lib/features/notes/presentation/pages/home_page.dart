@@ -90,7 +90,6 @@ class HomePage extends ConsumerWidget {
             ),
             InfoCard(
               message: 'You have reached the void\n\n',
-              primaryImage: AppImages.playfulCat,
             ),
           ],
         ),

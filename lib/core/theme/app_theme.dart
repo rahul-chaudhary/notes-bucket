@@ -6,6 +6,8 @@ class AppTheme {
 
     colorScheme: ColorScheme.fromSeed(
         seedColor: _AppThemeCommon.seedColor,
+        primary: _AppThemeCommon.primaryColor,
+        secondary: _AppThemeCommon.secondaryColor,
         brightness: Brightness.light,
         error: _AppThemeCommon.errorColor,
     ),
@@ -20,6 +22,8 @@ class AppTheme {
   static ThemeData darkTheme = ThemeData(
     colorScheme: ColorScheme.fromSeed(
       seedColor: _AppThemeCommon.seedColor,
+      primary: _AppThemeCommon.primaryColor,
+      secondary: _AppThemeCommon.secondaryColor,
       brightness: Brightness.dark,
       error: _AppThemeCommon.errorColor,
     ),
@@ -34,6 +38,8 @@ class AppTheme {
 
 abstract final class _AppThemeCommon {
   static const seedColor = Colors.amber;
+  static const primaryColor = Color(0xff2995e6);
+  static const secondaryColor = Color(0xffddfc73);
   static final errorColor = Colors.red.shade500;
   static final splashColor = Colors.blue.withAlpha(30);
   static const cardColor = Colors.white10;
