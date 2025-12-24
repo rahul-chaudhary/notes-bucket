@@ -6,6 +6,7 @@ class AppAlertDialog extends StatelessWidget {
   final Widget dialogHeader;
   final String primaryButtonText;
   final Color primaryButtonColor;
+  final Color primaryBtnTextColor;
   final String secondaryButtonText;
   final VoidCallback onPressPrimary;
   final VoidCallback onPressSecondary;
@@ -16,6 +17,7 @@ class AppAlertDialog extends StatelessWidget {
     required this.dialogHeader,
     required this.primaryButtonText,
     required this.primaryButtonColor,
+    required this.primaryBtnTextColor,
     required this.secondaryButtonText,
     required this.onPressPrimary,
     required this.onPressSecondary,
@@ -39,7 +41,7 @@ class AppAlertDialog extends StatelessWidget {
           style: FilledButton.styleFrom(
             backgroundColor: primaryButtonColor,
           ),
-          child: Text(primaryButtonText),
+          child: Text(primaryButtonText, style: AppTextStyles.bodyMedium(context).copyWith(color: primaryBtnTextColor),),
         ),
       ],
     );

@@ -54,6 +54,7 @@ class SelectFolderDialog extends HookConsumerWidget {
         ],
       ),
       primaryButtonText: 'Save Here',
+      primaryBtnTextColor: Colors.white,
       primaryButtonColor: currentFolderId.value != null
           ? Theme.of(context).colorScheme.primary
           : Theme.of(context).disabledColor,

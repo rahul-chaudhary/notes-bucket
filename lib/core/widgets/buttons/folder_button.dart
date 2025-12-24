@@ -129,6 +129,7 @@ class FolderButton extends ConsumerWidget {
       builder: (context) => AppAlertDialog(
         dialogHeader: Text('Delete Folder'),
         primaryButtonText: 'Delete',
+        primaryBtnTextColor: Colors.white,
         primaryButtonColor: Theme.of(context).colorScheme.error,
         secondaryButtonText: 'Cancel',
         onPressPrimary: () {

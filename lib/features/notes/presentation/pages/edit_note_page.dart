@@ -54,6 +54,7 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
       builder: (context) => AppAlertDialog(
         dialogHeader: Text('Discard Changes?'),
         primaryButtonText: 'Discard',
+        primaryBtnTextColor: Theme.of(context).colorScheme.onSecondary,
         primaryButtonColor: Theme.of(context).colorScheme.secondary,
         secondaryButtonText: 'Cancel',
         onPressPrimary: () {
@@ -143,6 +144,7 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
 
   Widget _buildPopUpMenu(NoteController noteController) {
     return PopupMenuButton<EditNoteMenuOptions>(
+      color: Theme.of(context).cardColor,
       icon: Icon(Icons.more_vert_rounded, color: Theme.of(context).colorScheme.onSurface,),
       onSelected: (value) async {
         switch(value) {
@@ -153,7 +155,8 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
                 builder: (context) => AppAlertDialog(
                   dialogHeader: const Text('Delete Note?'),
                   primaryButtonText: 'Delete',
-                  primaryButtonColor: Colors.red,
+                  primaryButtonColor: Colors.red.shade500,
+                  primaryBtnTextColor: Colors.white,
                   secondaryButtonText: 'Cancel',
                   onPressPrimary: () => Navigator.of(context).pop(true),
                   onPressSecondary: () => Navigator.of(context).pop(false),
@@ -185,6 +188,7 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
       itemBuilder: (context) => [
         PopupMenuItem(
           value: EditNoteMenuOptions.delete,
+
           enabled: note != null,
           child: const Row(
             children: [

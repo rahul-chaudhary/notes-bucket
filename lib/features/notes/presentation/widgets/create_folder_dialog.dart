@@ -28,6 +28,7 @@ class CreateFolderDialog extends HookConsumerWidget {
     return AppAlertDialog(
       dialogHeader: Text('Create New Folder'),
       primaryButtonText: 'Create',
+      primaryBtnTextColor: Colors.white,
       primaryButtonColor: textEmpty
           ? Theme.of(context).disabledColor
           : Theme.of(context).colorScheme.primary,
