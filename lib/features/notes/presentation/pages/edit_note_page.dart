@@ -5,6 +5,7 @@ import 'package:notes_bucket/core/theme/app_spacing.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
 import 'package:notes_bucket/core/widgets/app_snackbar.dart';
+import 'package:notes_bucket/core/widgets/cards/app_container.dart';
 import 'package:notes_bucket/features/notes/domain/entities/note_entity.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/notes_provider.dart';
@@ -110,11 +111,13 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
         onPressed: () => _handleBackNavigation(),
       ),
       actions: [
-        IconButton(
-          onPressed: () async => await _handleSaveNote(noteController),
-          disabledColor: Theme.of(context).disabledColor,
-          tooltip: 'Save Note',
-          icon: Icon(Icons.save_rounded, color: Theme.of(context).primaryColor),
+        InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: () async => await _handleSaveNote(noteController),
+          child: AppContainer(
+            borderRadius: 20,
+            child: Icon(Icons.save_rounded, color: Theme.of(context).colorScheme.secondary),
+          ),
         ),
         _buildPopUpMenu(noteController),
       ],

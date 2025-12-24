@@ -36,7 +36,10 @@ class HomePage extends ConsumerWidget {
             recentNoteSliverBox(context),
           ],
         ),
-        floatingActionButton: AppElevatedButton(),
+        floatingActionButton: Padding(
+          padding: AppSpacing.paddingAllS,
+          child: AppElevatedButton(),
+        ),
       ),
     );
   }
