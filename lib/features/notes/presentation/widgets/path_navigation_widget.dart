@@ -16,6 +16,7 @@ class PathNavigationWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return SizedBox(
       height: 50,
       child: SingleChildScrollView(
@@ -32,9 +33,11 @@ class PathNavigationWidget extends StatelessWidget {
 
             // Folders in path
             ...folders.expand((folder) => [
-              const Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(horizontal: 4.0),
-                child: Icon(Icons.arrow_forward_ios_rounded, size: 12),
+                child: Icon(Icons.arrow_forward_ios_rounded,
+                  size: 12,
+                  color: theme.colorScheme.onSurface ),
               ),
               _buildPathButton(
                 context: context,

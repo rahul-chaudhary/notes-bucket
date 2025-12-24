@@ -17,9 +17,18 @@ class FolderButton extends ConsumerWidget {
   final int itemCount;
   final VoidCallback onTap;
 
-  const FolderButton({this.color, super.key, required this.folder, required this.onTap, required this.itemCount});
+  const FolderButton({
+    this.color,
+    super.key,
+    required this.folder,
+    required this.onTap,
+    required this.itemCount,
+  });
 
-  void _showOptionsBottomSheet(BuildContext context, FolderController folderController) {
+  void _showOptionsBottomSheet(
+    BuildContext context,
+    FolderController folderController,
+  ) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Theme.of(context).cardColor,
@@ -56,8 +65,13 @@ class FolderButton extends ConsumerWidget {
     );
   }
 
-  void _showRenameDialog(BuildContext context, FolderController folderController) {
-    final TextEditingController controller = TextEditingController(text: folder.name);
+  void _showRenameDialog(
+    BuildContext context,
+    FolderController folderController,
+  ) {
+    final TextEditingController controller = TextEditingController(
+      text: folder.name,
+    );
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -81,17 +95,20 @@ class FolderButton extends ConsumerWidget {
               final newName = controller.text.trim();
               try {
                 await folderController.rename(folder, newName);
-                if(context.mounted) {
-                  AppSnackBar.showSuccess(context, '"${folder.name}" renamed to "$newName" successfully!');
+                if (context.mounted) {
+                  AppSnackBar.showSuccess(
+                    context,
+                    '"${folder.name}" renamed to "$newName" successfully!',
+                  );
                 }
-              } catch(e,st) {
-                if(context.mounted) {
+              } catch (e, st) {
+                if (context.mounted) {
                   AppSnackBar.showError(context, 'Failed to rename folder: $e');
                 }
-                dbPrint('Failed to rename the folder',e: e, st: st);
+                dbPrint('Failed to rename the folder', e: e, st: st);
                 rethrow;
               } finally {
-                if(context.mounted) {
+                if (context.mounted) {
                   Navigator.pop(context);
                 }
               }
@@ -103,32 +120,38 @@ class FolderButton extends ConsumerWidget {
     );
   }
 
-  void _showDeleteConfirmation(BuildContext context, FolderController folderController) {
+  void _showDeleteConfirmation(
+    BuildContext context,
+    FolderController folderController,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AppAlertDialog(
-          dialogHeader: Text('Delete Folder'),
-          primaryButtonText: 'Delete',
-          primaryButtonColor: Theme.of(context).colorScheme.error,
-          secondaryButtonText: 'Cancel',
-          onPressPrimary: () {
-            try{
-              folderController.delete(folder.id, folder.parentId);
-              AppSnackBar.showSuccess(context, '"${folder.name}" deleted successfully!');
-            } catch(e,st) {
-              AppSnackBar.showError(context, 'Failed to delete folder: $e');
-              dbPrint('Failed to delete the folder',e: e, st: st);
-              rethrow;
-            } finally {
-              Navigator.pop(context);
-            }
-          },
-          onPressSecondary: () {
+        dialogHeader: Text('Delete Folder'),
+        primaryButtonText: 'Delete',
+        primaryButtonColor: Theme.of(context).colorScheme.error,
+        secondaryButtonText: 'Cancel',
+        onPressPrimary: () {
+          try {
+            folderController.delete(folder.id, folder.parentId);
+            AppSnackBar.showSuccess(
+              context,
+              '"${folder.name}" deleted successfully!',
+            );
+          } catch (e, st) {
+            AppSnackBar.showError(context, 'Failed to delete folder: $e');
+            dbPrint('Failed to delete the folder', e: e, st: st);
+            rethrow;
+          } finally {
             Navigator.pop(context);
-          },
-          content: Text(
-            'Are you sure you want to delete "${folder.name}"? This action cannot be undone.',
-          ),
+          }
+        },
+        onPressSecondary: () {
+          Navigator.pop(context);
+        },
+        content: Text(
+          'Are you sure you want to delete "${folder.name}"? This action cannot be undone.',
+        ),
       ),
     );
   }
@@ -150,13 +173,11 @@ class FolderButton extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SvgPicture.asset(
-                    AppSvgs.blueMacFolder,
-                    colorFilter: color != null ?
-                    ColorFilter.mode(
-                      color!,
-                      BlendMode.srcIn,
-                    ): null,
-                    height: 100,
+                  AppSvgs.blueMacFolder,
+                  colorFilter: color != null
+                      ? ColorFilter.mode(color!, BlendMode.srcIn)
+                      : null,
+                  height: 100,
                   clipBehavior: Clip.none,
                 ),
                 Flexible(
@@ -176,12 +197,17 @@ class FolderButton extends ConsumerWidget {
             top: 10,
             left: 18,
             child: Container(
-              padding: const EdgeInsets.all(4),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Theme.of(context).colorScheme.onPrimary.withAlpha(200),
+                color: Colors.white54,
               ),
-              child: Text('$itemCount'),
+              child: Text(
+                '$itemCount',
+                style: AppTextStyles.bodySmall(
+                  context,
+                ).copyWith(color: Colors.black),
+              ),
             ),
           ),
         ],
