@@ -54,7 +54,7 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
       builder: (context) => AppAlertDialog(
         dialogHeader: Text('Discard Changes?'),
         primaryButtonText: 'Discard',
-        primaryButtonColor: Theme.of(context).primaryColor,
+        primaryButtonColor: Theme.of(context).colorScheme.secondary,
         secondaryButtonText: 'Cancel',
         onPressPrimary: () {
           Navigator.of(context).pop();

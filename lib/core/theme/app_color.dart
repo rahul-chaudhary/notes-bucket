@@ -10,7 +10,9 @@ abstract final class AppGradient {
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
       colors: [
-        Color(0xff00076e),
+        Color(0xff000746),
         Color(0xff050303),
       ] );
 }
+
+//0xff006e2c
