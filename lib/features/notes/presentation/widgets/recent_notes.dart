@@ -54,17 +54,20 @@ class NoteItemWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     final noteFolderAsync = ref.watch(folderByIdProvider(note.folderId));
     return InkWell(
+      borderRadius: BorderRadius.circular(12),
       onTap: onTap,
-      splashColor: Colors.amber.withAlpha(100),
+      splashColor: theme.splashColor,
       child: Container(
         height: (note.content?.length ?? 0) > 100 ? 150 : 100,
         padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
         decoration: BoxDecoration(
+          color: Colors.white10,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: Theme.of(context).colorScheme.outline.withAlpha(50),
+            color: theme.colorScheme.outline.withAlpha(50),
             width: 1,
           ),
         ),

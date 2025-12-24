@@ -12,11 +12,11 @@ class NotesAppBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return SliverAppBar(
       automaticallyImplyLeading: false,
-      pinned: true,
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      pinned: false,
+      backgroundColor: Colors.transparent,
       leading: isBackButtonVisible
           ? IconButton(
-        icon: const Icon(Icons.arrow_back),
+        icon: const Icon(Icons.arrow_back_ios_new_rounded),
         onPressed: onBackButtonPressed ?? () => Navigator.of(context).pop(),
       )
           : null,

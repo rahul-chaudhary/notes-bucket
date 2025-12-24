@@ -61,13 +61,12 @@ class PathNavigationWidget extends StatelessWidget {
       onPressed: onPressed,
       style: TextButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        backgroundColor: isSelected ? Colors.white10: null,
       ),
       child: Text(
         label,
         style: AppTextStyles.bodyMedium(context).copyWith(
-          color: isSelected
-              ? Theme.of(context).primaryColor
-              : Theme.of(context).textTheme.bodyMedium?.color,
+          color: Theme.of(context).textTheme.bodyMedium?.color,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),

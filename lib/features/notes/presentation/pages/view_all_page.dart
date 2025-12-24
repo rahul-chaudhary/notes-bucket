@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:notes_bucket/core/constants/app_assets.dart';
 import 'package:notes_bucket/core/constants/app_constants.dart';
+import 'package:notes_bucket/core/theme/app_color.dart';
 import 'package:notes_bucket/core/theme/app_spacing.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_fab.dart';
 import 'package:notes_bucket/core/widgets/cards/info_card.dart';
@@ -45,54 +46,60 @@ class ViewAllPage extends HookConsumerWidget {
       fetchNotesByFolderIdProvider(currentFolderID.value),
     );
 
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          NotesAppBar(
-            title: 'View All',
-            onBackButtonPressed: () async {
-              if (currentFolderID.value == null) {
-                Navigator.of(context).pop();
-                return;
-              } else {
-                final selectedFolder = await ref.read(
-                  folderByIdProvider(currentFolderID.value!).future,
-                );
-                currentFolderID.value = selectedFolder?.parentId;
-              }
-            },
-          ),
-          // SliverToBoxAdapter(child: Text('Path: ${currentPathAsync.value}')),
-          SliverToBoxAdapter(
-            child: PathNavigationWidget(
-              folders: currentPathAsync.value ?? [],
-              selectedFolderId: currentFolderID.value,
-              onPathSelected: (id) {
-                currentFolderID.value = id;
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppGradient.scaffoldBackground,
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: CustomScrollView(
+          slivers: [
+            NotesAppBar(
+              title: 'View All',
+              onBackButtonPressed: () async {
+                if (currentFolderID.value == null) {
+                  Navigator.of(context).pop();
+                  return;
+                } else {
+                  final selectedFolder = await ref.read(
+                    folderByIdProvider(currentFolderID.value!).future,
+                  );
+                  currentFolderID.value = selectedFolder?.parentId;
+                }
               },
             ),
-          ),
-          SliverFillRemaining(
-            child: Padding(
-              padding: AppSpacing.paddingAllS,
-              child: _buildCombinedGrid(
-                folderAsync,
-                notesAsync,
-                ref,
-                currentFolderID,
+            // SliverToBoxAdapter(child: Text('Path: ${currentPathAsync.value}')),
+            SliverToBoxAdapter(
+              child: PathNavigationWidget(
+                folders: currentPathAsync.value ?? [],
+                selectedFolderId: currentFolderID.value,
+                onPathSelected: (id) {
+                  currentFolderID.value = id;
+                },
               ),
             ),
-          ),
-        ],
-      ),
-      floatingActionButton: AppFab(
-        onPressed: () async {
-          await showDialog(
-            context: context,
-            builder: (context) =>
-                CreateFolderDialog(parentId: currentFolderID.value),
-          );
-        },
+            SliverFillRemaining(
+              child: Padding(
+                padding: AppSpacing.paddingAllS,
+                child: _buildCombinedGrid(
+                  folderAsync,
+                  notesAsync,
+                  ref,
+                  currentFolderID,
+                ),
+              ),
+            ),
+          ],
+        ),
+        floatingActionButton: AppFab(
+          onPressed: () async {
+            await showDialog(
+              context: context,
+              builder: (context) =>
+                  CreateFolderDialog(parentId: currentFolderID.value),
+            );
+          },
+        ),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:notes_bucket/core/theme/app_color.dart';
 import 'package:notes_bucket/core/theme/app_spacing.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
@@ -80,15 +81,20 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
   @override
   Widget build(BuildContext context) {
     final noteController = ref.read(noteControllerProvider.notifier);
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: _buildAppBar(context, noteController),
-      body: PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (didPop, result) {
-          if (!didPop) _handleBackNavigation();
-        },
-        child: _buildBody(context),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppGradient.scaffoldBackground,
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: _buildAppBar(context, noteController),
+        body: PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) {
+            if (!didPop) _handleBackNavigation();
+          },
+          child: _buildBody(context),
+        ),
       ),
     );
   }
@@ -96,6 +102,7 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
   AppBar _buildAppBar(BuildContext context, NoteController noteController) {
     return AppBar(
       title: const Text('Edit Note'),
+      backgroundColor: Colors.transparent,
       centerTitle: true,
       automaticallyImplyLeading: false,
       leading: IconButton(

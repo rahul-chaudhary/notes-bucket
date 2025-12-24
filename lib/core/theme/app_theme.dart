@@ -5,51 +5,44 @@ class AppTheme {
   static ThemeData lightTheme = ThemeData(
 
     colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.amber,
+        seedColor: _AppThemeCommon.seedColor,
         brightness: Brightness.light,
-        primary: Colors.amber,
-        secondary: Colors.blueAccent,
-        error: Colors.red.shade500,
+        error: _AppThemeCommon.errorColor,
     ),
     brightness: Brightness.light,
-    primarySwatch: Colors.amber,
-    scaffoldBackgroundColor: Colors.white,
-    splashColor: Colors.amber.withAlpha(30),
-    // fontFamily: "Inter",
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.transparent,
-      surfaceTintColor: Colors.transparent,
-    ),
+    splashColor: _AppThemeCommon.splashColor,
+    fontFamily: "Inter",
     cardColor: Colors.white,
     dividerColor: Colors.grey.shade300,
-    shadowColor: Colors.grey.withAlpha(50),
-    textSelectionTheme: const TextSelectionThemeData(
-      cursorColor: Colors.amber,
-      selectionHandleColor: Colors.amber,
-    ),
+    textSelectionTheme: _AppThemeCommon.textSelectionTheme,
   );
 
   static ThemeData darkTheme = ThemeData(
     colorScheme: ColorScheme.fromSeed(
-      seedColor: Colors.amber,
+      seedColor: _AppThemeCommon.seedColor,
       brightness: Brightness.dark,
-      primary: Colors.amber,
-      secondary: Colors.blueAccent,
-      error: Colors.red.shade500,
+      error: _AppThemeCommon.errorColor,
     ),
     brightness: Brightness.dark,
     fontFamily: "Inter",
-    scaffoldBackgroundColor: Colors.black87,
-    splashColor: Colors.amber.withAlpha(30),
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Color(0xFF0b1014),
-      surfaceTintColor: Color(0xFF0b1014),
-    ),
-    cardColor: const Color(0xFF222222),
+    splashColor: _AppThemeCommon.splashColor,
     dividerColor: Colors.grey.shade700.withAlpha(50),
-    textSelectionTheme: const TextSelectionThemeData(
-      cursorColor: Colors.amber,
-      selectionHandleColor: Colors.amber,
-    ),
+    textSelectionTheme: _AppThemeCommon.textSelectionTheme,
   );
+}
+
+
+abstract final class _AppThemeCommon {
+  static const seedColor = Colors.amber;
+  static final errorColor = Colors.red.shade500;
+  static final splashColor = Colors.blue.withAlpha(30);
+  static const cardColor = Colors.white10;
+
+
+  static const textSelectionTheme = TextSelectionThemeData(
+    cursorColor: Colors.amber,
+    selectionHandleColor: Colors.amber,
+  );
+
+
 }

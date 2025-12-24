@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:notes_bucket/core/constants/app_assets.dart';
 import 'package:notes_bucket/core/constants/app_routes.dart';
+import 'package:notes_bucket/core/theme/app_color.dart';
 import 'package:notes_bucket/core/theme/app_spacing.dart';
 import 'package:notes_bucket/core/theme/app_text_style.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_elevated_button.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_text_button.dart';
 import 'package:notes_bucket/core/widgets/buttons/folder_button.dart';
+import 'package:notes_bucket/core/widgets/cards/app_container.dart';
 import 'package:notes_bucket/core/widgets/cards/info_card.dart';
 import 'package:notes_bucket/core/widgets/notes_app_bar.dart';
 import 'package:notes_bucket/core/widgets/skeletons/folder_grid_view_skeleton.dart';
@@ -21,15 +23,21 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          NotesAppBar(title: 'Notes Bucket', isBackButtonVisible: false),
-          myFoldersSliverAppBar(context, ref),
-          recentNoteSliverBox(context),
-        ],
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppGradient.scaffoldBackground,
       ),
-      floatingActionButton: AppElevatedButton(),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: CustomScrollView(
+          slivers: [
+            NotesAppBar(title: 'Notes Bucket', isBackButtonVisible: false),
+            myFoldersSliverAppBar(context, ref),
+            recentNoteSliverBox(context),
+          ],
+        ),
+        floatingActionButton: AppElevatedButton(),
+      ),
     );
   }
 
@@ -38,17 +46,16 @@ class HomePage extends ConsumerWidget {
       automaticallyImplyLeading: false,
       pinned: false,
       floating: true,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      expandedHeight: 190,
+      backgroundColor: Colors.transparent,
+      expandedHeight: 230,
       toolbarHeight: 0,
       flexibleSpace: FlexibleSpaceBar(
-        background: Padding(
-          padding: AppSpacing.paddingAllS,
+        background: AppContainer(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               myFolderHeader(context),
-              myFolderListView(ref, context),
+              Expanded(child: Center(child: myFolderListView(ref, context))),
               viewAllButton(context),
             ],
           ),
@@ -61,21 +68,22 @@ class HomePage extends ConsumerWidget {
   Align viewAllButton(BuildContext context) {
     return Align(
       alignment: Alignment.centerRight,
-      child: AppTextButton(
-        onPressed: () {
-          Navigator.pushNamed(context, AppRoutes.viewAll);
-        },
-      ),
+      child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: () => Navigator.pushNamed(context, AppRoutes.viewAll),
+          child: AppContainer(
+            child: Text('View All'),
+          )),
     );
   }
 
   SliverToBoxAdapter recentNoteSliverBox(BuildContext context) {
     return SliverToBoxAdapter(
-      child: Padding(
-        padding: AppSpacing.paddingAllS,
+      child: AppContainer(
         child: Column(
           children: [
             HomePageHeader(title: 'Recent Notes'),
+            const SizedBox(height: 15),
             SizedBox(
               height: MediaQuery.of(context).size.height * 1,
               child: const RecentNotes(),
@@ -93,8 +101,8 @@ class HomePage extends ConsumerWidget {
   Container myFolderListView(WidgetRef ref, BuildContext context) {
     final rootFoldersAsync = ref.watch(rootFoldersProvider(limit: 3, offset: 0));
     return Container(
-      color: Colors.transparent,
-      height: 120,
+      padding: AppSpacing.verticalS,
+      height: 160,
       child: rootFoldersAsync.when(
         loading: () => FolderGridVewSkeleton(itemCount: 3),
         error: (error, stack) => Center(child: Text('Error: $error')),
@@ -108,6 +116,7 @@ class HomePage extends ConsumerWidget {
             : ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: data.length,
+                shrinkWrap: true,
                 physics: const BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
                   final folder = data[index];
@@ -141,7 +150,7 @@ class HomePage extends ConsumerWidget {
   Row myFolderHeader(BuildContext context) {
     return Row(
       children: [
-        HomePageHeader(title: 'My Folders'),
+        HomePageHeader(title: 'Folders'),
         const Spacer(),
         IconButton(
           onPressed: () async {
@@ -150,7 +159,11 @@ class HomePage extends ConsumerWidget {
               builder: (context) => CreateFolderDialog(parentId: null),
             );
           },
-          icon: const Icon(Icons.add_circle_rounded),
+          icon: AppContainer(
+              outerPadding: const EdgeInsets.all(0),
+              innerPadding: const EdgeInsets.all(2),
+              borderRadius: 20,
+              child: const Icon(Icons.add_rounded)),
         ),
       ],
     );
