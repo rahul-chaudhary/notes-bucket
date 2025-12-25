@@ -170,6 +170,7 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
                 try {
                   await noteController.deleteNote(note!.id);
                   ref.invalidate(fetchAllNotesProvider);
+                  ref.invalidate(totalItemsCountProvider);
                   if (context.mounted) {
                     AppSnackBar.showSuccess(context, 'Note deleted successfully');
                     Navigator.of(context).pop();
