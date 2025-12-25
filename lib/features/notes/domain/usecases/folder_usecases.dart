@@ -8,6 +8,7 @@ import '../repositories/folder_repo.dart';
 class CreateFolderParams {
   final String name;
   final int? parentId;
+
   CreateFolderParams({required this.name, this.parentId});
 }
 
@@ -19,15 +20,15 @@ class CreateFolder implements UseCase<FolderEntity, CreateFolderParams> {
   @override
   Future<Either<Failure, FolderEntity>> call(CreateFolderParams params) async {
     final exists = await repository.folderExists(params.parentId, params.name);
-    return exists.fold(
-          (l) => Left(l),
-          (r) {
-        if (r == true) {
-          return Left(ValidationFailure('Folder name already exists'));
-        }
-        return repository.createFolder(name: params.name, parentId: params.parentId);
-      },
-    );
+    return exists.fold((l) => Left(l), (r) {
+      if (r == true) {
+        return Left(ValidationFailure('Folder name already exists'));
+      }
+      return repository.createFolder(
+        name: params.name,
+        parentId: params.parentId,
+      );
+    });
   }
 }
 
@@ -38,14 +39,20 @@ class FetchRootFoldersParams {
   FetchRootFoldersParams({required this.limit, required this.offset});
 }
 
-class FetchRootFolders implements UseCase<List<FolderEntity>, FetchRootFoldersParams> {
+class FetchRootFolders
+    implements UseCase<List<FolderEntity>, FetchRootFoldersParams> {
   final FolderRepository repository;
 
   FetchRootFolders(this.repository);
 
   @override
-  Future<Either<Failure, List<FolderEntity>>> call(FetchRootFoldersParams params) {
-    return repository.fetchRootFolders(limit: params.limit, offset: params.offset);
+  Future<Either<Failure, List<FolderEntity>>> call(
+    FetchRootFoldersParams params,
+  ) {
+    return repository.fetchRootFolders(
+      limit: params.limit,
+      offset: params.offset,
+    );
   }
 }
 
@@ -61,13 +68,16 @@ class FetchFoldersByParentIdParams {
   });
 }
 
-class FetchFoldersByParentId implements UseCase<List<FolderEntity>, FetchFoldersByParentIdParams> {
+class FetchFoldersByParentId
+    implements UseCase<List<FolderEntity>, FetchFoldersByParentIdParams> {
   final FolderRepository repository;
 
   FetchFoldersByParentId(this.repository);
 
   @override
-  Future<Either<Failure, List<FolderEntity>>> call(FetchFoldersByParentIdParams params) {
+  Future<Either<Failure, List<FolderEntity>>> call(
+    FetchFoldersByParentIdParams params,
+  ) {
     return repository.fetchFoldersByParentId(
       parentId: params.parentId,
       limit: params.limit,
@@ -82,8 +92,14 @@ class DeleteFolder implements UseCase<void, int> {
   DeleteFolder(this.repository);
 
   @override
-  Future<Either<Failure, void>> call(int params) {
-    return repository.deleteFolder(params);
+  Future<Either<Failure, void>> call(int params) async {
+    final folderExist = await repository.fetchFolderById(params);
+    return folderExist.fold(
+      (l) => throw Exception(l.message),
+      (r) => r == null
+          ? Left(CacheFailure('Folder not found'))
+          : repository.deleteFolder(params),
+    );
   }
 }
 
@@ -101,12 +117,16 @@ class RenameFolder implements UseCase<void, RenameFolderParams> {
 
   @override
   Future<Either<Failure, void>> call(RenameFolderParams params) async {
-    if(params.newName.isEmpty) return Left(ValidationFailure('Folder name cannot be empty'));
+    if (params.newName.isEmpty)
+      return Left(ValidationFailure('Folder name cannot be empty'));
 
-    final exists = await repository.folderExists(params.folder.parentId, params.newName);
+    final exists = await repository.folderExists(
+      params.folder.parentId,
+      params.newName,
+    );
     return exists.fold(
-          (l) => Left(l),
-          (r) => r == true
+      (l) => Left(l),
+      (r) => r == true
           ? Left(ValidationFailure('Folder name already exists'))
           : repository.renameFolder(params.folder.id, params.newName),
     );
@@ -129,16 +149,13 @@ class GetCurrentPath implements UseCase<List<FolderEntity>, int?> {
       final res = await repository.fetchFolderById(id);
 
       // Directly handle the Either result
-      final folder = res.fold(
-            (failure) => null,
-            (folder) => folder,
-      );
+      final folder = res.fold((failure) => null, (folder) => folder);
 
       if (folder == null) {
         // Return error immediately if folder not found
         return res.fold(
-              (failure) => Left(failure),
-              (_) => Left(CacheFailure('Folder not found')),
+          (failure) => Left(failure),
+          (_) => Left(CacheFailure('Folder not found')),
         );
       }
 
@@ -149,7 +166,6 @@ class GetCurrentPath implements UseCase<List<FolderEntity>, int?> {
     return Right(folders.reversed.toList());
   }
 }
-
 
 class FetchFolderById implements UseCase<FolderEntity?, int> {
   final FolderRepository repository;
@@ -162,7 +178,7 @@ class FetchFolderById implements UseCase<FolderEntity?, int> {
   }
 }
 
-class FetchFoldersCountByFolderId implements UseCase<int,int> {
+class FetchFoldersCountByFolderId implements UseCase<int, int> {
   final FolderRepository repository;
 
   FetchFoldersCountByFolderId(this.repository);
@@ -183,14 +199,18 @@ class FetchTotalItemsCount {
   });
 
   Future<Either<Failure, int>> call(int folderId) async {
-    final foldersResult = await folderRepository.fetchFoldersCountByFolderId(folderId: folderId);
-    final notesResult = await noteRepository.fetchNotesCountByFolderId(folderId: folderId);
+    final foldersResult = await folderRepository.fetchFoldersCountByFolderId(
+      folderId: folderId,
+    );
+    final notesResult = await noteRepository.fetchNotesCountByFolderId(
+      folderId: folderId,
+    );
 
     return foldersResult.fold(
-          (failure) => Left(failure),
-          (foldersCount) => notesResult.fold(
-            (failure) => Left(failure),
-            (notesCount) => Right(foldersCount + notesCount),
+      (failure) => Left(failure),
+      (foldersCount) => notesResult.fold(
+        (failure) => Left(failure),
+        (notesCount) => Right(foldersCount + notesCount),
       ),
     );
   }
