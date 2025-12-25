@@ -12,7 +12,7 @@ import 'package:notes_bucket/core/widgets/notes_app_bar.dart';
 import 'package:notes_bucket/core/widgets/skeletons/folder_grid_view_skeleton.dart';
 import 'package:notes_bucket/features/notes/presentation/pages/view_all_page.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
-import 'package:notes_bucket/features/notes/presentation/widgets/create_folder_dialog.dart';
+import 'package:notes_bucket/features/notes/presentation/widgets/folder_dialogs.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/home_page_header.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/recent_notes.dart';
 
