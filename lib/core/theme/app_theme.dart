@@ -21,6 +21,12 @@ class AppTheme {
     cardColor: _AppThemeCommon.cardColor,
     dividerColor: Colors.grey.shade300,
     textSelectionTheme: _AppThemeCommon.textSelectionTheme,
+
+    dividerTheme: DividerThemeData(
+      color: _AppThemeCommon.dividerColor,
+      space: 1,
+      thickness: 1,
+    ),
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -35,6 +41,11 @@ class AppTheme {
       error: _AppThemeCommon.errorColor,
     ),
     disabledColor: _AppThemeCommon.disabledColor,
+    dividerTheme: DividerThemeData(
+      color: _AppThemeCommon.dividerColor,
+      space: 1,
+      thickness: 1,
+    ),
     brightness: Brightness.dark,
     fontFamily: "Inter",
     cardColor: _AppThemeCommon.cardColor,
@@ -56,6 +67,7 @@ abstract final class _AppThemeCommon {
   static const onSurfaceColor = Colors.white;
   static const cardColor = Color(0xff0F0E0E);
   static const disabledColor = Color(0x80526d82);
+  static const dividerColor = Colors.white10;
 
 
   static const textSelectionTheme = TextSelectionThemeData(
