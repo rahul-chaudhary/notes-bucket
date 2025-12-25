@@ -85,14 +85,95 @@ class SettingsPage extends StatelessWidget {
       pinned: false,
       floating: true,
       elevation: 12,
-      backgroundColor: theme.colorScheme.secondary,
+      backgroundColor: Colors.transparent,
       expandedHeight: 100,
       toolbarHeight: 0,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
+      flexibleSpace: FlexibleSpaceBar(
+        background: AppContainer(
+          outerPadding: const EdgeInsets.all(0),
+          innerPadding: const EdgeInsets.all(12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Avatar
+              SizedBox(
+                width: 100,
+                height: 100,
+                child: AppContainer(
+                  borderRadius: 100,
+                  outerPadding: const EdgeInsets.all(0),
+                  innerPadding: const EdgeInsets.all(0),
+                  child: Icon(Icons.person_2_rounded)
+                ),
+              ),
+              const SizedBox(width: 16),
+              // User Info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Hello! 👋',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'rahul@example.com',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary.withAlpha(20),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.lightbulb_outline_rounded,
+                            size: 16,
+                            color: theme.colorScheme.primary,
+                          ),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: SelectableText(
+                              '"Every note is a step forward" \n- Alan Turning',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.primary,
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              maxLines: 2,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
+
 }
 
 class SettingMenuOption extends StatelessWidget {
