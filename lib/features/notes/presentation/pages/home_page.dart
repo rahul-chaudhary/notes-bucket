@@ -86,7 +86,7 @@ class HomePage extends ConsumerWidget {
       child: AppContainer(
         child: Column(
           children: [
-            HomePageHeader(title: 'Recent Notes'),
+            HomePageHeader(title: '📝 Notes'),
             const SizedBox(height: 15),
             SizedBox(
               height: MediaQuery.of(context).size.height * 1,
@@ -119,7 +119,7 @@ class HomePage extends ConsumerWidget {
             : ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: data.length,
-                shrinkWrap: true,
+                shrinkWrap: false,
                 physics: const BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
                   final folder = data[index];
@@ -153,7 +153,7 @@ class HomePage extends ConsumerWidget {
   Row myFolderHeader(BuildContext context) {
     return Row(
       children: [
-        HomePageHeader(title: 'Folders'),
+        HomePageHeader(title: '📁 Folders'),
         const Spacer(),
         IconButton(
           onPressed: () async {
