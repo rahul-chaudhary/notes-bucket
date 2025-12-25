@@ -11,8 +11,8 @@ class AddNote implements UseCase<NoteEntity, NoteEntity> {
   AddNote(this.repository);
 
   @override
-  Future<Either<Failure, NoteEntity>> call(NoteEntity folderParentId) async {
-    return await repository.addNote(folderParentId);
+  Future<Either<Failure, NoteEntity>> call(NoteEntity params) async {
+    return await repository.addNote(params);
   }
 }
 
@@ -21,8 +21,8 @@ class FetchNotesByFolderId implements UseCase<List<NoteEntity>, int> {
   FetchNotesByFolderId(this.repository);
 
   @override
-  Future<Either<Failure, List<NoteEntity>>> call(int folderParentId) async {
-    return await repository.fetchNotesByFolderId(folderParentId);
+  Future<Either<Failure, List<NoteEntity>>> call(int params) async {
+    return await repository.fetchNotesByFolderId(params);
   }
 }
 
@@ -32,8 +32,8 @@ class FetchNoteById implements UseCase<NoteEntity?, int> {
   FetchNoteById(this.repository);
 
   @override
-  Future<Either<Failure, NoteEntity?>> call(int folderParentId) async {
-    return await repository.fetchNoteById(folderParentId);
+  Future<Either<Failure, NoteEntity?>> call(int params) async {
+    return await repository.fetchNoteById(params);
   }
 }
 
@@ -42,8 +42,8 @@ class UpdateNote implements UseCase<NoteEntity, NoteEntity> {
   UpdateNote(this.repository);
 
   @override
-  Future<Either<Failure, NoteEntity>> call(NoteEntity folderParentId) async {
-    return await repository.updateNote(folderParentId);
+  Future<Either<Failure, NoteEntity>> call(NoteEntity params) async {
+    return await repository.updateNote(params);
   }
 }
 
@@ -53,8 +53,8 @@ class DeleteNote implements UseCase<void, int> {
   DeleteNote(this.repository);
 
   @override
-  Future<Either<Failure, void>> call(int folderParentId) async {
-    return await repository.deleteNote(folderParentId);
+  Future<Either<Failure, void>> call(int params) async {
+    return await repository.deleteNote(params);
   }
 }
 
@@ -65,10 +65,10 @@ class FetchAllNotes implements UseCase<List<NoteEntity>, FetchAllNotesParams> {
   FetchAllNotes(this.repository);
 
   @override
-  Future<Either<Failure, List<NoteEntity>>> call(FetchAllNotesParams folderParentId) async {
+  Future<Either<Failure, List<NoteEntity>>> call(FetchAllNotesParams params) async {
     return await repository.fetchAllNotes(
-      limit: folderParentId.limit,
-      offset: folderParentId.offset,
+      limit: params.limit,
+      offset: params.offset,
     );
   }
 }
@@ -79,8 +79,8 @@ class FetchNotesCountByFolderId implements UseCase<int, int> {
   FetchNotesCountByFolderId(this.repository);
 
   @override
-  Future<Either<Failure, int>> call(int folderParentId) async {
-    return await repository.fetchNotesCountByFolderId(folderId: folderParentId);
+  Future<Either<Failure, int>> call(int params) async {
+    return await repository.fetchNotesCountByFolderId(folderId: params);
   }
 }
 
