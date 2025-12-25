@@ -29,7 +29,10 @@ class HomePage extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         body: CustomScrollView(
           slivers: [
-            NotesAppBar(title: 'Notes Bucket', isBackButtonVisible: false),
+            NotesAppBar(
+                title: 'Notes Bucket',
+                isSettingsBtnVisible: true,
+                isBackButtonVisible: false),
             myFoldersSliverAppBar(context, ref),
             recentNoteSliverBox(context),
           ],
