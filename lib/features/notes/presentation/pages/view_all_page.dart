@@ -16,7 +16,7 @@ import 'package:notes_bucket/features/notes/domain/entities/note_entity.dart';
 import 'package:notes_bucket/features/notes/presentation/pages/edit_note_page.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/notes_provider.dart';
-import 'package:notes_bucket/features/notes/presentation/widgets/create_folder_dialog.dart';
+import 'package:notes_bucket/features/notes/presentation/widgets/folder_dialogs.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/path_navigation_widget.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/recent_notes.dart';
 
