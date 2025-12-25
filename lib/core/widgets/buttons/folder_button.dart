@@ -8,6 +8,7 @@ import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
 import 'package:notes_bucket/core/widgets/app_snackbar.dart';
 import 'package:notes_bucket/features/notes/domain/entities/folder_entity.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
+import 'package:notes_bucket/features/notes/presentation/widgets/folder_dialogs.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/app_text_style.dart';
 
@@ -27,6 +28,7 @@ class FolderButton extends ConsumerWidget {
 
   void _showOptionsBottomSheet(
     BuildContext context,
+    WidgetRef ref,
     FolderController folderController,
   ) {
     showModalBottomSheet(
@@ -42,7 +44,10 @@ class FolderButton extends ConsumerWidget {
               title: const Text('Rename Folder'),
               onTap: () {
                 Navigator.pop(context);
-                _showRenameDialog(context, folderController);
+                showDialog(
+                  context: context,
+                  builder: (context) => RenameFolderDialog(folder: folder),
+                );
               },
             ),
             ListTile(
@@ -56,7 +61,7 @@ class FolderButton extends ConsumerWidget {
               ),
               onTap: () {
                 Navigator.pop(context);
-                _showDeleteConfirmation(context, folderController);
+                _showDeleteConfirmation(context, ref, folderController);
               },
             ),
           ],
@@ -65,63 +70,10 @@ class FolderButton extends ConsumerWidget {
     );
   }
 
-  void _showRenameDialog(
-    BuildContext context,
-    FolderController folderController,
-  ) {
-    final TextEditingController controller = TextEditingController(
-      text: folder.name,
-    );
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Rename Folder'),
-        backgroundColor: Theme.of(context).cardColor,
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Folder Name',
-            border: OutlineInputBorder(),
-          ),
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancel', style: AppTextStyles.bodySmall(context)),
-          ),
-          FilledButton(
-            onPressed: () async {
-              final newName = controller.text.trim();
-              try {
-                await folderController.rename(folder, newName);
-                if (context.mounted) {
-                  AppSnackBar.showSuccess(
-                    context,
-                    '"${folder.name}" renamed to "$newName" successfully!',
-                  );
-                }
-              } catch (e, st) {
-                if (context.mounted) {
-                  AppSnackBar.showError(context, 'Failed to rename folder: $e');
-                }
-                dbPrint('Failed to rename the folder', e: e, st: st);
-                rethrow;
-              } finally {
-                if (context.mounted) {
-                  Navigator.pop(context);
-                }
-              }
-            },
-            child: const Text('Rename'),
-          ),
-        ],
-      ),
-    );
-  }
 
   void _showDeleteConfirmation(
     BuildContext context,
+    WidgetRef ref,
     FolderController folderController,
   ) {
     showDialog(
@@ -132,13 +84,15 @@ class FolderButton extends ConsumerWidget {
         primaryBtnTextColor: Colors.white,
         primaryButtonColor: Theme.of(context).colorScheme.error,
         secondaryButtonText: 'Cancel',
-        onPressPrimary: () {
+        onPressPrimary: () async {
           try {
-            folderController.delete(folder.id, folder.parentId);
+            await folderController.delete(folder.id, folder.parentId);
             AppSnackBar.showSuccess(
               context,
               '"${folder.name}" deleted successfully!',
             );
+            ref.invalidate(foldersByParentProvider);
+            ref.invalidate(rootFoldersProvider);
           } catch (e, st) {
             AppSnackBar.showError(context, 'Failed to delete folder: $e');
             dbPrint('Failed to delete the folder', e: e, st: st);
@@ -163,7 +117,7 @@ class FolderButton extends ConsumerWidget {
 
     return InkWell(
       onTap: onTap,
-      onLongPress: () => _showOptionsBottomSheet(context, folderController),
+      onLongPress: () => _showOptionsBottomSheet(context, ref, folderController),
       splashColor: Theme.of(context).colorScheme.primary.withAlpha(100),
       borderRadius: BorderRadius.circular(12),
       child: Stack(
