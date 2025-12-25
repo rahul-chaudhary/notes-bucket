@@ -115,6 +115,7 @@ class CreateFolderDialog extends HookConsumerWidget {
             updatedAt: DateTime.now(),
           );
           await folderController.create(newFolder);
+          ref.invalidate(totalItemsCountProvider);
         },
         successMessage: 'Folder created successfully!',
       ),
