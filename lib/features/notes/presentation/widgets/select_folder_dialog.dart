@@ -7,7 +7,7 @@ import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_arrow_button.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/path_navigation_widget.dart';
-import 'create_folder_dialog.dart';
+import 'folder_dialogs.dart';
 import 'folder_list_tile.dart';
 
 class SelectFolderDialog extends HookConsumerWidget {
