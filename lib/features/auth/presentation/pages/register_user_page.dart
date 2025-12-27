@@ -44,6 +44,8 @@ class RegisterUserPage extends HookConsumerWidget {
                     const SizedBox(height: 50),
                     AppTextField(
                       controller: emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      errorText: isEmailValid.value ? null : 'Invalid email',
                       hintText: 'example@email.com',
                     ),
                     const SizedBox(height: 50),
