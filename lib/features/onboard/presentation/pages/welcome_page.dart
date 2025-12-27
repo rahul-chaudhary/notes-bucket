@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -34,31 +35,47 @@ class WelcomePage extends HookConsumerWidget {
   }
 
   Widget _animationPageView(BuildContext context) {
-    final PageController pageController = usePageController(
-      initialPage: 0,
-      keepPage: false,
-      viewportFraction: 1,
-    );
+
     const List<OnboardSlideItem> slides = [
       OnboardSlideItem(
         animationPath: AppAnimations.browsing,
         title: 'Always Find What You Need',
         subtitle:
-            'Stay effortlessly organized with smart grouping and quick access.',
+        'Stay effortlessly organized with smart grouping and quick access.',
       ),
       OnboardSlideItem(
         animationPath: AppAnimations.student,
         title: 'Neat folders, calm mind, better thinking',
         subtitle:
-            'Sort your ideas and create your own system of folders for every thought.',
+        'Sort your ideas and create your own system of folders for every thought.',
       ),
       OnboardSlideItem(
-        animationPath: AppAnimations.folders,
+        animationPath: AppAnimations.folder,
         title: 'Structure That Feels Natural',
         subtitle:
-            'Sort your ideas, create your own structure, and stay effortlessly organized.',
+        'Sort your ideas, create your own structure, and stay effortlessly organized.',
       ),
     ];
+    final pageController = usePageController(
+      initialPage: 1000 * slides.length,
+      viewportFraction: 1,
+    );
+
+    final currentPage = useState(0);
+
+    useEffect(() {
+      final timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+        final nextPage = pageController.page!.toInt() + 1;
+        pageController.animateToPage(
+          nextPage,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      });
+
+      return timer.cancel;
+    }, []);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 36),
       child: Column(
@@ -68,10 +85,12 @@ class WelcomePage extends HookConsumerWidget {
           Expanded(
             child: PageView.builder(
               controller: pageController,
-              itemCount: slides.length,
+              onPageChanged: (index) {
+                currentPage.value = index % slides.length;
+              },
               physics: const BouncingScrollPhysics(),
               itemBuilder: (context, index) {
-                final item = slides[index];
+                final item = slides[index % slides.length];
                 return Column(
                   children: [
                     Lottie.asset(
@@ -96,12 +115,11 @@ class WelcomePage extends HookConsumerWidget {
               },
             ),
           ),
-
           const SizedBox(height: 60),
-          SmoothPageIndicator(
-            controller: pageController,
+          AnimatedSmoothIndicator(
+            activeIndex: currentPage.value,
             count: slides.length,
-            effect: ExpandingDotsEffect(
+            effect: const ExpandingDotsEffect(
               activeDotColor: Colors.white,
               spacing: 20,
             ),
