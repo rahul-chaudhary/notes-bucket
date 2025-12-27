@@ -39,7 +39,10 @@ class HomePage extends ConsumerWidget {
         ),
         floatingActionButton: Padding(
           padding: AppSpacing.paddingAllS,
-          child: AppElevatedButton(),
+          child: AppElevatedButton(
+            onPressed: () => Navigator.pushNamed(context, AppRoutes.editNotes),
+            text: 'New Note',
+          ),
         ),
       ),
     );

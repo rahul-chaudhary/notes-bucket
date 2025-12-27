@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notes_bucket/core/constants/app_routes.dart';
 import 'package:notes_bucket/core/theme/app_color.dart';
 import 'package:notes_bucket/core/widgets/cards/app_container.dart';
 import 'package:notes_bucket/core/widgets/notes_app_bar.dart';
@@ -65,7 +66,9 @@ class SettingsPage extends StatelessWidget {
                           leadingIconColor: theme.colorScheme.error,
                           title: 'Sign out',
                           titleColor: theme.colorScheme.error,
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pushNamed(context, AppRoutes.welcome);
+                          },
                         ),
                       ],
                     ),

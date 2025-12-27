@@ -15,7 +15,7 @@ dependencies:
   dio: ^5.8.0+1
   google_fonts: ^6.2.1
   auto_size_text: ^3.0.0
-  lottie: ^3.3.1
+  lottie: ^3.3.2
   audioplayers: ^6.4.0
   flutter_svg: ^2.1.0
   url_launcher: ^6.2.1
@@ -40,6 +40,7 @@ dependencies:
   skeletonizer: ^2.1.1
   hooks_riverpod: ^3.0.3
   flutter_hooks: ^0.21.3+1
+  smooth_page_indicator: ^2.0.1
 
 dev_dependencies:
   flutter_test:
@@ -57,4 +58,5 @@ flutter:
   assets:
     - assets/svgs/
     - assets/images/
+    - assets/animations/
 
