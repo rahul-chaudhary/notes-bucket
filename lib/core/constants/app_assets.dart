@@ -12,4 +12,5 @@ abstract final class AppAnimations {
   static const String student = 'assets/animations/student.lottie';
   static const String browsing = 'assets/animations/browsing.lottie';
   static const String folder = 'assets/animations/folder.lottie';
+  static const String folders = 'assets/animations/folders.lottie';
 }
