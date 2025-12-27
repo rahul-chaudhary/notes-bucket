@@ -5,8 +5,9 @@ import 'package:notes_bucket/features/notes/presentation/pages/edit_note_page.da
 import 'package:notes_bucket/features/notes/presentation/pages/view_all_page.dart';
 import 'package:notes_bucket/features/onboard/presentation/pages/welcome_page.dart';
 import 'package:notes_bucket/features/settings/presentation/pages/settings_page.dart';
-
 import 'core/theme/app_theme.dart';
+import 'features/auth/presentation/pages/register_user_page.dart';
+import 'features/auth/presentation/pages/user_sign_in_page.dart';
 import 'features/notes/presentation/pages/home_page.dart';
 
 class MyApp extends ConsumerWidget {
@@ -27,6 +28,9 @@ class MyApp extends ConsumerWidget {
         AppRoutes.viewAll: (context) => const ViewAllPage(),
         AppRoutes.settings: (context) => const SettingsPage(),
         AppRoutes.welcome: (context) => const WelcomePage(),
+        AppRoutes.registerUser: (context) => const RegisterUserPage(),
+        AppRoutes.userSignIn: (context) => const UserSignInPage(),
+
       },
     );
   }
