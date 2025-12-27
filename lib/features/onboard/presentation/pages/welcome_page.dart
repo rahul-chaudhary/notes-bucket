@@ -150,7 +150,7 @@ class WelcomePage extends HookConsumerWidget {
                 horizontalPadding: 50,
                 verticalPadding: 20,
                 onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.signIn);
+                  Navigator.pushNamed(context, AppRoutes.userSignIn);
                 },
                 text: 'Sign In',
               ),
@@ -161,7 +161,7 @@ class WelcomePage extends HookConsumerWidget {
                 btnColor: theme.colorScheme.primary,
                 btnTextColor: theme.colorScheme.onPrimary,
                 onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.signUp);
+                  Navigator.pushNamed(context, AppRoutes.registerUser);
                 },
                 text: 'Register',
               ),
