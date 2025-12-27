@@ -6,6 +6,7 @@ import 'package:notes_bucket/core/constants/app_assets.dart';
 import 'package:notes_bucket/core/constants/app_routes.dart';
 import 'package:notes_bucket/core/theme/app_color.dart';
 import 'package:notes_bucket/core/theme/app_text_style.dart';
+import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_elevated_button.dart';
 import 'package:notes_bucket/features/onboard/domain/entities/onboard_slide_item.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -75,7 +76,7 @@ class WelcomePage extends HookConsumerWidget {
                   children: [
                     Lottie.asset(
                       item.animationPath,
-                      decoder: customDecoder,
+                      decoder: dotLottieDecoder,
                       fit: BoxFit.fitWidth,
                     ),
                     const SizedBox(height: 24),
@@ -165,16 +166,4 @@ class WelcomePage extends HookConsumerWidget {
   }
 }
 
-Future<LottieComposition?> customDecoder(List<int> bytes) {
-  return LottieComposition.decodeZip(
-    bytes,
-    filePicker: (files) {
-      for (final f in files) {
-        if (f.name.startsWith('animations/') && f.name.endsWith('.json')) {
-          return f;
-        }
-      }
-      return null;
-    },
-  );
-}
+

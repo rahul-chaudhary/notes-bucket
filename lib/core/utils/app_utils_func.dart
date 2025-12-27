@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../constants/app_strings.dart';
@@ -143,3 +144,18 @@ double getScreenHeight(BuildContext context) =>
 
 double getBottomPadding(BuildContext context) =>
     MediaQuery.of(context).viewInsets.bottom;
+
+
+Future<LottieComposition?> dotLottieDecoder(List<int> bytes) {
+  return LottieComposition.decodeZip(
+    bytes,
+    filePicker: (files) {
+      for (final f in files) {
+        if (f.name.startsWith('animations/') && f.name.endsWith('.json')) {
+          return f;
+        }
+      }
+      return null;
+    },
+  );
+}
