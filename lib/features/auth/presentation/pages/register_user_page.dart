@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:notes_bucket/core/constants/app_assets.dart';
+import 'package:notes_bucket/core/constants/app_routes.dart';
 import 'package:notes_bucket/core/theme/app_color.dart';
 import 'package:notes_bucket/core/theme/app_text_style.dart';
 import 'package:notes_bucket/core/utils/app_validator.dart';
@@ -110,9 +111,13 @@ class RegisterUserPage extends HookConsumerWidget {
                       children: [
                         Text('Already have an account?'),
                         AppTextButton(
-                            text: 'Sign In',
-                            color: theme.colorScheme.secondary,
-                            onPressed: () {}),
+                          text: 'Sign In',
+                          color: theme.colorScheme.secondary,
+                          onPressed: () => Navigator.pushReplacementNamed(
+                            context,
+                            AppRoutes.userSignIn,
+                          ),
+                        ),
                       ],
                     ),
                   ],
