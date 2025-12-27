@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:notes_bucket/core/constants/app_assets.dart';
 import 'package:notes_bucket/core/constants/app_routes.dart';
 import 'package:notes_bucket/core/theme/app_color.dart';
 import 'package:notes_bucket/core/theme/app_text_style.dart';
-import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_elevated_button.dart';
+import 'package:notes_bucket/features/onboard/domain/entities/onboard_slide_item.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class WelcomePage extends StatelessWidget {
+class WelcomePage extends HookConsumerWidget {
   const WelcomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final screenHeight = getScreenHeight(context);
 
     return Container(
       decoration: BoxDecoration(gradient: AppGradient.scaffoldBackground),
@@ -32,100 +33,135 @@ class WelcomePage extends StatelessWidget {
   }
 
   Widget _animationPageView(BuildContext context) {
+    final PageController pageController = usePageController(
+      initialPage: 0,
+      keepPage: false,
+      viewportFraction: 1,
+    );
+    const List<OnboardSlideItem> slides = [
+      OnboardSlideItem(
+        animationPath: AppAnimations.browsing,
+        title: 'Always Find What You Need',
+        subtitle:
+            'Stay effortlessly organized with smart grouping and quick access.',
+      ),
+      OnboardSlideItem(
+        animationPath: AppAnimations.student,
+        title: 'Neat folders, calm mind, better thinking',
+        subtitle:
+            'Sort your ideas and create your own system of folders for every thought.',
+      ),
+      OnboardSlideItem(
+        animationPath: AppAnimations.folders,
+        title: 'Structure That Feels Natural',
+        subtitle:
+            'Sort your ideas, create your own structure, and stay effortlessly organized.',
+      ),
+    ];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 36),
       child: Column(
         mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Lottie.asset(
-              AppAnimations.browsing,
-              decoder: customDecoder,
-              fit: BoxFit.fitWidth,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: PageView.builder(
+              controller: pageController,
+              itemCount: slides.length,
+              physics: const BouncingScrollPhysics(),
+              itemBuilder: (context, index) {
+                final item = slides[index];
+                return Column(
+                  children: [
+                    Lottie.asset(
+                      item.animationPath,
+                      decoder: customDecoder,
+                      fit: BoxFit.fitWidth,
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      item.title,
+                      style: AppTextStyles.headlineMedium(context),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      item.subtitle,
+                      style: AppTextStyles.bodyMedium(context),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                );
+              },
             ),
-            Text(
-              'Always Find What You Need',
-              style: AppTextStyles.headlineMedium(context),
-              textAlign: TextAlign.center,
+          ),
+
+          const SizedBox(height: 60),
+          SmoothPageIndicator(
+            controller: pageController,
+            count: slides.length,
+            effect: ExpandingDotsEffect(
+              activeDotColor: Colors.white,
+              spacing: 20,
             ),
-            const SizedBox(height: 4),
-            Text(
-              'Stay effortlessly organized with smart grouping and quick access.',
-              style: AppTextStyles.bodyMedium(context),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 60),
-            SmoothPageIndicator(
-              controller: PageController(),
-              count:  3,
-              effect:  ExpandingDotsEffect(
-                activeDotColor: Colors.white,
-                spacing: 20,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
+      ),
     );
   }
+
   Container _authBtnsModal(BuildContext context, ThemeData theme) {
     return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 36,),
-                  decoration: BoxDecoration(
-                    color: Colors.white10,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(24),
-                      topRight: Radius.circular(24),
-                    ),
-                  ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 36),
+      decoration: BoxDecoration(
+        color: Colors.white10,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+      ),
 
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          AppElevatedButton(
-                            borderRadius: 8,
-                            horizontalPadding: 50,
-                            verticalPadding: 20,
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                context,
-                                AppRoutes.signIn,
-                              );
-                            },
-                            text: 'Sign In',
-                          ),
-                          AppElevatedButton(
-                            borderRadius: 8,
-                            horizontalPadding: 50,
-                            verticalPadding: 20,
-                            btnColor: theme.colorScheme.primary,
-                            btnTextColor: theme.colorScheme.onPrimary,
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                context,
-                                AppRoutes.signUp,
-                              );
-                            },
-                            text: 'Register',
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              AppElevatedButton(
+                borderRadius: 8,
+                horizontalPadding: 50,
+                verticalPadding: 20,
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRoutes.signIn);
+                },
+                text: 'Sign In',
+              ),
+              AppElevatedButton(
+                borderRadius: 8,
+                horizontalPadding: 50,
+                verticalPadding: 20,
+                btnColor: theme.colorScheme.primary,
+                btnTextColor: theme.colorScheme.onPrimary,
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRoutes.signUp);
+                },
+                text: 'Register',
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
 
-                      TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          'Maybe later, Skip',
-                          style: AppTextStyles.button(
-                            context,
-                          ).copyWith(
-                              color: Colors.white70),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
+          TextButton(
+            onPressed: () {},
+            child: Text(
+              'Maybe later, Skip',
+              style: AppTextStyles.button(
+                context,
+              ).copyWith(color: Colors.white70),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
