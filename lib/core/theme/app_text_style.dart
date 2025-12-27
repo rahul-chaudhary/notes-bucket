@@ -49,13 +49,13 @@ class AppTextStyles {
   );
 
   ///Hyperlink text
-  static TextStyle hyperlink(BuildContext context) => GoogleFonts.poppins(
+  static TextStyle hyperlink(Color? color) => GoogleFonts.poppins(
     fontSize: 14,
     decoration: TextDecoration.underline,
     fontWeight: FontWeight.w600,
-    decorationColor: Colors.blueAccent,
+    decorationColor: color ?? Colors.blueAccent,
     decorationThickness: 1.5,
     decorationStyle: TextDecorationStyle.solid,
-    color: Colors.blueAccent,
+    color: color ?? Colors.blueAccent,
   );
 }

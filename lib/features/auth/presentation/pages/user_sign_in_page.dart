@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:notes_bucket/core/utils/app_validator.dart';
+
 import '../widgets/common_auth_widget.dart';
 
-class RegisterUserPage extends HookConsumerWidget {
-  const RegisterUserPage({super.key});
+class UserSignInPage extends HookConsumerWidget {
+  const UserSignInPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,14 +29,12 @@ class RegisterUserPage extends HookConsumerWidget {
         emailError.value == null && emailController.text.isNotEmpty;
 
     return CommonAuthWidget(
-      emailController: emailController,
-      emailError: emailError,
-      isEmailValid: isEmailValid,
-      authType: AuthType.signUp,
-      googleBtnOnPressed: () {},
-      onContinuePressed: () {}
+        emailController: emailController,
+        emailError: emailError,
+        isEmailValid: isEmailValid,
+        authType: AuthType.signIn,
+        googleBtnOnPressed: () {},
+        onContinuePressed: () {}
     );
   }
 }
-
-
