@@ -5,6 +5,7 @@ abstract final class AppRoutes {
   static const String settings = '/settings';
   static const String registerUser = '/registerUser';
   static const String userSignIn = '/userSignIn';
+  static const String otpVerification = '/otpVerification';
   static const String welcome = '/welcome';
 
   static const String about = '/about';

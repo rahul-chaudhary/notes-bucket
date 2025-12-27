@@ -7,7 +7,7 @@ import 'package:notes_bucket/core/theme/app_color.dart';
 import 'package:notes_bucket/core/theme/app_text_style.dart';
 import 'package:notes_bucket/core/widgets/app_text_field.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_elevated_button.dart';
-import 'package:notes_bucket/core/widgets/buttons/app_text_button.dart';
+import 'package:notes_bucket/core/widgets/buttons/app_rich_text_button.dart';
 import 'package:notes_bucket/core/widgets/cards/app_container.dart';
 
 enum AuthType { signIn, signUp }
@@ -109,26 +109,19 @@ class CommonAuthWidget extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(authType == AuthType.signUp
-                            ? 'Already have an account?'
-                            : 'Don\'t have an account?'),
-                        const SizedBox(width: 4),
-                        AppTextButton(
-                          text: authType == AuthType.signUp
-                              ? 'Sign In'
-                              : 'Sign Up',
-                          color: theme.colorScheme.secondary,
-                          onPressed: () => Navigator.pushReplacementNamed(
-                            context,
-                            authType == AuthType.signUp
-                                ? AppRoutes.userSignIn
-                                : AppRoutes.registerUser,
-                          ),
-                        ),
-                      ],
+                    AppRichTextButton(
+                      primaryText: authType == AuthType.signUp
+                          ? 'Already have an account? '
+                          : 'Don\'t have an account? ',
+                      btnText: authType == AuthType.signUp
+                          ? 'Sign In'
+                          : 'Sign Up',
+                      onBtnPressed: ()=> Navigator.pushReplacementNamed(
+                        context,
+                        authType == AuthType.signUp
+                            ? AppRoutes.userSignIn
+                            : AppRoutes.registerUser,
+                      ),
                     ),
                   ],
                 ),

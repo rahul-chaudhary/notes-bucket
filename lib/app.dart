@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:notes_bucket/core/constants/app_routes.dart';
+import 'package:notes_bucket/features/auth/presentation/pages/otp_verification_page.dart';
 import 'package:notes_bucket/features/notes/presentation/pages/edit_note_page.dart';
 import 'package:notes_bucket/features/notes/presentation/pages/view_all_page.dart';
 import 'package:notes_bucket/features/onboard/presentation/pages/welcome_page.dart';
@@ -30,6 +31,7 @@ class MyApp extends ConsumerWidget {
         AppRoutes.welcome: (context) => const WelcomePage(),
         AppRoutes.registerUser: (context) => const RegisterUserPage(),
         AppRoutes.userSignIn: (context) => const UserSignInPage(),
+        AppRoutes.otpVerification: (context) => const OtpVerificationPage(email: ''),
 
       },
     );
