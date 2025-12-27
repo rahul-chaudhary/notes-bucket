@@ -9,6 +9,7 @@ import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_elevated_button.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_rich_text_button.dart';
 import 'package:notes_bucket/core/widgets/cards/app_container.dart';
+import 'package:notes_bucket/features/auth/presentation/widgets/otp_pin_input.dart';
 import 'package:pinput/pinput.dart';
 
 class OtpVerificationPage extends HookConsumerWidget {
@@ -22,6 +23,17 @@ class OtpVerificationPage extends HookConsumerWidget {
     final otpController = useTextEditingController();
     final resendOtpTimer = useState(60);
 
+    final isOtpLengthValid = useState(false);
+
+    useEffect(() {
+      void listener() {
+        isOtpLengthValid.value = otpController.text.length == 4;
+      }
+
+      otpController.addListener(listener);
+      return () => otpController.removeListener(listener);
+    }, [otpController]);
+
     useEffect(() {
       final timer = Timer.periodic(const Duration(seconds: 1), (timer) {
         if (resendOtpTimer.value > 0) {
@@ -34,36 +46,6 @@ class OtpVerificationPage extends HookConsumerWidget {
       return timer.cancel;
     });
 
-    final defaultPinTheme = PinTheme(
-      width: 56,
-      height: 56,
-      textStyle: TextStyle(
-        fontSize: 20,
-        color: Colors.white,
-        fontWeight: FontWeight.w600,
-      ),
-      decoration: BoxDecoration(
-        border: Border.all(color: theme.disabledColor),
-        borderRadius: BorderRadius.circular(8),
-        color: Colors.transparent,
-        backgroundBlendMode: BlendMode.dst,
-      ),
-    );
-
-    final focusedPinTheme = defaultPinTheme.copyDecorationWith(
-      border: Border.all(color: theme.colorScheme.secondary),
-      borderRadius: BorderRadius.circular(8),
-      color: Colors.transparent,
-    );
-
-    final submittedPinTheme = defaultPinTheme.copyWith(
-      decoration: defaultPinTheme.decoration?.copyWith(
-        color: theme.colorScheme.secondary,
-        // backgroundBlendMode: BlendMode.dst,
-        // borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: theme.colorScheme.secondary),
-      ),
-    );
 
     return Container(
       decoration: BoxDecoration(gradient: AppGradient.scaffoldBackground),
@@ -99,28 +81,25 @@ class OtpVerificationPage extends HookConsumerWidget {
                       ).copyWith(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 40),
-                    Pinput(
-                      defaultPinTheme: defaultPinTheme,
-                      focusedPinTheme: focusedPinTheme,
-                      submittedPinTheme: submittedPinTheme,
-                      validator: (s) {
-                        return s == '2222' ? null : 'OTP is incorrect';
-                      },
-                      pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
-                      showCursor: true,
-                      keyboardType: TextInputType.number,
-                      length: 4,
-                      controller: otpController,
-                      onCompleted: (pin) => dbPrint(pin),
-                    ),
+                    OtpPinInput(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter OTP';
+                          }
+                          return null;
+                        },
+                        otpController: otpController,
+                        onCompleted: (value) {}),
                     const SizedBox(height: 48),
                     Align(
                       alignment: Alignment.center,
                       child: AppElevatedButton(
                         text: 'Verify',
+                        btnColor: isOtpLengthValid.value ? theme.colorScheme.secondary : theme.disabledColor,
                         horizontalPadding: 100,
                         borderRadius: 8,
                         onPressed: () {
+                          if (!isOtpLengthValid.value) return;
                           Navigator.pushNamed(context, AppRoutes.home);
                         },
                       ),
