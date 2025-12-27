@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:notes_bucket/core/constants/app_routes.dart';
 import 'package:notes_bucket/core/theme/app_color.dart';
 import 'package:notes_bucket/core/theme/app_text_style.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
@@ -119,7 +120,9 @@ class OtpVerificationPage extends HookConsumerWidget {
                         text: 'Verify',
                         horizontalPadding: 100,
                         borderRadius: 8,
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, AppRoutes.home);
+                        },
                       ),
                     ),
                     const SizedBox(height: 24),

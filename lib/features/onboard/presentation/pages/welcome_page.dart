@@ -170,7 +170,9 @@ class WelcomePage extends HookConsumerWidget {
           const SizedBox(height: 24),
 
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home, (route) => false);
+            },
             child: Text(
               'Maybe later, Skip',
               style: AppTextStyles.button(
