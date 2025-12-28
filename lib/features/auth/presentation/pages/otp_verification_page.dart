@@ -5,12 +5,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:notes_bucket/core/constants/app_routes.dart';
 import 'package:notes_bucket/core/theme/app_color.dart';
 import 'package:notes_bucket/core/theme/app_text_style.dart';
-import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_elevated_button.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_rich_text_button.dart';
 import 'package:notes_bucket/core/widgets/cards/app_container.dart';
 import 'package:notes_bucket/features/auth/presentation/widgets/otp_pin_input.dart';
-import 'package:pinput/pinput.dart';
 
 class OtpVerificationPage extends HookConsumerWidget {
   final String email;
