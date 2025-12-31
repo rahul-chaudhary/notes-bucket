@@ -306,10 +306,15 @@ class AuthResponseModelMapper extends ClassMapperBase<AuthResponseModel> {
     'message',
     _$message,
   );
-  static String _$token(AuthResponseModel v) => v.token;
-  static const Field<AuthResponseModel, String> _f$token = Field(
-    'token',
-    _$token,
+  static String _$accessToken(AuthResponseModel v) => v.accessToken;
+  static const Field<AuthResponseModel, String> _f$accessToken = Field(
+    'accessToken',
+    _$accessToken,
+  );
+  static String _$refreshToken(AuthResponseModel v) => v.refreshToken;
+  static const Field<AuthResponseModel, String> _f$refreshToken = Field(
+    'refreshToken',
+    _$refreshToken,
   );
   static User _$user(AuthResponseModel v) => v.user;
   static const Field<AuthResponseModel, User> _f$user = Field('user', _$user);
@@ -317,14 +322,16 @@ class AuthResponseModelMapper extends ClassMapperBase<AuthResponseModel> {
   @override
   final MappableFields<AuthResponseModel> fields = const {
     #message: _f$message,
-    #token: _f$token,
+    #accessToken: _f$accessToken,
+    #refreshToken: _f$refreshToken,
     #user: _f$user,
   };
 
   static AuthResponseModel _instantiate(DecodingData data) {
     return AuthResponseModel(
       message: data.dec(_f$message),
-      token: data.dec(_f$token),
+      accessToken: data.dec(_f$accessToken),
+      refreshToken: data.dec(_f$refreshToken),
       user: data.dec(_f$user),
     );
   }
@@ -401,7 +408,12 @@ abstract class AuthResponseModelCopyWith<
 >
     implements ClassCopyWith<$R, $In, $Out> {
   UserCopyWith<$R, User, User> get user;
-  $R call({String? message, String? token, User? user});
+  $R call({
+    String? message,
+    String? accessToken,
+    String? refreshToken,
+    User? user,
+  });
   AuthResponseModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
     Then<$Out2, $R2> t,
   );
@@ -419,17 +431,24 @@ class _AuthResponseModelCopyWithImpl<$R, $Out>
   UserCopyWith<$R, User, User> get user =>
       $value.user.copyWith.$chain((v) => call(user: v));
   @override
-  $R call({String? message, String? token, User? user}) => $apply(
+  $R call({
+    String? message,
+    String? accessToken,
+    String? refreshToken,
+    User? user,
+  }) => $apply(
     FieldCopyWithData({
       if (message != null) #message: message,
-      if (token != null) #token: token,
+      if (accessToken != null) #accessToken: accessToken,
+      if (refreshToken != null) #refreshToken: refreshToken,
       if (user != null) #user: user,
     }),
   );
   @override
   AuthResponseModel $make(CopyWithData data) => AuthResponseModel(
     message: data.get(#message, or: $value.message),
-    token: data.get(#token, or: $value.token),
+    accessToken: data.get(#accessToken, or: $value.accessToken),
+    refreshToken: data.get(#refreshToken, or: $value.refreshToken),
     user: data.get(#user, or: $value.user),
   );
 

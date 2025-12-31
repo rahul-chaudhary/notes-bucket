@@ -1,9 +1,11 @@
 abstract final class ApiEndpoints {
   // Auth endpoints
-  static const String login = '/auth/login';
+  static const String doesEmailExist = '/auth/doesEmailExist';
+  static const String sendOtp = '/auth/sendOtp';
   static const String register = '/auth/register';
+  static const String login = '/auth/login';
+  static const String googleSignIn = '/auth/googleSignIn';
   static const String refreshToken = '/auth/refresh';
-  static const String sendOtp = '/auth/send-otp';
   static const String logout = '/auth/logout';
 
   // User endpoints

@@ -28,12 +28,14 @@ class SendOtpResponseModel {
 @MappableClass()
 class AuthResponseModel {
   final String message;
-  final String token;
+  final String accessToken;
+  final String refreshToken;
   final User user;
 
   const AuthResponseModel({
     required this.message,
-    required this.token,
+    required this.accessToken,
+    required this.refreshToken,
     required this.user,
   });
 }

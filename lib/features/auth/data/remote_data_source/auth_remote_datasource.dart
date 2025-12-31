@@ -12,6 +12,10 @@ abstract interface class AuthRemoteDatasource {
 
   Future<AuthResponseModel> login(String email, String otp);
 
+  Future<AuthResponseModel> googleSignIn(String email);
+
+  Future<String> refreshToken();
+
   Future<void> logout();
 }
 
@@ -27,14 +31,13 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   }
 
   @override
-  Future<AuthResponseModel> login(String email, String otp) async {
+  Future<SendOtpResponseModel> sendOtp(String email) async {
     try {
       final response = await _apiClient.post(
-        ApiEndpoints.login,
-        data: {'email': email, 'otp': otp},
+        ApiEndpoints.sendOtp,
+        data: {'email': email},
       );
-
-      return AuthResponseModelMapper.fromJson(response.data);
+      return SendOtpResponseModelMapper.fromJson(response.data);
     } on DioException catch (e) {
       throw _handleError(e);
     }
@@ -55,16 +58,27 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   }
 
   @override
-  Future<SendOtpResponseModel> sendOtp(String email) async {
+  Future<AuthResponseModel> login(String email, String otp) async {
     try {
       final response = await _apiClient.post(
-        ApiEndpoints.sendOtp,
-        data: {'email': email},
+        ApiEndpoints.login,
+        data: {'email': email, 'otp': otp},
       );
-      return SendOtpResponseModelMapper.fromJson(response.data);
+
+      return AuthResponseModelMapper.fromJson(response.data);
     } on DioException catch (e) {
       throw _handleError(e);
     }
+  }
+
+  @override
+  Future<AuthResponseModel> googleSignIn(String email) async {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> refreshToken() async {
+    throw UnimplementedError();
   }
 
   @override

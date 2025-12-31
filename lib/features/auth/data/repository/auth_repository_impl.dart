@@ -50,14 +50,34 @@ class AuthRepositoryImpl implements AuthRepository {
       // Save tokens
       await _secureStorage.write(
         key: ApiConstants.accessTokenKey,
-        value: response['data']['accessToken'],
+        value: response.accessToken,
       );
       await _secureStorage.write(
         key: ApiConstants.refreshTokenKey,
-        value: response['data']['refreshToken'],
+        value: response.refreshToken,
       );
 
       // Parse and return user
+      return Right(response);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, AuthResponseModel>> googleSignIn(String email) async {
+    try {
+      final response = await _remoteDataSource.googleSignIn(email);
+      return Right(response);
+      } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> refreshToken() async {
+    try {
+      final response = await _remoteDataSource.refreshToken();
       return Right(response);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
