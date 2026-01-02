@@ -19,6 +19,7 @@ class CommonAuthWidget extends StatelessWidget {
     required this.emailError,
     required this.isEmailValid,
     required this.authType,
+    required this.isContinueBtnLoading,
     required this.onContinuePressed,
     required this.googleBtnOnPressed,
   });
@@ -27,6 +28,7 @@ class CommonAuthWidget extends StatelessWidget {
   final ValueNotifier<String?> emailError;
   final bool isEmailValid;
   final AuthType authType;
+  final bool isContinueBtnLoading;
   final VoidCallback onContinuePressed;
   final VoidCallback googleBtnOnPressed;
   @override
@@ -74,7 +76,9 @@ class CommonAuthWidget extends StatelessWidget {
                       hintText: 'example@email.com',
                     ),
                     const SizedBox(height: 50),
-                    AppElevatedButton(
+                    isContinueBtnLoading
+                        ? const Center(child: CircularProgressIndicator())
+                    : AppElevatedButton(
                       text: 'Continue',
                       borderRadius: 8,
                       horizontalPadding: 100,

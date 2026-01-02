@@ -13,9 +13,9 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._remoteDataSource, this._secureStorage);
 
   @override
-  Future<Either<Failure, GenericResponseModel>> doesUserExist(String email) async {
+  Future<Either<Failure, GenericResponseModel>> doesEmailExist(String email) async {
     try {
-      final response = await _remoteDataSource.doesUserExist(email);
+      final response = await _remoteDataSource.doesEmailExist(email);
       return Right(response);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
@@ -36,6 +36,17 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, AuthResponseModel>> register(String email, String otp) async {
     try {
       final response = await _remoteDataSource.register(email, otp);
+
+      // Save tokens
+      await _secureStorage.write(
+        key: ApiConstants.accessTokenKey,
+        value: response.accessToken,
+      );
+      await _secureStorage.write(
+        key: ApiConstants.refreshTokenKey,
+        value: response.refreshToken,
+      );
+
       return Right(response);
     } catch (e) {
       return Left(ServerFailure(e.toString()));

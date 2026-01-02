@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:notes_bucket/core/network/api_client.dart';
 import 'package:notes_bucket/core/network/api_endpoints.dart';
+import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/features/auth/data/models/response_models.dart';
 
 abstract interface class AuthRemoteDatasource {
-  Future<GenericResponseModel> doesUserExist(String email);
+  Future<GenericResponseModel> doesEmailExist(String email);
 
   Future<SendOtpResponseModel> sendOtp(String email);
 
@@ -25,9 +26,19 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   AuthRemoteDatasourceImpl(this._apiClient);
 
   @override
-  Future<GenericResponseModel> doesUserExist(String email) {
-    // TODO: implement doesUserExist
-    throw UnimplementedError();
+  Future<GenericResponseModel> doesEmailExist(String email) async {
+    try{
+      final res =  await _apiClient.post(
+        ApiEndpoints.doesEmailExist,
+        data: {'email': email},
+      );
+      dbPrint(res.data);
+      return GenericResponseModelMapper.fromMap(res.data);
+      } on DioException catch (e) {
+      throw _handleError(e);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
   }
 
   @override
@@ -37,9 +48,11 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         ApiEndpoints.sendOtp,
         data: {'email': email},
       );
-      return SendOtpResponseModelMapper.fromJson(response.data);
+      return SendOtpResponseModelMapper.fromMap(response.data);
     } on DioException catch (e) {
       throw _handleError(e);
+    } catch (e) {
+      throw Exception(e.toString());
     }
   }
 
@@ -51,9 +64,11 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         data: {'email': email, 'otp': otp},
       );
 
-      return AuthResponseModelMapper.fromJson(response.data);
+      return AuthResponseModelMapper.fromMap(response.data);
     } on DioException catch (e) {
       throw _handleError(e);
+    } catch (e) {
+      throw Exception(e.toString());
     }
   }
 
@@ -65,9 +80,11 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         data: {'email': email, 'otp': otp},
       );
 
-      return AuthResponseModelMapper.fromJson(response.data);
+      return AuthResponseModelMapper.fromMap(response.data);
     } on DioException catch (e) {
       throw _handleError(e);
+    } catch (e) {
+      throw Exception(e.toString());
     }
   }
 
@@ -87,6 +104,8 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       await _apiClient.post(ApiEndpoints.logout);
     } on DioException catch (e) {
       throw _handleError(e);
+    } catch (e) {
+      throw Exception(e.toString());
     }
   }
 

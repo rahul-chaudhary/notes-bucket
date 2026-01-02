@@ -14,6 +14,7 @@ class UserSignInPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final emailController = useTextEditingController();
     final emailError = useState<String?>(null);
+    final isContinueBtnLoading = useState(false);
     final theme = Theme.of(context);
 
     // Validate email on text change
@@ -36,34 +37,53 @@ class UserSignInPage extends HookConsumerWidget {
       isEmailValid: isEmailValid,
       authType: AuthType.signIn,
       googleBtnOnPressed: () {},
+      isContinueBtnLoading: isContinueBtnLoading.value,
       onContinuePressed: () async {
         try {
-          final userExists = await ref.read(doesUserExistProvider(emailController.text.trim()).future);
+          isContinueBtnLoading.value = true;
+          final authController = ref.read(authControllerProvider.notifier);
+          final email = emailController.text.trim();
 
-          if (userExists) {
-            await ref.read(sendOtpProvider(emailController.text).future);
+          // Check if user exists
+          final userExists = await authController.doesEmailExist(email);
 
+          if (!userExists) {
             if (context.mounted) {
-              Navigator.push(
+              AppSnackBar.showError(
                 context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      OtpVerificationPage(email: emailController.text),
-                ),
+                'No user found with this email. Use another email or sign up!',
               );
             }
-          } else {
-            if (context.mounted) {
-              AppSnackBar.showError(context, 'No user with this found. Use another email or sign Up!');
-            }
+            return;
+          }
+
+          // Send OTP
+          final message = await authController.sendOtp(
+            emailController.text.trim(),
+          );
+          if (context.mounted) AppSnackBar.showSuccess(context, message);
+
+          // Navigate after both operations complete
+          if (context.mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    OtpVerificationPage(
+                        authType: AuthType.signIn,
+                        email: emailController.text.trim()),
+              ),
+            );
           }
         } catch (e) {
           if (context.mounted) {
             AppSnackBar.showError(context, e.toString());
           }
           rethrow;
+        } finally {
+          isContinueBtnLoading.value = false;
         }
-      }
+      },
     );
   }
 }

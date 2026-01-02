@@ -12,7 +12,7 @@ class RegisterUserPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final emailController = useTextEditingController();
     final emailError = useState<String?>(null);
-    final theme = Theme.of(context);
+    final isContinueBtnLoading = useState(false);
 
     // Validate email on text change
     useEffect(() {
@@ -34,11 +34,14 @@ class RegisterUserPage extends HookConsumerWidget {
       isEmailValid: isEmailValid,
       authType: AuthType.signUp,
       googleBtnOnPressed: () {},
+      isContinueBtnLoading: isContinueBtnLoading.value,
       onContinuePressed: () => Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) =>
-              OtpVerificationPage(email: emailController.text),
+              OtpVerificationPage(
+                  authType: AuthType.signUp,
+                  email: emailController.text),
         ),
       ),
     );

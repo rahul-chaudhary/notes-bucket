@@ -5,21 +5,28 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:notes_bucket/core/constants/app_routes.dart';
 import 'package:notes_bucket/core/theme/app_color.dart';
 import 'package:notes_bucket/core/theme/app_text_style.dart';
+import 'package:notes_bucket/core/utils/app_utils_func.dart';
+import 'package:notes_bucket/core/widgets/app_snackbar.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_elevated_button.dart';
 import 'package:notes_bucket/core/widgets/buttons/app_rich_text_button.dart';
 import 'package:notes_bucket/core/widgets/cards/app_container.dart';
+import 'package:notes_bucket/features/auth/domain/usecases/auth_usecases.dart';
+import 'package:notes_bucket/features/auth/presentation/providers/auth_provider.dart';
+import 'package:notes_bucket/features/auth/presentation/widgets/common_auth_widget.dart';
 import 'package:notes_bucket/features/auth/presentation/widgets/otp_pin_input.dart';
 
 class OtpVerificationPage extends HookConsumerWidget {
+  final AuthType authType;
   final String email;
 
-  const OtpVerificationPage({super.key, required this.email});
+  const OtpVerificationPage({super.key, required this.email, required this.authType});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final otpController = useTextEditingController();
     final resendOtpTimer = useState(60);
+    final isBtnLoading = useState(false);
 
     final isOtpLengthValid = useState(false);
 
@@ -96,9 +103,23 @@ class OtpVerificationPage extends HookConsumerWidget {
                         btnColor: isOtpLengthValid.value ? theme.colorScheme.secondary : theme.disabledColor,
                         horizontalPadding: 100,
                         borderRadius: 8,
-                        onPressed: () {
-                          if (!isOtpLengthValid.value) return;
-                          Navigator.pushNamed(context, AppRoutes.home);
+                        onPressed: () async {
+                          try{
+                            if (!isOtpLengthValid.value) return;
+                            isBtnLoading.value = true;
+                            final authParams = AuthParams(
+                                authType: authType,
+                                email: email,
+                                otp: otpController.text.trim());
+                            final user = await ref.read(authControllerProvider.notifier).authenticate(authParams);
+                            dbPrint(user.toString());
+                            Navigator.pushNamed(context, AppRoutes.home);
+                          } catch(e) {
+                            AppSnackBar.showError(context, e.toString());
+                            rethrow;
+                          } finally {
+                            isBtnLoading.value = false;
+                          }
                         },
                       ),
                     ),

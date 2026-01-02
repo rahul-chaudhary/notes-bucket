@@ -139,47 +139,47 @@ final class AuthRepositoryProvider
 
 String _$authRepositoryHash() => r'2c68f39f0c49eb3c90b12437dd21515f6f457ec2';
 
-@ProviderFor(doesUserExistUseCase)
-const doesUserExistUseCaseProvider = DoesUserExistUseCaseProvider._();
+@ProviderFor(doesEmailExistUseCase)
+const doesEmailExistUseCaseProvider = DoesEmailExistUseCaseProvider._();
 
-final class DoesUserExistUseCaseProvider
-    extends $FunctionalProvider<DoesUserExist, DoesUserExist, DoesUserExist>
-    with $Provider<DoesUserExist> {
-  const DoesUserExistUseCaseProvider._()
+final class DoesEmailExistUseCaseProvider
+    extends $FunctionalProvider<DoesEmailExist, DoesEmailExist, DoesEmailExist>
+    with $Provider<DoesEmailExist> {
+  const DoesEmailExistUseCaseProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'doesUserExistUseCaseProvider',
+        name: r'doesEmailExistUseCaseProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$doesUserExistUseCaseHash();
+  String debugGetCreateSourceHash() => _$doesEmailExistUseCaseHash();
 
   @$internal
   @override
-  $ProviderElement<DoesUserExist> $createElement($ProviderPointer pointer) =>
+  $ProviderElement<DoesEmailExist> $createElement($ProviderPointer pointer) =>
       $ProviderElement(pointer);
 
   @override
-  DoesUserExist create(Ref ref) {
-    return doesUserExistUseCase(ref);
+  DoesEmailExist create(Ref ref) {
+    return doesEmailExistUseCase(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(DoesUserExist value) {
+  Override overrideWithValue(DoesEmailExist value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<DoesUserExist>(value),
+      providerOverride: $SyncValueProvider<DoesEmailExist>(value),
     );
   }
 }
 
-String _$doesUserExistUseCaseHash() =>
-    r'4c4b8a8cfd5ba33066ea3f16d2d41c038b9143d7';
+String _$doesEmailExistUseCaseHash() =>
+    r'357b56dcd54982186f4b5df28d2b85109a611d32';
 
 @ProviderFor(sendOtpUseCase)
 const sendOtpUseCaseProvider = SendOtpUseCaseProvider._();
@@ -222,183 +222,88 @@ final class SendOtpUseCaseProvider
 
 String _$sendOtpUseCaseHash() => r'5306bf0bf284a66c463a78790a79fd9826d178ad';
 
-@ProviderFor(DoesUserExistNotifier)
-const doesUserExistProvider = DoesUserExistNotifierFamily._();
+@ProviderFor(authUseCase)
+const authUseCaseProvider = AuthUseCaseProvider._();
 
-final class DoesUserExistNotifierProvider
-    extends $AsyncNotifierProvider<DoesUserExistNotifier, bool> {
-  const DoesUserExistNotifierProvider._({
-    required DoesUserExistNotifierFamily super.from,
-    required String super.argument,
-  }) : super(
-         retry: null,
-         name: r'doesUserExistProvider',
-         isAutoDispose: true,
-         dependencies: null,
-         $allTransitiveDependencies: null,
-       );
-
-  @override
-  String debugGetCreateSourceHash() => _$doesUserExistNotifierHash();
+final class AuthUseCaseProvider
+    extends $FunctionalProvider<Authentication, Authentication, Authentication>
+    with $Provider<Authentication> {
+  const AuthUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'authUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
-  String toString() {
-    return r'doesUserExistProvider'
-        ''
-        '($argument)';
-  }
+  String debugGetCreateSourceHash() => _$authUseCaseHash();
 
   @$internal
   @override
-  DoesUserExistNotifier create() => DoesUserExistNotifier();
+  $ProviderElement<Authentication> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
-  bool operator ==(Object other) {
-    return other is DoesUserExistNotifierProvider && other.argument == argument;
+  Authentication create(Ref ref) {
+    return authUseCase(ref);
   }
 
-  @override
-  int get hashCode {
-    return argument.hashCode;
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Authentication value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Authentication>(value),
+    );
   }
 }
 
-String _$doesUserExistNotifierHash() =>
-    r'61f0e51db6d526b199ed62356c974702c893c639';
+String _$authUseCaseHash() => r'c4efdc46d21a1301ceddecb2c151fe0ebf34ca43';
 
-final class DoesUserExistNotifierFamily extends $Family
-    with
-        $ClassFamilyOverride<
-          DoesUserExistNotifier,
-          AsyncValue<bool>,
-          bool,
-          FutureOr<bool>,
-          String
-        > {
-  const DoesUserExistNotifierFamily._()
+@ProviderFor(AuthController)
+const authControllerProvider = AuthControllerProvider._();
+
+final class AuthControllerProvider
+    extends $AsyncNotifierProvider<AuthController, void> {
+  const AuthControllerProvider._()
     : super(
+        from: null,
+        argument: null,
         retry: null,
-        name: r'doesUserExistProvider',
+        name: r'authControllerProvider',
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
-        isAutoDispose: true,
       );
 
-  DoesUserExistNotifierProvider call(String email) =>
-      DoesUserExistNotifierProvider._(argument: email, from: this);
-
   @override
-  String toString() => r'doesUserExistProvider';
-}
-
-abstract class _$DoesUserExistNotifier extends $AsyncNotifier<bool> {
-  late final _$args = ref.$arg as String;
-  String get email => _$args;
-
-  FutureOr<bool> build(String email);
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final created = build(_$args);
-    final ref = this.ref as $Ref<AsyncValue<bool>, bool>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<AsyncValue<bool>, bool>,
-              AsyncValue<bool>,
-              Object?,
-              Object?
-            >;
-    element.handleValue(ref, created);
-  }
-}
-
-@ProviderFor(SendOtpNotifier)
-const sendOtpProvider = SendOtpNotifierFamily._();
-
-final class SendOtpNotifierProvider
-    extends $AsyncNotifierProvider<SendOtpNotifier, String> {
-  const SendOtpNotifierProvider._({
-    required SendOtpNotifierFamily super.from,
-    required String super.argument,
-  }) : super(
-         retry: null,
-         name: r'sendOtpProvider',
-         isAutoDispose: true,
-         dependencies: null,
-         $allTransitiveDependencies: null,
-       );
-
-  @override
-  String debugGetCreateSourceHash() => _$sendOtpNotifierHash();
-
-  @override
-  String toString() {
-    return r'sendOtpProvider'
-        ''
-        '($argument)';
-  }
+  String debugGetCreateSourceHash() => _$authControllerHash();
 
   @$internal
   @override
-  SendOtpNotifier create() => SendOtpNotifier();
-
-  @override
-  bool operator ==(Object other) {
-    return other is SendOtpNotifierProvider && other.argument == argument;
-  }
-
-  @override
-  int get hashCode {
-    return argument.hashCode;
-  }
+  AuthController create() => AuthController();
 }
 
-String _$sendOtpNotifierHash() => r'9bce5bbce5ddd038ef9aa1b21a35023a6b8b9ff8';
+String _$authControllerHash() => r'51b855a096671c581a95c7380dc89e0ceb404994';
 
-final class SendOtpNotifierFamily extends $Family
-    with
-        $ClassFamilyOverride<
-          SendOtpNotifier,
-          AsyncValue<String>,
-          String,
-          FutureOr<String>,
-          String
-        > {
-  const SendOtpNotifierFamily._()
-    : super(
-        retry: null,
-        name: r'sendOtpProvider',
-        dependencies: null,
-        $allTransitiveDependencies: null,
-        isAutoDispose: true,
-      );
-
-  SendOtpNotifierProvider call(String email) =>
-      SendOtpNotifierProvider._(argument: email, from: this);
-
-  @override
-  String toString() => r'sendOtpProvider';
-}
-
-abstract class _$SendOtpNotifier extends $AsyncNotifier<String> {
-  late final _$args = ref.$arg as String;
-  String get email => _$args;
-
-  FutureOr<String> build(String email);
+abstract class _$AuthController extends $AsyncNotifier<void> {
+  FutureOr<void> build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(_$args);
-    final ref = this.ref as $Ref<AsyncValue<String>, String>;
+    build();
+    final ref = this.ref as $Ref<AsyncValue<void>, void>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<String>, String>,
-              AsyncValue<String>,
+              AnyNotifier<AsyncValue<void>, void>,
+              AsyncValue<void>,
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleValue(ref, null);
   }
 }

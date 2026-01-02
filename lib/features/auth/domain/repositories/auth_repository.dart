@@ -4,7 +4,7 @@ import 'package:notes_bucket/features/auth/data/models/response_models.dart';
 
 abstract interface class AuthRepository {
 
-  Future<Either<Failure, GenericResponseModel>> doesUserExist(String email);
+  Future<Either<Failure, GenericResponseModel>> doesEmailExist(String email);
 
   Future<Either<Failure, SendOtpResponseModel>> sendOtp(String email);
 
