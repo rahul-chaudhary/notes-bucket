@@ -110,10 +110,17 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   }
 
   Exception _handleError(DioException error) {
+    dbPrint('_handleError ${error.response?.toString()}');
     if (error.response != null) {
-      final message = error.response?.data['message'] ?? error.error.toString();
-      return Exception(message);
+      final data = error.response?.data;
+      // Check if data is a Map before accessing keys
+      if (data is Map<String, dynamic>) {
+        final message = data['message'] ?? data['error'] ?? error.message;
+        return Exception(message);
+      }
+      // If data is a String or other type, use it directly
+      return Exception(data.toString());
     }
-    return Exception(error.error.toString());
+    return Exception(error.message ?? 'Unknown error occurred');
   }
 }
