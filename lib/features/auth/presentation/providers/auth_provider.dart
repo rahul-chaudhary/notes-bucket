@@ -62,7 +62,7 @@ class AuthController extends _$AuthController {
       final usecase = ref.read(doesEmailExistUseCaseProvider);
       final useCaseResult = await usecase.call(email);
       return useCaseResult.fold(
-            (failure) => throw failure,
+            (failure) => throw failure.toString(),
             (exists) => exists,
       );
     });
@@ -85,7 +85,7 @@ class AuthController extends _$AuthController {
       final usecase = ref.read(sendOtpUseCaseProvider);
       final useCaseResult = await usecase.call(email);
       return useCaseResult.fold(
-            (failure) => throw Exception(failure.message),
+            (failure) => throw failure.toString(),
             (message) => message,
       );
     });
@@ -106,7 +106,7 @@ class AuthController extends _$AuthController {
       final usecase = ref.read(authUseCaseProvider);
       final useCaseResult = await usecase.call(params);
       return useCaseResult.fold(
-            (failure) => throw Exception(failure.message),
+            (failure) => throw failure.toString(),
             (user) => user,
       );
     });
