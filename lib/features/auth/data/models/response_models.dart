@@ -25,7 +25,7 @@ class SendOtpResponseModel {
   });
 }
 
-@MappableClass()
+@MappableClass(caseStyle: CaseStyle.snakeCase)
 class AuthResponseModel {
   final String message;
   final String accessToken;

@@ -31,22 +31,26 @@ class UserMapper extends ClassMapperBase<User> {
   static const Field<User, bool> _f$subscriptionActive = Field(
     'subscriptionActive',
     _$subscriptionActive,
+    key: r'subscription_active',
   );
   static DateTime _$createdAt(User v) => v.createdAt;
   static const Field<User, DateTime> _f$createdAt = Field(
     'createdAt',
     _$createdAt,
+    key: r'created_at',
   );
   static DateTime? _$updatedAt(User v) => v.updatedAt;
   static const Field<User, DateTime> _f$updatedAt = Field(
     'updatedAt',
     _$updatedAt,
+    key: r'updated_at',
     opt: true,
   );
   static DateTime? _$deletedAt(User v) => v.deletedAt;
   static const Field<User, DateTime> _f$deletedAt = Field(
     'deletedAt',
     _$deletedAt,
+    key: r'deleted_at',
     opt: true,
   );
 

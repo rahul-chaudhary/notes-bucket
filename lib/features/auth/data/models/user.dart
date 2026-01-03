@@ -2,7 +2,7 @@ import 'package:dart_mappable/dart_mappable.dart';
 
 part 'user.mapper.dart';
 
-@MappableClass()
+@MappableClass(caseStyle: CaseStyle.snakeCase)
 class User with UserMappable {
   final String id;
   final String email;

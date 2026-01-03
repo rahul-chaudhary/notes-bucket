@@ -310,11 +310,13 @@ class AuthResponseModelMapper extends ClassMapperBase<AuthResponseModel> {
   static const Field<AuthResponseModel, String> _f$accessToken = Field(
     'accessToken',
     _$accessToken,
+    key: r'access_token',
   );
   static String _$refreshToken(AuthResponseModel v) => v.refreshToken;
   static const Field<AuthResponseModel, String> _f$refreshToken = Field(
     'refreshToken',
     _$refreshToken,
+    key: r'refresh_token',
   );
   static User _$user(AuthResponseModel v) => v.user;
   static const Field<AuthResponseModel, User> _f$user = Field('user', _$user);
