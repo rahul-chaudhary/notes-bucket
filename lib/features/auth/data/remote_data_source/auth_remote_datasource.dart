@@ -37,7 +37,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       } on DioException catch (e) {
       throw _handleError(e);
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -68,7 +68,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     } on DioException catch (e) {
       throw _handleError(e);
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -84,7 +84,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     } on DioException catch (e) {
       throw _handleError(e);
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
