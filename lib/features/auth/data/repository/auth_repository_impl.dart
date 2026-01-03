@@ -17,8 +17,11 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final response = await _remoteDataSource.doesEmailExist(email);
       return Right(response);
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    } on Failure catch (e) {
+      return Left(e);
+    }
+    catch (e) {
+      return Left(UnknownFailure(e.toString()));
     }
   }
 
@@ -27,8 +30,11 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final response = await _remoteDataSource.sendOtp(email);
       return Right(response);
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    } on Failure catch (e) {
+      return Left(e);
+    }
+    catch (e) {
+      return Left(UnknownFailure(e.toString()));
     }
   }
 
@@ -48,8 +54,11 @@ class AuthRepositoryImpl implements AuthRepository {
       );
 
       return Right(response);
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    } on Failure catch (e) {
+      return Left(e);
+    }
+    catch (e) {
+      return Left(UnknownFailure(e.toString()));
     }
   }
 
@@ -70,8 +79,11 @@ class AuthRepositoryImpl implements AuthRepository {
 
       // Parse and return user
       return Right(response);
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    } on Failure catch (e) {
+      return Left(e);
+    }
+    catch (e) {
+      return Left(UnknownFailure(e.toString()));
     }
   }
 
@@ -80,8 +92,11 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final response = await _remoteDataSource.googleSignIn(email);
       return Right(response);
-      } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      } on Failure catch (e) {
+      return Left(e);
+    }
+    catch (e) {
+      return Left(UnknownFailure(e.toString()));
     }
   }
 
@@ -90,8 +105,11 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final response = await _remoteDataSource.refreshToken();
       return Right(response);
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    } on Failure catch (e) {
+      return Left(e);
+    }
+    catch (e) {
+      return Left(UnknownFailure(e.toString()));
     }
   }
 
@@ -103,8 +121,11 @@ class AuthRepositoryImpl implements AuthRepository {
       await _secureStorage.delete(key: ApiConstants.accessTokenKey);
       await _secureStorage.delete(key: ApiConstants.refreshTokenKey);
       return const Right(null);
-    } catch (e) {
-      throw Exception('Logout failed: $e');
+    } on Failure catch (e) {
+      return Left(e);
+    }
+    catch (e) {
+      return Left(UnknownFailure(e.toString()));
     }
   }
 }

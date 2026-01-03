@@ -28,3 +28,31 @@ class ServerFailure extends Failure {
 class NoInternetFailure extends Failure {
   const NoInternetFailure(super.message);
 }
+
+class TimeoutFailure extends Failure {
+  const TimeoutFailure(super.message);
+}
+
+class CancelledFailure extends Failure {
+  const CancelledFailure(super.message);
+}
+
+class ConnectionFailure extends Failure {
+  const ConnectionFailure(super.message);
+}
+
+class UnknownFailure extends Failure {
+  const UnknownFailure(super.message);
+}
+
+class UnexpectedFailure extends Failure {
+  const UnexpectedFailure(super.message);
+}
+
+class BadResponseFailure extends Failure {
+  const BadResponseFailure(super.message);
+}
+
+class UnauthorizedFailure extends Failure {
+  const UnauthorizedFailure(super.message);
+}

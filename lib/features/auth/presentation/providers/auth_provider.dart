@@ -62,7 +62,7 @@ class AuthController extends _$AuthController {
       final usecase = ref.read(doesEmailExistUseCaseProvider);
       final useCaseResult = await usecase.call(email);
       return useCaseResult.fold(
-            (failure) => throw failure.message,
+            (failure) => throw failure,
             (exists) => exists,
       );
     });

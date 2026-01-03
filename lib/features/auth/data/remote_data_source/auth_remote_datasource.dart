@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:notes_bucket/core/errors/error_handler.dart';
 import 'package:notes_bucket/core/network/api_client.dart';
 import 'package:notes_bucket/core/network/api_endpoints.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
@@ -35,7 +36,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       dbPrint(res.data);
       return GenericResponseModelMapper.fromMap(res.data);
       } on DioException catch (e) {
-      throw _handleError(e);
+      throw DioExceptionHandler.handleError(e);
     } catch (e) {
       rethrow;
     }
@@ -50,7 +51,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       );
       return SendOtpResponseModelMapper.fromMap(response.data);
     } on DioException catch (e) {
-      throw _handleError(e);
+      throw DioExceptionHandler.handleError(e);
     } catch (e) {
       throw Exception(e.toString());
     }
@@ -66,7 +67,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
 
       return AuthResponseModelMapper.fromMap(response.data);
     } on DioException catch (e) {
-      throw _handleError(e);
+      throw DioExceptionHandler.handleError(e);
     } catch (e) {
       rethrow;
     }
@@ -82,7 +83,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
 
       return AuthResponseModelMapper.fromMap(response.data);
     } on DioException catch (e) {
-      throw _handleError(e);
+      throw DioExceptionHandler.handleError(e);
     } catch (e) {
       rethrow;
     }
@@ -103,24 +104,10 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     try {
       await _apiClient.post(ApiEndpoints.logout);
     } on DioException catch (e) {
-      throw _handleError(e);
+      throw DioExceptionHandler.handleError(e);
     } catch (e) {
       throw Exception(e.toString());
     }
   }
 
-  Exception _handleError(DioException error) {
-    dbPrint('_handleError ${error.response?.toString()}');
-    if (error.response != null) {
-      final data = error.response?.data;
-      // Check if data is a Map before accessing keys
-      if (data is Map<String, dynamic>) {
-        final message = data['message'] ?? data['error'] ?? error.message;
-        return Exception(message);
-      }
-      // If data is a String or other type, use it directly
-      return Exception(data.toString());
-    }
-    return Exception(error.message ?? 'Unknown error occurred');
-  }
 }
