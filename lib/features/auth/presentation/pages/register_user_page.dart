@@ -69,7 +69,7 @@ class RegisterUserPage extends HookConsumerWidget {
               MaterialPageRoute(
                 builder: (context) =>
                     OtpVerificationPage(
-                        authType: AuthType.signIn,
+                        authType: AuthType.signUp,
                         email: emailController.text.trim()),
               ),
             );
