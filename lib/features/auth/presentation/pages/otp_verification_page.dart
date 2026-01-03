@@ -24,6 +24,7 @@ class OtpVerificationPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final authController = ref.read(authControllerProvider.notifier);
     final otpController = useTextEditingController();
     final resendOtpTimer = useState(60);
     final isBtnLoading = useState(false);
@@ -111,7 +112,7 @@ class OtpVerificationPage extends HookConsumerWidget {
                                 authType: authType,
                                 email: email,
                                 otp: otpController.text.trim());
-                            final user = await ref.read(authControllerProvider.notifier).authenticate(authParams);
+                            final user = await authController.authenticate(authParams);
                             dbPrint(user.toString());
                             Navigator.pushNamed(context, AppRoutes.home);
                           } catch(e) {
@@ -135,8 +136,18 @@ class OtpVerificationPage extends HookConsumerWidget {
                       : AppRichTextButton(
                         primaryText: 'Didn\'t receive the code? ',
                         btnText: 'Resend',
-                        onBtnPressed: () {
-                          resendOtpTimer.value = 60;
+                        onBtnPressed: () async {
+                          try{
+                            resendOtpTimer.value = 60;
+                            otpController.clear();
+                            final message = await authController.sendOtp(
+                              email.trim(),
+                            );
+                            if (context.mounted) AppSnackBar.showSuccess(context, message);
+                          } catch(e){
+                            AppSnackBar.showError(context, e.toString());
+                            rethrow;
+                          }
                         },
                       ),
                     ),
