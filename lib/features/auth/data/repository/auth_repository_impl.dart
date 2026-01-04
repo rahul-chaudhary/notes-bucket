@@ -1,21 +1,21 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:notes_bucket/core/errors/failures.dart';
-import 'package:notes_bucket/core/network/constants/api_constants.dart';
+import 'package:notes_bucket/core/secure_storage/secure_storage_helper.dart';
+import 'package:notes_bucket/core/secure_storage/secure_storage_model.dart';
 import 'package:notes_bucket/features/auth/data/models/response_models.dart';
 import 'package:notes_bucket/features/auth/data/remote_data_source/auth_remote_datasource.dart';
 import 'package:notes_bucket/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  final AuthRemoteDatasource _remoteDataSource;
-  final FlutterSecureStorage _secureStorage;
+  final AuthRemoteDatasource _remoteDatasource;
+  final SecureStorageHelper _secureStorageHelper;
 
-  AuthRepositoryImpl(this._remoteDataSource, this._secureStorage);
+  AuthRepositoryImpl(this._remoteDatasource, this._secureStorageHelper);
 
   @override
   Future<Either<Failure, GenericResponseModel>> doesEmailExist(String email) async {
     try {
-      final response = await _remoteDataSource.doesEmailExist(email);
+      final response = await _remoteDatasource.doesEmailExist(email);
       return Right(response);
     } on Failure catch (e) {
       return Left(e);
@@ -28,31 +28,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, SendOtpResponseModel>> sendOtp(String email) async {
     try {
-      final response = await _remoteDataSource.sendOtp(email);
-      return Right(response);
-    } on Failure catch (e) {
-      return Left(e);
-    }
-    catch (e) {
-      return Left(UnknownFailure(e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, AuthResponseModel>> register(String email, String otp) async {
-    try {
-      final response = await _remoteDataSource.register(email, otp);
-
-      // Save tokens
-      await _secureStorage.write(
-        key: ApiConstants.accessTokenKey,
-        value: response.accessToken,
-      );
-      await _secureStorage.write(
-        key: ApiConstants.refreshTokenKey,
-        value: response.refreshToken,
-      );
-
+      final response = await _remoteDatasource.sendOtp(email);
       return Right(response);
     } on Failure catch (e) {
       return Left(e);
@@ -65,32 +41,51 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, AuthResponseModel>> login(String email, String otp) async {
     try {
-      final response = await _remoteDataSource.login(email, otp);
-
-      // Save tokens
-      await _secureStorage.write(
-        key: ApiConstants.accessTokenKey,
-        value: response.accessToken,
-      );
-      await _secureStorage.write(
-        key: ApiConstants.refreshTokenKey,
-        value: response.refreshToken,
-      );
-
-      // Parse and return user
+      final response = await _remoteDatasource.login(email, otp);
+      await _saveAuthToStorage(response);
       return Right(response);
-    } on Failure catch (e) {
-      return Left(e);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
     }
-    catch (e) {
-      return Left(UnknownFailure(e.toString()));
+  }
+
+  @override
+  Future<Either<Failure, AuthResponseModel>> register(String email, String otp) async {
+    try {
+      final response = await _remoteDatasource.register(email, otp);
+      await _saveAuthToStorage(response);
+      return Right(response);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<void> _saveAuthToStorage(AuthResponseModel authResponse) async {
+    final ssModel = SecureStorageModel(
+      isFirstLaunch: false,
+      isLoggedIn: true,
+      authResponseModel: authResponse,
+    );
+    await _secureStorageHelper.save(
+      SecureStorageKeys.secureStorageKey,
+      ssModel.toJson(),
+    );
+  }
+
+  @override
+  Future<Either<Failure, void>> saveAuthData(AuthResponseModel authResponse) async {
+    try {
+      await _saveAuthToStorage(authResponse);
+      return const Right(null);
+    } catch (e) {
+      return Left(CacheFailure(e.toString()));
     }
   }
 
   @override
   Future<Either<Failure, AuthResponseModel>> googleSignIn(String email) async {
     try {
-      final response = await _remoteDataSource.googleSignIn(email);
+      final response = await _remoteDatasource.googleSignIn(email);
       return Right(response);
       } on Failure catch (e) {
       return Left(e);
@@ -103,7 +98,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, String>> refreshToken() async {
     try {
-      final response = await _remoteDataSource.refreshToken();
+      final response = await _remoteDatasource.refreshToken();
       return Right(response);
     } on Failure catch (e) {
       return Left(e);
@@ -114,12 +109,12 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
 
+
   @override
   Future<Either<Failure, void>> logout() async {
     try {
-      await _remoteDataSource.logout();
-      await _secureStorage.delete(key: ApiConstants.accessTokenKey);
-      await _secureStorage.delete(key: ApiConstants.refreshTokenKey);
+      await _remoteDatasource.logout();
+      await _secureStorageHelper.deleteAll();
       return const Right(null);
     } on Failure catch (e) {
       return Left(e);

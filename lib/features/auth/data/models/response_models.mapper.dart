@@ -306,13 +306,13 @@ class AuthResponseModelMapper extends ClassMapperBase<AuthResponseModel> {
     'message',
     _$message,
   );
-  static String _$accessToken(AuthResponseModel v) => v.accessToken;
+  static String? _$accessToken(AuthResponseModel v) => v.accessToken;
   static const Field<AuthResponseModel, String> _f$accessToken = Field(
     'accessToken',
     _$accessToken,
     key: r'access_token',
   );
-  static String _$refreshToken(AuthResponseModel v) => v.refreshToken;
+  static String? _$refreshToken(AuthResponseModel v) => v.refreshToken;
   static const Field<AuthResponseModel, String> _f$refreshToken = Field(
     'refreshToken',
     _$refreshToken,
@@ -435,14 +435,14 @@ class _AuthResponseModelCopyWithImpl<$R, $Out>
   @override
   $R call({
     String? message,
-    String? accessToken,
-    String? refreshToken,
+    Object? accessToken = $none,
+    Object? refreshToken = $none,
     User? user,
   }) => $apply(
     FieldCopyWithData({
       if (message != null) #message: message,
-      if (accessToken != null) #accessToken: accessToken,
-      if (refreshToken != null) #refreshToken: refreshToken,
+      if (accessToken != $none) #accessToken: accessToken,
+      if (refreshToken != $none) #refreshToken: refreshToken,
       if (user != null) #user: user,
     }),
   );

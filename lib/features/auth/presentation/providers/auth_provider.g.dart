@@ -15,18 +15,20 @@ const authRemoteDatasourceProvider = AuthRemoteDatasourceProvider._();
 final class AuthRemoteDatasourceProvider
     extends
         $FunctionalProvider<
+          AsyncValue<AuthRemoteDatasource>,
           AuthRemoteDatasource,
-          AuthRemoteDatasource,
-          AuthRemoteDatasource
+          FutureOr<AuthRemoteDatasource>
         >
-    with $Provider<AuthRemoteDatasource> {
+    with
+        $FutureModifier<AuthRemoteDatasource>,
+        $FutureProvider<AuthRemoteDatasource> {
   const AuthRemoteDatasourceProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'authRemoteDatasourceProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -36,81 +38,37 @@ final class AuthRemoteDatasourceProvider
 
   @$internal
   @override
-  $ProviderElement<AuthRemoteDatasource> $createElement(
+  $FutureProviderElement<AuthRemoteDatasource> $createElement(
     $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  ) => $FutureProviderElement(pointer);
 
   @override
-  AuthRemoteDatasource create(Ref ref) {
+  FutureOr<AuthRemoteDatasource> create(Ref ref) {
     return authRemoteDatasource(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AuthRemoteDatasource value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<AuthRemoteDatasource>(value),
-    );
   }
 }
 
 String _$authRemoteDatasourceHash() =>
-    r'5731f190cb7e881ea3ea2ef83c88a6bb64960ea9';
-
-@ProviderFor(apiClient)
-const apiClientProvider = ApiClientProvider._();
-
-final class ApiClientProvider
-    extends $FunctionalProvider<ApiClient, ApiClient, ApiClient>
-    with $Provider<ApiClient> {
-  const ApiClientProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'apiClientProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$apiClientHash();
-
-  @$internal
-  @override
-  $ProviderElement<ApiClient> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  ApiClient create(Ref ref) {
-    return apiClient(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(ApiClient value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<ApiClient>(value),
-    );
-  }
-}
-
-String _$apiClientHash() => r'd4310848561288f96a9b18fcc917832824cd277e';
+    r'fd92e11e8196819903999450391c744531185efc';
 
 @ProviderFor(authRepository)
 const authRepositoryProvider = AuthRepositoryProvider._();
 
 final class AuthRepositoryProvider
-    extends $FunctionalProvider<AuthRepository, AuthRepository, AuthRepository>
-    with $Provider<AuthRepository> {
+    extends
+        $FunctionalProvider<
+          AsyncValue<AuthRepository>,
+          AuthRepository,
+          FutureOr<AuthRepository>
+        >
+    with $FutureModifier<AuthRepository>, $FutureProvider<AuthRepository> {
   const AuthRepositoryProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'authRepositoryProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -120,38 +78,36 @@ final class AuthRepositoryProvider
 
   @$internal
   @override
-  $ProviderElement<AuthRepository> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $FutureProviderElement<AuthRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
-  AuthRepository create(Ref ref) {
+  FutureOr<AuthRepository> create(Ref ref) {
     return authRepository(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AuthRepository value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<AuthRepository>(value),
-    );
   }
 }
 
-String _$authRepositoryHash() => r'2c68f39f0c49eb3c90b12437dd21515f6f457ec2';
+String _$authRepositoryHash() => r'd69be86afb4f5b95ba00e6b356d8d6eeef7bba09';
 
 @ProviderFor(doesEmailExistUseCase)
 const doesEmailExistUseCaseProvider = DoesEmailExistUseCaseProvider._();
 
 final class DoesEmailExistUseCaseProvider
-    extends $FunctionalProvider<DoesEmailExist, DoesEmailExist, DoesEmailExist>
-    with $Provider<DoesEmailExist> {
+    extends
+        $FunctionalProvider<
+          AsyncValue<DoesEmailExist>,
+          DoesEmailExist,
+          FutureOr<DoesEmailExist>
+        >
+    with $FutureModifier<DoesEmailExist>, $FutureProvider<DoesEmailExist> {
   const DoesEmailExistUseCaseProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'doesEmailExistUseCaseProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -161,39 +117,32 @@ final class DoesEmailExistUseCaseProvider
 
   @$internal
   @override
-  $ProviderElement<DoesEmailExist> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $FutureProviderElement<DoesEmailExist> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
-  DoesEmailExist create(Ref ref) {
+  FutureOr<DoesEmailExist> create(Ref ref) {
     return doesEmailExistUseCase(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(DoesEmailExist value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<DoesEmailExist>(value),
-    );
   }
 }
 
 String _$doesEmailExistUseCaseHash() =>
-    r'357b56dcd54982186f4b5df28d2b85109a611d32';
+    r'3930a4060d636116bb9b7cb2db8649b4fc085d03';
 
 @ProviderFor(sendOtpUseCase)
 const sendOtpUseCaseProvider = SendOtpUseCaseProvider._();
 
 final class SendOtpUseCaseProvider
-    extends $FunctionalProvider<SendOtp, SendOtp, SendOtp>
-    with $Provider<SendOtp> {
+    extends $FunctionalProvider<AsyncValue<SendOtp>, SendOtp, FutureOr<SendOtp>>
+    with $FutureModifier<SendOtp>, $FutureProvider<SendOtp> {
   const SendOtpUseCaseProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'sendOtpUseCaseProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -203,38 +152,35 @@ final class SendOtpUseCaseProvider
 
   @$internal
   @override
-  $ProviderElement<SendOtp> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $FutureProviderElement<SendOtp> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
-  SendOtp create(Ref ref) {
+  FutureOr<SendOtp> create(Ref ref) {
     return sendOtpUseCase(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(SendOtp value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<SendOtp>(value),
-    );
   }
 }
 
-String _$sendOtpUseCaseHash() => r'5306bf0bf284a66c463a78790a79fd9826d178ad';
+String _$sendOtpUseCaseHash() => r'b8b32b6d580587426171603ad804cb8512c40cac';
 
 @ProviderFor(authUseCase)
 const authUseCaseProvider = AuthUseCaseProvider._();
 
 final class AuthUseCaseProvider
-    extends $FunctionalProvider<Authentication, Authentication, Authentication>
-    with $Provider<Authentication> {
+    extends
+        $FunctionalProvider<
+          AsyncValue<Authentication>,
+          Authentication,
+          FutureOr<Authentication>
+        >
+    with $FutureModifier<Authentication>, $FutureProvider<Authentication> {
   const AuthUseCaseProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'authUseCaseProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -244,24 +190,17 @@ final class AuthUseCaseProvider
 
   @$internal
   @override
-  $ProviderElement<Authentication> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $FutureProviderElement<Authentication> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
-  Authentication create(Ref ref) {
+  FutureOr<Authentication> create(Ref ref) {
     return authUseCase(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(Authentication value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<Authentication>(value),
-    );
   }
 }
 
-String _$authUseCaseHash() => r'c4efdc46d21a1301ceddecb2c151fe0ebf34ca43';
+String _$authUseCaseHash() => r'4e5ba6bb0310e2d111d8a25ee761a6b06705a5e4';
 
 @ProviderFor(AuthController)
 const authControllerProvider = AuthControllerProvider._();
@@ -287,7 +226,7 @@ final class AuthControllerProvider
   AuthController create() => AuthController();
 }
 
-String _$authControllerHash() => r'db1d2e232ffe1ed06b305698ba86a40c40608abb';
+String _$authControllerHash() => r'66ee39a47c0029f4bdfa2593f7b247e4aa637f09';
 
 abstract class _$AuthController extends $AsyncNotifier<void> {
   FutureOr<void> build();

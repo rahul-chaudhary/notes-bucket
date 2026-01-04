@@ -1,5 +1,5 @@
-import 'package:notes_bucket/core/network/api_client.dart';
-import 'package:notes_bucket/core/network/providers/api_client_provider.dart';
+import 'package:notes_bucket/core/network/providers/network_providers.dart';
+import 'package:notes_bucket/core/secure_storage/secure_storage_providers.dart';
 import 'package:notes_bucket/features/auth/data/models/user.dart';
 import 'package:notes_bucket/features/auth/data/remote_data_source/auth_remote_datasource.dart';
 import 'package:notes_bucket/features/auth/data/repository/auth_repository_impl.dart';
@@ -13,37 +13,40 @@ part 'auth_provider.g.dart';
 // DATA LAYER PROVIDERS (Datasource + Repository)
 // ─────────────────────────────────────────────────────────────
 
-@riverpod
-AuthRemoteDatasource authRemoteDatasource(Ref ref) {
-  final apiClient = ref.watch(apiClientProvider);
+@Riverpod(keepAlive: true)
+Future<AuthRemoteDatasource> authRemoteDatasource(Ref ref) async {
+  final apiClient = await ref.watch(apiClientProvider.future);
   return AuthRemoteDatasourceImpl(apiClient);
 }
 
-@riverpod
-ApiClient apiClient(Ref ref) {
-  final dio = ref.watch(dioProvider);
-  return ApiClient(dio);
-}
-
-@riverpod
-AuthRepository authRepository(Ref ref) {
-  final remoteDataSource = ref.watch(authRemoteDatasourceProvider);
-  final secureStorage = ref.watch(secureStorageProvider);
-  return AuthRepositoryImpl(remoteDataSource, secureStorage);
+@Riverpod(keepAlive: true)
+Future<AuthRepository> authRepository(Ref ref) async {
+  final remoteDataSource = await ref.watch(authRemoteDatasourceProvider.future);
+  final secureStorageHelper = ref.watch(secureStorageHelperProvider);
+  return AuthRepositoryImpl(remoteDataSource, secureStorageHelper);
 }
 
 // ─────────────────────────────────────────────────────────────
 // DOMAIN LAYER PROVIDERS (Use-Cases)
 // ─────────────────────────────────────────────────────────────
 
-@riverpod
-DoesEmailExist doesEmailExistUseCase(Ref ref) => DoesEmailExist(ref.watch(authRepositoryProvider));
+@Riverpod(keepAlive: true)
+Future<DoesEmailExist> doesEmailExistUseCase(Ref ref) async {
+  final repository = await ref.watch(authRepositoryProvider.future);
+  return DoesEmailExist(repository);
+}
 
-@riverpod
-SendOtp sendOtpUseCase(Ref ref) => SendOtp(ref.watch(authRepositoryProvider));
+@Riverpod(keepAlive: true)
+Future<SendOtp> sendOtpUseCase(Ref ref) async {
+  final repository = await ref.watch(authRepositoryProvider.future);
+  return SendOtp(repository);
+}
 
-@riverpod
-Authentication authUseCase(Ref ref) => Authentication(ref.watch(authRepositoryProvider));
+@Riverpod(keepAlive: true)
+Future<Authentication> authUseCase(Ref ref) async {
+  final repository = await ref.watch(authRepositoryProvider.future);
+  return Authentication(repository);
+}
 
 
 // ─────────────────────────────────────────────────────────────
@@ -58,62 +61,70 @@ class AuthController extends _$AuthController {
   Future<bool> doesEmailExist(String email) async {
     state = const AsyncValue.loading();
 
-    final result = await AsyncValue.guard(() async {
-      final usecase = ref.read(doesEmailExistUseCaseProvider);
+    try {
+      final usecase = await ref.read(doesEmailExistUseCaseProvider.future);
       final useCaseResult = await usecase.call(email);
+
       return useCaseResult.fold(
-            (failure) => throw failure.toString(),
-            (exists) => exists,
+            (failure) {
+          state = AsyncValue.error(failure.toString(), StackTrace.current);
+          throw Exception(failure.toString());
+        },
+            (exists) {
+          state = const AsyncValue.data(null);
+          return exists;
+        },
       );
-    });
-
-    // Update state
-    state = result.map(data: (_) => const AsyncValue.data(null), error: (e) => e, loading: (l) => l);
-
-    // Rethrow if error occurred
-    if (result.hasError) {
-      throw result.error!;
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+      rethrow;
     }
-
-    return result.requireValue;
   }
 
   Future<String> sendOtp(String email) async {
     state = const AsyncValue.loading();
 
-    final result = await AsyncValue.guard(() async {
-      final usecase = ref.read(sendOtpUseCaseProvider);
+    try {
+      final usecase = await ref.read(sendOtpUseCaseProvider.future);
       final useCaseResult = await usecase.call(email);
+
       return useCaseResult.fold(
-            (failure) => throw failure.toString(),
-            (message) => message,
+            (failure) {
+          state = AsyncValue.error(failure.toString(), StackTrace.current);
+          throw Exception(failure.toString());
+        },
+            (message) {
+          state = const AsyncValue.data(null);
+          return message;
+        },
       );
-    });
-
-    // Update state
-    state = result.map(data: (_) => const AsyncValue.data(null), error: (e) => e, loading: (l) => l);
-
-    if (result.hasError) {
-      throw result.error!;
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+      rethrow;
     }
-
-    return result.requireValue;
   }
 
   Future<User> authenticate(AuthParams params) async {
     state = const AsyncValue.loading();
-    final result = await AsyncValue.guard(() async {
-      final usecase = ref.read(authUseCaseProvider);
-      final useCaseResult = await usecase.call(params);
-      return useCaseResult.fold(
-            (failure) => throw failure.toString(),
-            (user) => user,
-      );
-    });
 
-    if(result.hasError) {
-      throw result.error!;
+    try {
+      final usecase = await ref.read(authUseCaseProvider.future);
+      final useCaseResult = await usecase.call(params);
+
+      return useCaseResult.fold(
+            (failure) {
+          state = AsyncValue.error(failure.toString(), StackTrace.current);
+          throw Exception(failure.toString());
+        },
+            (user) {
+          state = const AsyncValue.data(null);
+          return user;
+        },
+      );
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+      rethrow;
     }
-    return result.requireValue;
   }
 }
+

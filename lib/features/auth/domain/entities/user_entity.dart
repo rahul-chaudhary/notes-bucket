@@ -3,7 +3,7 @@ import 'package:dart_mappable/dart_mappable.dart';
 part 'user_entity.mapper.dart';
 
 @MappableClass()
-class UserEntity {
+class UserEntity with UserEntityMappable {
   final String id;
   final String email;
   final String? username;

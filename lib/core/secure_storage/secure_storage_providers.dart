@@ -1,0 +1,68 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:notes_bucket/core/secure_storage/secure_storage_helper.dart';
+import 'package:notes_bucket/core/secure_storage/secure_storage_model.dart';
+import 'package:notes_bucket/features/auth/data/models/response_models.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'secure_storage_providers.g.dart';
+
+
+// Secure storage provider
+@riverpod
+FlutterSecureStorage secureStorage(Ref ref) {
+  return const FlutterSecureStorage(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+  );
+}
+
+@riverpod
+SecureStorageHelper secureStorageHelper(Ref ref) {
+  final secureStorage = ref.watch(secureStorageProvider);
+  return SecureStorageHelper(secureStorage);
+}
+
+@Riverpod(keepAlive: true)
+class SecureStorageDataNotifier extends _$SecureStorageDataNotifier {
+  @override
+  Future<SecureStorageModel?> build() async {
+    final secureStorageHelper = ref.watch(secureStorageHelperProvider);
+    final secureString = await secureStorageHelper.get(
+      SecureStorageKeys.secureStorageKey,
+    );
+    return secureString == null
+        ? null
+        : SecureStorageModelMapper.fromJson(secureString);
+  }
+
+  Future<void> save(SecureStorageModel model) async {
+    final secureStorageHelper = ref.read(secureStorageHelperProvider);
+    await secureStorageHelper.save(
+      SecureStorageKeys.secureStorageKey,
+      model.toJson(),
+    );
+    state = AsyncValue.data(model);
+  }
+
+  Future<void> updateAuthResponse(AuthResponseModel authResponse) async {
+    final current = state.valueOrNull;
+    final updated = current.copyWith(
+      authResponseModel: authResponse,
+      isLoggedIn: true,
+    );
+    await save(updated);
+  }
+
+  Future<void> setFirstLaunchComplete() async {
+    final current = state.valueOrNull;
+    final updated = current.copyWith(isFirstLaunch: false);
+    await save(updated);
+  }
+
+  Future<void> clear() async {
+    final secureStorageHelper = ref.read(secureStorageHelperProvider);
+    await secureStorageHelper.delete(SecureStorageKeys.secureStorageKey);
+    state = const AsyncValue.data(null);
+  }
+}
+
+

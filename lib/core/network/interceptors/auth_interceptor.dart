@@ -1,16 +1,27 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:notes_bucket/core/network/api_endpoints.dart';
-import 'package:notes_bucket/core/network/constants/api_constants.dart';
 
 class AuthInterceptor extends Interceptor {
-  final FlutterSecureStorage _secureStorage;
+  final String? _accessToken;
+  final String? _refreshToken;
+  final Function(String) _saveAccessToken;
+  final Function(String) _saveRefreshToken;
+  final Future<void> Function() _clearTokens;
   final Dio _dio;
 
   AuthInterceptor({
-    required FlutterSecureStorage secureStorage,
+    required String? accessToken,
+    required String? refreshToken,
+    required Function(String) saveAccessToken,
+    required Function(String) saveRefreshToken,
+    required Future<void> Function() clearTokens,
     required Dio dio,
-  })  : _secureStorage = secureStorage,
+  })  :
+        _accessToken = accessToken,
+        _refreshToken = refreshToken,
+        _saveAccessToken = saveAccessToken,
+        _saveRefreshToken = saveRefreshToken,
+        _clearTokens = clearTokens,
         _dio = dio;
 
   @override
@@ -23,13 +34,8 @@ class AuthInterceptor extends Interceptor {
       return handler.next(options);
     }
 
-    // Get access token from secure storage
-    final accessToken = await _secureStorage.read(
-      key: ApiConstants.accessTokenKey,
-    );
-
-    if (accessToken != null) {
-      options.headers['Authorization'] = 'Bearer $accessToken';
+    if (_accessToken != null) {
+      options.headers['Authorization'] = 'Bearer $_accessToken';
     }
 
     return handler.next(options);
@@ -44,7 +50,7 @@ class AuthInterceptor extends Interceptor {
     if (err.response?.statusCode == 401) {
       try {
         // Try to refresh the token
-        final newAccessToken = await _refreshToken();
+        final newAccessToken = await _fetchRefreshToken();
 
         if (newAccessToken != null) {
           // Retry the original request with new token
@@ -64,45 +70,27 @@ class AuthInterceptor extends Interceptor {
     return handler.next(err);
   }
 
-  Future<String?> _refreshToken() async {
+  Future<String?> _fetchRefreshToken() async {
     try {
-      final refreshToken = await _secureStorage.read(
-        key: ApiConstants.refreshTokenKey,
-      );
 
-      if (refreshToken == null) return null;
+      if (_refreshToken == null) return null;
 
       final response = await _dio.post(
         ApiEndpoints.refreshToken,
-        data: {'refreshToken': refreshToken},
+        data: {'refreshToken': _refreshToken},
       );
 
       final newAccessToken = response.data['data']['accessToken'] as String?;
       final newRefreshToken = response.data['data']['refreshToken'] as String?;
 
-      if (newAccessToken != null) {
-        await _secureStorage.write(
-          key: ApiConstants.accessTokenKey,
-          value: newAccessToken,
-        );
-      }
+      if (newAccessToken != null) _saveAccessToken(newAccessToken);
 
-      if (newRefreshToken != null) {
-        await _secureStorage.write(
-          key: ApiConstants.refreshTokenKey,
-          value: newRefreshToken,
-        );
-      }
+      if (newRefreshToken != null) _saveRefreshToken(newRefreshToken);
 
       return newAccessToken;
     } catch (e) {
       return null;
     }
-  }
-
-  Future<void> _clearTokens() async {
-    await _secureStorage.delete(key: ApiConstants.accessTokenKey);
-    await _secureStorage.delete(key: ApiConstants.refreshTokenKey);
   }
 
   bool _isPublicEndpoint(String path) {

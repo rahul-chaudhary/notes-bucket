@@ -4,7 +4,7 @@ import 'package:notes_bucket/features/auth/data/models/user.dart';
 part 'response_models.mapper.dart';
 
 @MappableClass()
-class GenericResponseModel {
+class GenericResponseModel with GenericResponseModelMappable {
   final bool status;
   final String message;
 
@@ -15,7 +15,7 @@ class GenericResponseModel {
 }
 
 @MappableClass()
-class SendOtpResponseModel {
+class SendOtpResponseModel with SendOtpResponseModelMappable {
   final String otp;
   final String message;
 
@@ -26,10 +26,10 @@ class SendOtpResponseModel {
 }
 
 @MappableClass(caseStyle: CaseStyle.snakeCase)
-class AuthResponseModel {
+class AuthResponseModel with AuthResponseModelMappable {
   final String message;
-  final String accessToken;
-  final String refreshToken;
+  final String? accessToken;
+  final String? refreshToken;
   final User user;
 
   const AuthResponseModel({
