@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:notes_bucket/core/constants/app_routes.dart';
+import 'package:notes_bucket/core/secure_storage/secure_storage_providers.dart';
 import 'package:notes_bucket/core/theme/app_color.dart';
 import 'package:notes_bucket/core/widgets/cards/app_container.dart';
 import 'package:notes_bucket/core/widgets/notes_app_bar.dart';
+import 'package:notes_bucket/features/auth/data/models/user.dart';
 
 class SettingsPage extends HookConsumerWidget {
   const SettingsPage({super.key});
@@ -11,6 +14,9 @@ class SettingsPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final secureDataProvider = ref.watch(secureStorageDataProvider);
+    final user = useState<User?>(null);
+    secureDataProvider.whenData((value) => user.value = value?.authResponseModel?.user);
     return Container(
       decoration: BoxDecoration(gradient: AppGradient.scaffoldBackground),
       child: Scaffold(
@@ -21,7 +27,7 @@ class SettingsPage extends HookConsumerWidget {
             NotesAppBar(title: 'Settings', isBackButtonVisible: true),
             SliverPadding(
               padding: const EdgeInsets.all(16.0),
-              sliver: _profileCard(theme),
+              sliver: _profileCard(theme, user.value?.email ?? ''),
             ),
             SliverPadding(
               padding: const EdgeInsets.all(16.0),
@@ -63,11 +69,12 @@ class SettingsPage extends HookConsumerWidget {
                           onTap: () {},
                         ),
                         SettingMenuOption(
-                          leadingIcon: Icons.logout_rounded,
-                          leadingIconColor: theme.colorScheme.error,
-                          title: 'Sign out',
-                          titleColor: theme.colorScheme.error,
-                          onTap: () {
+                          leadingIcon: user.value != null ? Icons.logout_rounded : Icons.login_rounded,
+                          leadingIconColor: user.value != null ? theme.colorScheme.error: theme.colorScheme.secondary,
+                          title: user.value != null ? 'Sign out': 'Sign in',
+                          titleColor: user.value != null ? theme.colorScheme.error : theme.colorScheme.secondary,
+                          onTap: () async {
+                            await ref.read(secureStorageDataProvider.notifier).clear();
                             Navigator.pushNamed(context, AppRoutes.welcome);
                           },
                         ),
@@ -83,7 +90,7 @@ class SettingsPage extends HookConsumerWidget {
     );
   }
 
-  SliverAppBar _profileCard(ThemeData theme) {
+  SliverAppBar _profileCard(ThemeData theme, String email) {
     return SliverAppBar(
       automaticallyImplyLeading: false,
       pinned: false,
@@ -128,8 +135,9 @@ class SettingsPage extends HookConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
+                    if(email.isNotEmpty)
                     Text(
-                      'rahul@example.com',
+                      email,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurface.withOpacity(0.7),
                       ),

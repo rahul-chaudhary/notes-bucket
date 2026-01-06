@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:notes_bucket/core/errors/error_handler.dart';
 import 'package:notes_bucket/core/network/api_client.dart';
-import 'package:notes_bucket/core/network/api_endpoints.dart';
+import 'package:notes_bucket/core/network/constants/api_endpoints.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/features/auth/data/models/response_models.dart';
 

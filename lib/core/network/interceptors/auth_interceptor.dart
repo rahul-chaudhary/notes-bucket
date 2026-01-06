@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:notes_bucket/core/network/api_endpoints.dart';
+import 'package:notes_bucket/core/network/constants/api_endpoints.dart';
 
 class AuthInterceptor extends Interceptor {
   final String? _accessToken;

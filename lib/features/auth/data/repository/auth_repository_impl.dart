@@ -63,7 +63,6 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> _saveAuthToStorage(AuthResponseModel authResponse) async {
     final ssModel = SecureStorageModel(
       isFirstLaunch: false,
-      isLoggedIn: true,
       authResponseModel: authResponse,
     );
     await _secureStorageHelper.save(

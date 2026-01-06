@@ -27,11 +27,6 @@ class SecureStorageModelMapper extends ClassMapperBase<SecureStorageModel> {
     'isFirstLaunch',
     _$isFirstLaunch,
   );
-  static bool _$isLoggedIn(SecureStorageModel v) => v.isLoggedIn;
-  static const Field<SecureStorageModel, bool> _f$isLoggedIn = Field(
-    'isLoggedIn',
-    _$isLoggedIn,
-  );
   static AuthResponseModel? _$authResponseModel(SecureStorageModel v) =>
       v.authResponseModel;
   static const Field<SecureStorageModel, AuthResponseModel>
@@ -40,14 +35,12 @@ class SecureStorageModelMapper extends ClassMapperBase<SecureStorageModel> {
   @override
   final MappableFields<SecureStorageModel> fields = const {
     #isFirstLaunch: _f$isFirstLaunch,
-    #isLoggedIn: _f$isLoggedIn,
     #authResponseModel: _f$authResponseModel,
   };
 
   static SecureStorageModel _instantiate(DecodingData data) {
     return SecureStorageModel(
       isFirstLaunch: data.dec(_f$isFirstLaunch),
-      isLoggedIn: data.dec(_f$isLoggedIn),
       authResponseModel: data.dec(_f$authResponseModel),
     );
   }
@@ -125,11 +118,7 @@ abstract class SecureStorageModelCopyWith<
     implements ClassCopyWith<$R, $In, $Out> {
   AuthResponseModelCopyWith<$R, AuthResponseModel, AuthResponseModel>?
   get authResponseModel;
-  $R call({
-    bool? isFirstLaunch,
-    bool? isLoggedIn,
-    AuthResponseModel? authResponseModel,
-  });
+  $R call({bool? isFirstLaunch, AuthResponseModel? authResponseModel});
   SecureStorageModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
     Then<$Out2, $R2> t,
   );
@@ -149,21 +138,15 @@ class _SecureStorageModelCopyWithImpl<$R, $Out>
     (v) => call(authResponseModel: v),
   );
   @override
-  $R call({
-    bool? isFirstLaunch,
-    bool? isLoggedIn,
-    Object? authResponseModel = $none,
-  }) => $apply(
+  $R call({bool? isFirstLaunch, Object? authResponseModel = $none}) => $apply(
     FieldCopyWithData({
       if (isFirstLaunch != null) #isFirstLaunch: isFirstLaunch,
-      if (isLoggedIn != null) #isLoggedIn: isLoggedIn,
       if (authResponseModel != $none) #authResponseModel: authResponseModel,
     }),
   );
   @override
   SecureStorageModel $make(CopyWithData data) => SecureStorageModel(
     isFirstLaunch: data.get(#isFirstLaunch, or: $value.isFirstLaunch),
-    isLoggedIn: data.get(#isLoggedIn, or: $value.isLoggedIn),
     authResponseModel: data.get(
       #authResponseModel,
       or: $value.authResponseModel,

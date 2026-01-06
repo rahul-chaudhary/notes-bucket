@@ -4,112 +4,78 @@ import 'package:notes_bucket/core/network/constants/api_constants.dart';
 import 'package:notes_bucket/core/network/interceptors/auth_interceptor.dart';
 import 'package:notes_bucket/core/network/interceptors/error_interceptor.dart';
 import 'package:notes_bucket/core/network/interceptors/logger_interceptor.dart';
-import 'package:notes_bucket/core/secure_storage/secure_storage_helper.dart';
 import 'package:notes_bucket/core/secure_storage/secure_storage_providers.dart';
-import 'package:notes_bucket/core/secure_storage/secure_storage_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'network_providers.g.dart';
 
-
-
 // Base Dio instance without interceptors
 @riverpod
 Dio baseDio(Ref ref) {
-  try{
-    final dio = Dio(
-      BaseOptions(
-        baseUrl: ApiConstants.baseUrl + ApiConstants.apiVersion,
-        connectTimeout: ApiConstants.connectionTimeout,
-        receiveTimeout: ApiConstants.receiveTimeout,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-      ),
-    );
-    return dio;
-  } catch(e){
-    rethrow;
-  }
+  final dio = Dio(
+    BaseOptions(
+      baseUrl: ApiConstants.baseUrl + ApiConstants.apiVersion,
+      connectTimeout: ApiConstants.connectionTimeout,
+      receiveTimeout: ApiConstants.receiveTimeout,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    ),
+  );
+  return dio;
 }
 
-// Dio with all interceptors
 // Dio with all interceptors
 @riverpod
 Future<Dio> dio(Ref ref) async {
-  try {
-    final baseDio = ref.watch(baseDioProvider);
-    final secureStorageHelper = ref.watch(secureStorageHelperProvider);
-    final secureString = await secureStorageHelper.get(
-      SecureStorageKeys.secureStorageKey,
-    );
-    final secureModel = secureString == null
-        ? null
-        : SecureStorageModelMapper.fromJson(secureString);
+  final baseDio = ref.watch(baseDioProvider);
+  final secureData = await ref.watch(secureStorageDataProvider.future);
 
-    // Add interceptors in order
-    baseDio.interceptors.addAll([
-      LoggerInterceptor(),
-      AuthInterceptor(
-        accessToken: secureModel?.authResponseModel?.accessToken,
-        refreshToken: secureModel?.authResponseModel?.refreshToken,
-        saveAccessToken: (accessToken) async {
-          final currentString = await secureStorageHelper.get(
-            SecureStorageKeys.secureStorageKey,
+  baseDio.interceptors.addAll([
+    LoggerInterceptor(),
+    AuthInterceptor(
+      accessToken: secureData?.authResponseModel?.accessToken,
+      refreshToken: secureData?.authResponseModel?.refreshToken,
+      saveAccessToken: (accessToken) async {
+        final notifier = ref.read(secureStorageDataProvider.notifier);
+        final current = await ref.read(secureStorageDataProvider.future);
+        if (current?.authResponseModel != null) {
+          final updated = current!.copyWith(
+            authResponseModel: current.authResponseModel!.copyWith(
+              accessToken: accessToken,
+            ),
           );
-          if (currentString != null) {
-            final currentModel = SecureStorageModelMapper.fromJson(currentString);
-            final updatedModel = currentModel.copyWith(
-              authResponseModel: currentModel.authResponseModel?.copyWith(
-                accessToken: accessToken,
-              ),
-            );
-            await secureStorageHelper.save(
-              SecureStorageKeys.secureStorageKey,
-              updatedModel.toJson(),
-            );
-          }
-        },
-        saveRefreshToken: (refreshToken) async {
-          final currentString = await secureStorageHelper.get(
-            SecureStorageKeys.secureStorageKey,
+          await notifier.save(updated);
+        }
+      },
+      saveRefreshToken: (refreshToken) async {
+        final notifier = ref.read(secureStorageDataProvider.notifier);
+        final current = await ref.read(secureStorageDataProvider.future);
+        if (current?.authResponseModel != null) {
+          final updated = current!.copyWith(
+            authResponseModel: current.authResponseModel!.copyWith(
+              refreshToken: refreshToken,
+            ),
           );
-          if (currentString != null) {
-            final currentModel = SecureStorageModelMapper.fromJson(currentString);
-            final updatedModel = currentModel.copyWith(
-              authResponseModel: currentModel.authResponseModel?.copyWith(
-                refreshToken: refreshToken,
-              ),
-            );
-            await secureStorageHelper.save(
-              SecureStorageKeys.secureStorageKey,
-              updatedModel.toJson(),
-            );
-          }
-        },
-        clearTokens: () async {
-          await secureStorageHelper.delete(SecureStorageKeys.secureStorageKey);
-        },
-        dio: baseDio,
-      ),
-      ErrorInterceptor(),
-    ]);
+          await notifier.save(updated);
+        }
+      },
+      clearTokens: () async {
+        final notifier = ref.read(secureStorageDataProvider.notifier);
+        await notifier.clear();
+      },
+      dio: baseDio,
+    ),
+    ErrorInterceptor(),
+  ]);
 
-    return baseDio;
-  } catch (e) {
-    rethrow;
-  }
+  return baseDio;
 }
-
 
 // API Client provider
 @riverpod
 Future<ApiClient> apiClient(Ref ref) async {
-  try{
-    final dio = await ref.watch(dioProvider.future);
-    return ApiClient(dio);
-  } catch(e){
-    rethrow;
-  }
+  final dio = await ref.watch(dioProvider.future);
+  return ApiClient(dio);
 }

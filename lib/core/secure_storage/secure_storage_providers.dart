@@ -6,7 +6,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'secure_storage_providers.g.dart';
 
-
 // Secure storage provider
 @riverpod
 FlutterSecureStorage secureStorage(Ref ref) {
@@ -44,16 +43,21 @@ class SecureStorageDataNotifier extends _$SecureStorageDataNotifier {
   }
 
   Future<void> updateAuthResponse(AuthResponseModel authResponse) async {
-    final current = state.valueOrNull;
+    final current = state.asData?.value ?? SecureStorageModel(
+      isFirstLaunch: true,
+      authResponseModel: null,
+    );
     final updated = current.copyWith(
       authResponseModel: authResponse,
-      isLoggedIn: true,
     );
     await save(updated);
   }
 
   Future<void> setFirstLaunchComplete() async {
-    final current = state.valueOrNull;
+    final current = state.asData?.value ?? SecureStorageModel(
+      isFirstLaunch: true,
+      authResponseModel: null,
+    );
     final updated = current.copyWith(isFirstLaunch: false);
     await save(updated);
   }
@@ -64,5 +68,3 @@ class SecureStorageDataNotifier extends _$SecureStorageDataNotifier {
     state = const AsyncValue.data(null);
   }
 }
-
-

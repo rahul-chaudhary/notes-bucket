@@ -47,7 +47,7 @@ final class BaseDioProvider extends $FunctionalProvider<Dio, Dio, Dio>
   }
 }
 
-String _$baseDioHash() => r'7d96155571c18364422108a5d16598f3dcbdd781';
+String _$baseDioHash() => r'dbaee855de94b8fe5d4ae9cc2101ca392465de47';
 
 @ProviderFor(dio)
 const dioProvider = DioProvider._();
@@ -80,7 +80,7 @@ final class DioProvider
   }
 }
 
-String _$dioHash() => r'39fda55b1d674a87c534df8fccd8b1d97ee27a0b';
+String _$dioHash() => r'ebd25bc18abdf391f0fc9ead9ff0dab4a2bde3af';
 
 @ProviderFor(apiClient)
 const apiClientProvider = ApiClientProvider._();
@@ -118,4 +118,4 @@ final class ApiClientProvider
   }
 }
 
-String _$apiClientHash() => r'129f65d3f2b2b76ad2b043921b74d5b15b47af04';
+String _$apiClientHash() => r'074dfc916db82e3d6dc31d60b56315c75626de9b';

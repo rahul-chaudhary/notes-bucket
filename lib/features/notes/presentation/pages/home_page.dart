@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:notes_bucket/core/constants/app_routes.dart';
+import 'package:notes_bucket/core/secure_storage/secure_storage_providers.dart';
 import 'package:notes_bucket/core/theme/app_color.dart';
 import 'package:notes_bucket/core/theme/app_spacing.dart';
 import 'package:notes_bucket/core/theme/app_text_style.dart';
@@ -10,29 +12,37 @@ import 'package:notes_bucket/core/widgets/cards/app_container.dart';
 import 'package:notes_bucket/core/widgets/cards/info_card.dart';
 import 'package:notes_bucket/core/widgets/notes_app_bar.dart';
 import 'package:notes_bucket/core/widgets/skeletons/folder_grid_view_skeleton.dart';
+import 'package:notes_bucket/features/auth/data/models/user.dart';
 import 'package:notes_bucket/features/notes/presentation/pages/view_all_page.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/folder_dialogs.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/home_page_header.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/recent_notes.dart';
 
-class HomePage extends ConsumerWidget {
+class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final secureDataProvider = ref.watch(secureStorageDataProvider);
+    final user = useState<User?>(null);
+    secureDataProvider.whenData(
+      (data) => user.value = data?.authResponseModel?.user,
+    );
     return Container(
-      decoration: BoxDecoration(
-        gradient: AppGradient.scaffoldBackground,
-      ),
+      decoration: BoxDecoration(gradient: AppGradient.scaffoldBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: CustomScrollView(
           slivers: [
             NotesAppBar(
-                title: 'Notes Bucket',
-                isSettingsBtnVisible: true,
-                isBackButtonVisible: false),
+              title: 'Notes Bucket',
+              isSettingsBtnVisible: true,
+              isBackButtonVisible: false,
+            ),
+            SliverToBoxAdapter(
+              child: AppContainer(child: Text(user.value.toString())),
+            ),
             myFoldersSliverAppBar(context, ref),
             recentNoteSliverBox(context),
           ],
@@ -76,11 +86,10 @@ class HomePage extends ConsumerWidget {
     return Align(
       alignment: Alignment.centerRight,
       child: InkWell(
-          borderRadius: BorderRadius.circular(12),
-          onTap: () => Navigator.pushNamed(context, AppRoutes.viewAll),
-          child: AppContainer(
-            child: Text('View All'),
-          )),
+        borderRadius: BorderRadius.circular(12),
+        onTap: () => Navigator.pushNamed(context, AppRoutes.viewAll),
+        child: AppContainer(child: Text('View All')),
+      ),
     );
   }
 
@@ -95,9 +104,7 @@ class HomePage extends ConsumerWidget {
               height: MediaQuery.of(context).size.height * 1,
               child: const RecentNotes(),
             ),
-            InfoCard(
-              message: 'You have reached the void\n\n',
-            ),
+            InfoCard(message: 'You have reached the void\n\n'),
           ],
         ),
       ),
@@ -105,7 +112,9 @@ class HomePage extends ConsumerWidget {
   }
 
   Container myFolderListView(WidgetRef ref, BuildContext context) {
-    final rootFoldersAsync = ref.watch(rootFoldersProvider(limit: 3, offset: 0));
+    final rootFoldersAsync = ref.watch(
+      rootFoldersProvider(limit: 3, offset: 0),
+    );
     return Container(
       padding: AppSpacing.verticalS,
       height: 160,
@@ -129,26 +138,27 @@ class HomePage extends ConsumerWidget {
                   final count = ref.watch(totalItemsCountProvider(folder.id));
 
                   return count.when(
-                    loading: () => const SizedBox(width: 100,
-                        child: Center(child: CircularProgressIndicator())),
+                    loading: () => const SizedBox(
+                      width: 100,
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
                     error: (error, stack) => ErrorWidget(error),
-                    data: (value) =>
-                        FolderButton(
-                          itemCount: value,
-                          folder: folder,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ViewAllPage(folderId: folder.id),
-                              ),
-                            );
-                          },
-                        ),
+                    data: (value) => FolderButton(
+                      itemCount: value,
+                      folder: folder,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ViewAllPage(folderId: folder.id),
+                          ),
+                        );
+                      },
+                    ),
                   );
-                }
-              )
+                },
+              ),
       ),
     );
   }
@@ -166,10 +176,14 @@ class HomePage extends ConsumerWidget {
             );
           },
           icon: AppContainer(
-              outerPadding: const EdgeInsets.all(0),
-              innerPadding: const EdgeInsets.all(2),
-              borderRadius: 12,
-              child: Icon(Icons.add_rounded, color: Theme.of(context).colorScheme.onSurface,)),
+            outerPadding: const EdgeInsets.all(0),
+            innerPadding: const EdgeInsets.all(2),
+            borderRadius: 12,
+            child: Icon(
+              Icons.add_rounded,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
         ),
       ],
     );

@@ -1,4 +1,5 @@
 abstract final class AppRoutes {
+  static const String splash = '/splash';
   static const String home = '/home';
   static const String editNotes = '/edit-notes';
   static const String viewAll = '/view-all';

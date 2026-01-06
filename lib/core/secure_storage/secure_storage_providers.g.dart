@@ -130,7 +130,7 @@ final class SecureStorageDataNotifierProvider
 }
 
 String _$secureStorageDataNotifierHash() =>
-    r'8b52e32207195b428ccbe602d144577ef894d1f8';
+    r'f3e57351ca572b5d35416b6454e463a386813d22';
 
 abstract class _$SecureStorageDataNotifier
     extends $AsyncNotifier<SecureStorageModel?> {
