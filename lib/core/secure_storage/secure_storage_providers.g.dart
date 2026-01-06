@@ -104,35 +104,39 @@ final class SecureStorageHelperProvider
 String _$secureStorageHelperHash() =>
     r'8d9ea2b5a1e6aa9875028913e1217898b9eb5534';
 
-@ProviderFor(SecureStorageDataNotifier)
-const secureStorageDataProvider = SecureStorageDataNotifierProvider._();
+@ProviderFor(SecureStorageControllerNotifier)
+const secureStorageControllerProvider =
+    SecureStorageControllerNotifierProvider._();
 
-final class SecureStorageDataNotifierProvider
+final class SecureStorageControllerNotifierProvider
     extends
-        $AsyncNotifierProvider<SecureStorageDataNotifier, SecureStorageModel?> {
-  const SecureStorageDataNotifierProvider._()
+        $AsyncNotifierProvider<
+          SecureStorageControllerNotifier,
+          SecureStorageModel?
+        > {
+  const SecureStorageControllerNotifierProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'secureStorageDataProvider',
+        name: r'secureStorageControllerProvider',
         isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$secureStorageDataNotifierHash();
+  String debugGetCreateSourceHash() => _$secureStorageControllerNotifierHash();
 
   @$internal
   @override
-  SecureStorageDataNotifier create() => SecureStorageDataNotifier();
+  SecureStorageControllerNotifier create() => SecureStorageControllerNotifier();
 }
 
-String _$secureStorageDataNotifierHash() =>
-    r'f3e57351ca572b5d35416b6454e463a386813d22';
+String _$secureStorageControllerNotifierHash() =>
+    r'f67a8f23716ab61b619c0640b8ba21d0c9f7a228';
 
-abstract class _$SecureStorageDataNotifier
+abstract class _$SecureStorageControllerNotifier
     extends $AsyncNotifier<SecureStorageModel?> {
   FutureOr<SecureStorageModel?> build();
   @$mustCallSuper

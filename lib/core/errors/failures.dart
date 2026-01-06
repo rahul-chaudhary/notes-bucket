@@ -56,6 +56,6 @@ class BadResponseFailure extends Failure {
   const BadResponseFailure(super.message);
 }
 
-class UnauthorizedFailure extends Failure {
-  const UnauthorizedFailure(super.message);
+class AuthenticationFailure extends Failure {
+  const AuthenticationFailure(super.message);
 }

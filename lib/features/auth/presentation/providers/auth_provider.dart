@@ -1,5 +1,8 @@
 import 'package:notes_bucket/core/network/providers/network_providers.dart';
+import 'package:notes_bucket/core/secure_storage/secure_storage_helper.dart';
+import 'package:notes_bucket/core/secure_storage/secure_storage_model.dart';
 import 'package:notes_bucket/core/secure_storage/secure_storage_providers.dart';
+import 'package:notes_bucket/features/auth/data/models/auth_state.dart';
 import 'package:notes_bucket/features/auth/data/models/user.dart';
 import 'package:notes_bucket/features/auth/data/remote_data_source/auth_remote_datasource.dart';
 import 'package:notes_bucket/features/auth/data/repository/auth_repository_impl.dart';
@@ -45,9 +48,9 @@ Future<SendOtp> sendOtpUseCase(Ref ref) async {
 @Riverpod(keepAlive: true)
 Future<Authentication> authUseCase(Ref ref) async {
   final repository = await ref.watch(authRepositoryProvider.future);
-  return Authentication(repository);
+  final secureStorageHelper = ref.watch(secureStorageHelperProvider);
+  return Authentication(secureStorageHelper, repository);
 }
-
 
 // ─────────────────────────────────────────────────────────────
 // PRESENTATION LAYER PROVIDERS (State Notifiers)
@@ -66,11 +69,11 @@ class AuthController extends _$AuthController {
       final useCaseResult = await usecase.call(email);
 
       return useCaseResult.fold(
-            (failure) {
+        (failure) {
           state = AsyncValue.error(failure.toString(), StackTrace.current);
           throw Exception(failure.toString());
         },
-            (exists) {
+        (exists) {
           state = const AsyncValue.data(null);
           return exists;
         },
@@ -89,11 +92,11 @@ class AuthController extends _$AuthController {
       final useCaseResult = await usecase.call(email);
 
       return useCaseResult.fold(
-            (failure) {
+        (failure) {
           state = AsyncValue.error(failure.toString(), StackTrace.current);
           throw Exception(failure.toString());
         },
-            (message) {
+        (message) {
           state = const AsyncValue.data(null);
           return message;
         },
@@ -111,12 +114,14 @@ class AuthController extends _$AuthController {
       final usecase = await ref.read(authUseCaseProvider.future);
       final useCaseResult = await usecase.call(params);
 
+      ref.invalidate(secureStorageControllerProvider);
+
       return useCaseResult.fold(
-            (failure) {
+        (failure) {
           state = AsyncValue.error(failure.toString(), StackTrace.current);
           throw Exception(failure.toString());
         },
-            (user) {
+        (user) {
           state = const AsyncValue.data(null);
           return user;
         },
@@ -128,3 +133,31 @@ class AuthController extends _$AuthController {
   }
 }
 
+// @Riverpod(keepAlive: true)
+// class AuthStateProvider extends _$AuthStateProvider {
+//   @override
+//   Future<AuthState> build() async => await init();
+//
+//   Future<AuthState> init() async {
+//     final secureStorageHelper = ref.watch(secureStorageHelperProvider);
+//     final secureString = await secureStorageHelper.get(
+//       SecureStorageKeys.secureStorageKey,
+//     );
+//     final secureData = secureString == null
+//         ? null
+//         : SecureStorageModelMapper.fromJson(secureString);
+//     if (secureData != null) {
+//       return AuthState.loggedIn;
+//     } else {
+//       return AuthState.loggedOut;
+//     }
+//   }
+//
+//   Future<void> refreshAccessToken() async {
+//     state = const AsyncValue.loading();
+//   }
+//
+//   Future<void> logout() async {
+//     state = const AsyncValue.loading();
+//   }
+// }

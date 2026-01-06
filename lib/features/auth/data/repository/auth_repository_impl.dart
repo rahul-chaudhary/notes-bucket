@@ -65,20 +65,7 @@ class AuthRepositoryImpl implements AuthRepository {
       isFirstLaunch: false,
       authResponseModel: authResponse,
     );
-    await _secureStorageHelper.save(
-      SecureStorageKeys.secureStorageKey,
-      ssModel.toJson(),
-    );
-  }
-
-  @override
-  Future<Either<Failure, void>> saveAuthData(AuthResponseModel authResponse) async {
-    try {
-      await _saveAuthToStorage(authResponse);
-      return const Right(null);
-    } catch (e) {
-      return Left(CacheFailure(e.toString()));
-    }
+    await _secureStorageHelper.save(SecureStorageKeys.secureStorageKey,ssModel);
   }
 
   @override

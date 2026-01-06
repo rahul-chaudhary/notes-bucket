@@ -200,7 +200,7 @@ final class AuthUseCaseProvider
   }
 }
 
-String _$authUseCaseHash() => r'4e5ba6bb0310e2d111d8a25ee761a6b06705a5e4';
+String _$authUseCaseHash() => r'076eb080f3eba678b9769ca09477bbc10434c8f0';
 
 @ProviderFor(AuthController)
 const authControllerProvider = AuthControllerProvider._();
@@ -226,7 +226,7 @@ final class AuthControllerProvider
   AuthController create() => AuthController();
 }
 
-String _$authControllerHash() => r'66ee39a47c0029f4bdfa2593f7b247e4aa637f09';
+String _$authControllerHash() => r'70cf7c48f1856feaa6ab9db7bdb532a95f6d598d';
 
 abstract class _$AuthController extends $AsyncNotifier<void> {
   FutureOr<void> build();

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +9,7 @@ import 'package:notes_bucket/core/notification/providers/notification_api_contro
 import 'package:notes_bucket/core/secure_storage/secure_storage_helper.dart';
 import 'package:notes_bucket/core/secure_storage/secure_storage_model.dart';
 import 'package:notes_bucket/core/secure_storage/secure_storage_providers.dart';
+import 'package:notes_bucket/core/theme/app_color.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -50,18 +50,17 @@ class _SplashPageState extends ConsumerState<SplashPage>
   Future<void> _saveFcmToken() async {
     try {
       String? token = await FirebaseMessaging.instance.getToken();
-      if(token == null || token.isEmpty) {
+      if (token == null || token.isEmpty) {
         dbPrint('FCM Token is null or empty');
         return;
       }
       dbPrint('FCM Token: $token');
-      final notiController = await ref.read(notificationApiControllerProvider.future);
-      await notiController.saveFCMToken(
-        token,
-        getDeviceType,
+      final notiController = await ref.read(
+        notificationApiControllerProvider.future,
       );
+      await notiController.saveFCMToken(token, getDeviceType);
     } catch (e, stack) {
-      dbPrint('Error getting FCM Token:',e: e, st: stack);
+      dbPrint('Error getting FCM Token:', e: e, st: stack);
     }
   }
 
@@ -83,51 +82,44 @@ class _SplashPageState extends ConsumerState<SplashPage>
     );
 
     final secureStorageHelper = ref.read(secureStorageHelperProvider);
-    final secureString = await secureStorageHelper.get(SecureStorageKeys.secureStorageKey);
-    final secureData = secureString == null ? null : SecureStorageModelMapper.fromJson(secureString);
-    if(secureData != null) {
-      final isFirstLaunch = secureData.isFirstLaunch;
-      final isLoggedIn = secureData.authResponseModel != null;
-      if(isFirstLaunch) {
-        _nextScreen = AppRoutes.welcome;
-      } else if(isLoggedIn || !secureData.isFirstLaunch) {
+    final secureStorageData = await secureStorageHelper.get(
+      SecureStorageKeys.secureStorageKey,
+    );
+
+    _nextScreen = AppRoutes.welcome;
+    if (secureStorageData != null) {
+      if (!secureStorageData.isFirstLaunch) {
         _nextScreen = AppRoutes.home;
       }
     }
-
-    _nextScreen = AppRoutes.home;
     await splashMinDuration;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black54,
-      body: Stack(
-        children: [
-          if (packageInfo != null)
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Text(
-                "Version : ${packageInfo!.version} (${packageInfo!.buildNumber})",
-                style: const TextStyle(fontSize: 12),
+    return Container(
+      decoration: BoxDecoration(gradient: AppGradient.scaffoldBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          children: [
+            if (packageInfo != null)
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Text(
+                  "Version : ${packageInfo!.version} (${packageInfo!.buildNumber})",
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ),
+            Positioned.fill(
+              child: Lottie.asset(
+                AppAnimations.infinityLoading,
+                decoder: dotLottieDecoder2,
+                fit: BoxFit.fitWidth,
               ),
             ),
-          Positioned.fill(
-            child: Lottie.asset(
-              AppAnimations.browsing,
-              width: getScreenWidth(context),
-              height: getScreenHeight(context),
-              fit: BoxFit.contain,
-              controller: _controller,
-              frameRate: FrameRate.max,
-              repeat: true,
-              onLoaded: (composition) {
-                _controller.repeat(period: composition.duration * .5);
-              },
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -30,7 +30,7 @@ Dio baseDio(Ref ref) {
 @riverpod
 Future<Dio> dio(Ref ref) async {
   final baseDio = ref.watch(baseDioProvider);
-  final secureData = await ref.watch(secureStorageDataProvider.future);
+  final secureData = await ref.watch(secureStorageControllerProvider.future);
 
   baseDio.interceptors.addAll([
     LoggerInterceptor(),
@@ -38,8 +38,8 @@ Future<Dio> dio(Ref ref) async {
       accessToken: secureData?.authResponseModel?.accessToken,
       refreshToken: secureData?.authResponseModel?.refreshToken,
       saveAccessToken: (accessToken) async {
-        final notifier = ref.read(secureStorageDataProvider.notifier);
-        final current = await ref.read(secureStorageDataProvider.future);
+        final notifier = ref.read(secureStorageControllerProvider.notifier);
+        final current = await ref.read(secureStorageControllerProvider.future);
         if (current?.authResponseModel != null) {
           final updated = current!.copyWith(
             authResponseModel: current.authResponseModel!.copyWith(
@@ -49,20 +49,8 @@ Future<Dio> dio(Ref ref) async {
           await notifier.save(updated);
         }
       },
-      saveRefreshToken: (refreshToken) async {
-        final notifier = ref.read(secureStorageDataProvider.notifier);
-        final current = await ref.read(secureStorageDataProvider.future);
-        if (current?.authResponseModel != null) {
-          final updated = current!.copyWith(
-            authResponseModel: current.authResponseModel!.copyWith(
-              refreshToken: refreshToken,
-            ),
-          );
-          await notifier.save(updated);
-        }
-      },
       clearTokens: () async {
-        final notifier = ref.read(secureStorageDataProvider.notifier);
+        final notifier = ref.read(secureStorageControllerProvider.notifier);
         await notifier.clear();
       },
       dio: baseDio,

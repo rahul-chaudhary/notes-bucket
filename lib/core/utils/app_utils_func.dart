@@ -151,7 +151,24 @@ Future<LottieComposition?> dotLottieDecoder(List<int> bytes) {
     bytes,
     filePicker: (files) {
       for (final f in files) {
+        dbPrint('Lottie file: ${f.name}');
         if (f.name.startsWith('animations/') && f.name.endsWith('.json')) {
+          return f;
+        }
+      }
+      return null;
+    },
+  );
+}
+
+Future<LottieComposition?> dotLottieDecoder2(List<int> bytes) {
+  return LottieComposition.decodeZip(
+    bytes,
+    filePicker: (files) {
+      for (final f in files) {
+        dbPrint('Lottie file: ${f.name}');
+        // Pick the first .json file that's NOT manifest.json
+        if (f.name.endsWith('.json') && !f.name.contains('manifest')) {
           return f;
         }
       }

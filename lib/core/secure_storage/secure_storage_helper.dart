@@ -1,8 +1,8 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:notes_bucket/core/secure_storage/secure_storage_model.dart';
 
 abstract final class SecureStorageKeys {
   static const String secureStorageKey = 'secureStorageKey';
-  static const String isFirstLaunchKey = 'isFirstLaunchKey';
 }
 
 class SecureStorageHelper {
@@ -10,17 +10,20 @@ class SecureStorageHelper {
 
   SecureStorageHelper(this._secureStorage);
 
-  Future<void> save(String key, String value) async {
+  Future<void> save(String key, SecureStorageModel value) async {
     try {
-      await _secureStorage.write(key: key, value: value);
+      final jsonString = value.toJson();
+      await _secureStorage.write(key: key, value: jsonString);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<String?> get(String key) async {
+  Future<SecureStorageModel?> get(String key) async {
     try {
-      return await _secureStorage.read(key: key);
+      final jsonString = await _secureStorage.read(key: key);
+      if (jsonString == null) return null;
+      return SecureStorageModelMapper.fromJson(jsonString);
     } catch (e) {
       rethrow;
     }

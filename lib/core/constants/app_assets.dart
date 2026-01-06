@@ -14,4 +14,5 @@ abstract final class AppAnimations {
   static const String browsing = 'assets/animations/browsing.lottie';
   static const String folder = 'assets/animations/folder.lottie';
   static const String folders = 'assets/animations/folders.lottie';
+  static const String infinityLoading = 'assets/animations/infinity_loading.lottie';
 }

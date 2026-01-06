@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:notes_bucket/core/errors/failures.dart';
 import 'package:notes_bucket/core/network/constants/api_endpoints.dart';
 
 class AuthInterceptor extends Interceptor {
   final String? _accessToken;
   final String? _refreshToken;
   final Function(String) _saveAccessToken;
-  final Function(String) _saveRefreshToken;
   final Future<void> Function() _clearTokens;
   final Dio _dio;
 
@@ -13,22 +13,19 @@ class AuthInterceptor extends Interceptor {
     required String? accessToken,
     required String? refreshToken,
     required Function(String) saveAccessToken,
-    required Function(String) saveRefreshToken,
     required Future<void> Function() clearTokens,
     required Dio dio,
-  })  :
-        _accessToken = accessToken,
+  }) : _accessToken = accessToken,
         _refreshToken = refreshToken,
-        _saveAccessToken = saveAccessToken,
-        _saveRefreshToken = saveRefreshToken,
-        _clearTokens = clearTokens,
-        _dio = dio;
+       _saveAccessToken = saveAccessToken,
+       _clearTokens = clearTokens,
+       _dio = dio;
 
   @override
   Future<void> onRequest(
-      RequestOptions options,
-      RequestInterceptorHandler handler,
-      ) async {
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
     // Skip auth for public endpoints
     if (_isPublicEndpoint(options.path)) {
       return handler.next(options);
@@ -43,14 +40,14 @@ class AuthInterceptor extends Interceptor {
 
   @override
   Future<void> onError(
-      DioException err,
-      ErrorInterceptorHandler handler,
-      ) async {
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
     // Handle 401 Unauthorized - Token expired
     if (err.response?.statusCode == 401) {
       try {
         // Try to refresh the token
-        final newAccessToken = await _fetchRefreshToken();
+        final newAccessToken = await _fetchAccessToken();
 
         if (newAccessToken != null) {
           // Retry the original request with new token
@@ -70,26 +67,24 @@ class AuthInterceptor extends Interceptor {
     return handler.next(err);
   }
 
-  Future<String?> _fetchRefreshToken() async {
+  Future<String?> _fetchAccessToken() async {
     try {
-
-      if (_refreshToken == null) return null;
+      if (_refreshToken == null) {
+        throw AuthenticationFailure('Refresh token is null');
+      }
 
       final response = await _dio.post(
         ApiEndpoints.refreshToken,
-        data: {'refreshToken': _refreshToken},
+        data: {'refresh_token': _refreshToken},
       );
 
-      final newAccessToken = response.data['data']['accessToken'] as String?;
-      final newRefreshToken = response.data['data']['refreshToken'] as String?;
+      final newAccessToken = response.data['data']['access_token'] as String?;
 
       if (newAccessToken != null) _saveAccessToken(newAccessToken);
 
-      if (newRefreshToken != null) _saveRefreshToken(newRefreshToken);
-
       return newAccessToken;
     } catch (e) {
-      return null;
+      rethrow;
     }
   }
 

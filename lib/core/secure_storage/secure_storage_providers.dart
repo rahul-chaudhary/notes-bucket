@@ -21,24 +21,19 @@ SecureStorageHelper secureStorageHelper(Ref ref) {
 }
 
 @Riverpod(keepAlive: true)
-class SecureStorageDataNotifier extends _$SecureStorageDataNotifier {
+class SecureStorageControllerNotifier extends _$SecureStorageControllerNotifier {
   @override
   Future<SecureStorageModel?> build() async {
     final secureStorageHelper = ref.watch(secureStorageHelperProvider);
-    final secureString = await secureStorageHelper.get(
+    final res = await secureStorageHelper.get(
       SecureStorageKeys.secureStorageKey,
     );
-    return secureString == null
-        ? null
-        : SecureStorageModelMapper.fromJson(secureString);
+    return res;
   }
 
   Future<void> save(SecureStorageModel model) async {
     final secureStorageHelper = ref.read(secureStorageHelperProvider);
-    await secureStorageHelper.save(
-      SecureStorageKeys.secureStorageKey,
-      model.toJson(),
-    );
+    await secureStorageHelper.save(SecureStorageKeys.secureStorageKey,model);
     state = AsyncValue.data(model);
   }
 

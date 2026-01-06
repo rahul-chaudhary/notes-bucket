@@ -14,7 +14,7 @@ class SettingsPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final secureDataProvider = ref.watch(secureStorageDataProvider);
+    final secureDataProvider = ref.watch(secureStorageControllerProvider);
     final user = useState<User?>(null);
     secureDataProvider.whenData((value) => user.value = value?.authResponseModel?.user);
     return Container(
@@ -74,7 +74,8 @@ class SettingsPage extends HookConsumerWidget {
                           title: user.value != null ? 'Sign out': 'Sign in',
                           titleColor: user.value != null ? theme.colorScheme.error : theme.colorScheme.secondary,
                           onTap: () async {
-                            await ref.read(secureStorageDataProvider.notifier).clear();
+                            await ref.read(secureStorageControllerProvider.notifier).clear();
+                            ref.invalidate(secureStorageControllerProvider);
                             Navigator.pushNamed(context, AppRoutes.welcome);
                           },
                         ),

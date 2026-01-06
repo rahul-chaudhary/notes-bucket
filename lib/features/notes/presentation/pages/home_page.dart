@@ -24,9 +24,9 @@ class HomePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final secureDataProvider = ref.watch(secureStorageDataProvider);
+    final secureStorageController = ref.watch(secureStorageControllerProvider);
     final user = useState<User?>(null);
-    secureDataProvider.whenData(
+    secureStorageController.whenData(
       (data) => user.value = data?.authResponseModel?.user,
     );
     return Container(

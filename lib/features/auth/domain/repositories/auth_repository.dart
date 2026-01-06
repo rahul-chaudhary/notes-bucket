@@ -16,8 +16,6 @@ abstract interface class AuthRepository {
 
   Future<Either<Failure, String>> refreshToken();
 
-  Future<Either<Failure, void>> saveAuthData(AuthResponseModel authResponse);
-
   Future<Either<Failure, void>> logout();
 
 }
