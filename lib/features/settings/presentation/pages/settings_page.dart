@@ -37,7 +37,7 @@ class SettingsPage extends HookConsumerWidget {
                 floating: true,
                 elevation: 12,
                 backgroundColor: Colors.transparent,
-                expandedHeight: 243,
+                expandedHeight: 245,
                 toolbarHeight: 0,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(12)),
