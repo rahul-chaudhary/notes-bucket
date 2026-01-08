@@ -7,10 +7,10 @@ import 'package:notes_bucket/core/constants/app_assets.dart';
 import 'package:notes_bucket/core/constants/app_routes.dart';
 import 'package:notes_bucket/core/notification/providers/notification_api_controller_provider.dart';
 import 'package:notes_bucket/core/secure_storage/secure_storage_helper.dart';
-import 'package:notes_bucket/core/secure_storage/secure_storage_model.dart';
 import 'package:notes_bucket/core/secure_storage/secure_storage_providers.dart';
 import 'package:notes_bucket/core/theme/app_color.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
+import 'package:notes_bucket/features/auth/presentation/providers/auth_provider.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
@@ -82,13 +82,21 @@ class _SplashPageState extends ConsumerState<SplashPage>
     );
 
     final secureStorageHelper = ref.read(secureStorageHelperProvider);
-    final secureStorageData = await secureStorageHelper.get(
+    final secureData = await secureStorageHelper.get(
       SecureStorageKeys.secureStorageKey,
     );
+    if(secureData?.authResponseModel != null) {
+      final authRepoProvider = await ref.read(authRepositoryProvider.future);
+      final fetchUserRes = await authRepoProvider.fetchUser();
+      fetchUserRes.fold(
+            (left)=> dbPrint('Failed to update user. ${left.toString()}'),
+            (right) => secureStorageHelper.updateUser(right),
+      );
+    }
 
     _nextScreen = AppRoutes.welcome;
-    if (secureStorageData != null) {
-      if (!secureStorageData.isFirstLaunch) {
+    if (secureData != null) {
+      if (!secureData.isFirstLaunch) {
         _nextScreen = AppRoutes.home;
       }
     }

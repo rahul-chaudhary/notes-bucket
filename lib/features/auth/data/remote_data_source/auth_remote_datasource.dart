@@ -4,6 +4,7 @@ import 'package:notes_bucket/core/network/api_client.dart';
 import 'package:notes_bucket/core/network/constants/api_endpoints.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/features/auth/data/models/response_models.dart';
+import 'package:notes_bucket/features/auth/data/models/user.dart';
 
 abstract interface class AuthRemoteDatasource {
   Future<GenericResponseModel> doesEmailExist(String email);
@@ -16,7 +17,9 @@ abstract interface class AuthRemoteDatasource {
 
   Future<AuthResponseModel> googleSignIn(String email);
 
-  Future<String> refreshToken();
+  Future<String?> refreshAccessToken();
+
+  Future<User> fetchUser();
 
   Future<void> logout();
 }
@@ -95,8 +98,27 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   }
 
   @override
-  Future<String> refreshToken() async {
-    throw UnimplementedError();
+  Future<String?> refreshAccessToken() async {
+    try {
+      final response = await _apiClient.post(ApiEndpoints.refreshAccessToken);
+      return response.data['access_token'];
+  } on DioException catch (e) {
+      throw DioExceptionHandler.handleError(e);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+    }
+
+  @override
+  Future<User> fetchUser() async {
+    try {
+      final response = await _apiClient.get(ApiEndpoints.userDetail);
+      return UserMapper.fromMap(response.data);
+    } on DioException catch (e) {
+      throw DioExceptionHandler.handleError(e);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
   }
 
   @override

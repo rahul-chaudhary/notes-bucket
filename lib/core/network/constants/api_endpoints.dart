@@ -5,10 +5,11 @@ abstract final class ApiEndpoints {
   static const String register = '/auth/register';
   static const String login = '/auth/login';
   static const String googleSignIn = '/auth/googleSignIn';
-  static const String refreshToken = '/auth/refresh';
+  static const String refreshAccessToken = '/auth/refreshAccessToken';
   static const String logout = '/auth/logout';
 
   // User endpoints
+  static const String userDetail = '/user/detail';
   static const String profile = '/user/profile';
   static const String updateProfile = '/user/profile';
 

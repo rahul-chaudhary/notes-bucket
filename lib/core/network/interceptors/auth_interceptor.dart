@@ -74,7 +74,7 @@ class AuthInterceptor extends Interceptor {
       }
 
       final response = await _dio.post(
-        ApiEndpoints.refreshToken,
+        ApiEndpoints.refreshAccessToken,
         data: {'refresh_token': _refreshToken},
       );
 
@@ -92,7 +92,7 @@ class AuthInterceptor extends Interceptor {
     final publicEndpoints = [
       ApiEndpoints.login,
       ApiEndpoints.register,
-      ApiEndpoints.refreshToken,
+      ApiEndpoints.refreshAccessToken,
     ];
     return publicEndpoints.any((endpoint) => path.contains(endpoint));
   }

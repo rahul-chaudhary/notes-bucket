@@ -1,5 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:notes_bucket/core/secure_storage/secure_storage_model.dart';
+import 'package:notes_bucket/features/auth/data/models/user.dart';
 
 abstract final class SecureStorageKeys {
   static const String secureStorageKey = 'secureStorageKey';
@@ -24,6 +25,19 @@ class SecureStorageHelper {
       final jsonString = await _secureStorage.read(key: key);
       if (jsonString == null) return null;
       return SecureStorageModelMapper.fromJson(jsonString);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> updateUser(User user) async {
+    try{
+      final secureStorageModel = await get(SecureStorageKeys.secureStorageKey);
+      if(secureStorageModel == null) return;
+      final authResponseModel = secureStorageModel.authResponseModel;
+      if(authResponseModel == null) return;
+      final updatedSecureStorageModel = secureStorageModel.copyWith(authResponseModel: authResponseModel.copyWith(user: user));
+      await save(SecureStorageKeys.secureStorageKey, updatedSecureStorageModel);
     } catch (e) {
       rethrow;
     }

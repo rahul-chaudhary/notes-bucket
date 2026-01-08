@@ -3,6 +3,7 @@ import 'package:notes_bucket/core/errors/failures.dart';
 import 'package:notes_bucket/core/secure_storage/secure_storage_helper.dart';
 import 'package:notes_bucket/core/secure_storage/secure_storage_model.dart';
 import 'package:notes_bucket/features/auth/data/models/response_models.dart';
+import 'package:notes_bucket/features/auth/data/models/user.dart';
 import 'package:notes_bucket/features/auth/data/remote_data_source/auth_remote_datasource.dart';
 import 'package:notes_bucket/features/auth/domain/repositories/auth_repository.dart';
 
@@ -82,10 +83,11 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, String>> refreshToken() async {
+  Future<Either<Failure, String>> refreshAccessToken() async {
     try {
-      final response = await _remoteDatasource.refreshToken();
-      return Right(response);
+      final accessToken = await _remoteDatasource.refreshAccessToken();
+      if (accessToken == null) throw 'Access token is null';
+      return Right(accessToken);
     } on Failure catch (e) {
       return Left(e);
     }
@@ -94,6 +96,17 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  @override
+  Future<Either<Failure, User>> fetchUser() async {
+    try {
+      final response = await _remoteDatasource.fetchUser();
+      return Right(response);
+  } on Failure catch (e) {
+      return Left(e);
+    } catch (e) {
+      return Left(UnknownFailure(e.toString()));
+    }
+  }
 
 
   @override
