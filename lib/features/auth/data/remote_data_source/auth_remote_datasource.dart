@@ -4,7 +4,7 @@ import 'package:notes_bucket/core/network/api_client.dart';
 import 'package:notes_bucket/core/network/constants/api_endpoints.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/features/auth/data/models/response_models.dart';
-import 'package:notes_bucket/features/auth/data/models/user.dart';
+import 'package:notes_bucket/features/user/data/models/user.dart';
 
 abstract interface class AuthRemoteDatasource {
   Future<GenericResponseModel> doesEmailExist(String email);

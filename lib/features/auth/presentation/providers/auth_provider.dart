@@ -1,9 +1,6 @@
 import 'package:notes_bucket/core/network/providers/network_providers.dart';
-import 'package:notes_bucket/core/secure_storage/secure_storage_helper.dart';
-import 'package:notes_bucket/core/secure_storage/secure_storage_model.dart';
 import 'package:notes_bucket/core/secure_storage/secure_storage_providers.dart';
-import 'package:notes_bucket/features/auth/data/models/auth_state.dart';
-import 'package:notes_bucket/features/auth/data/models/user.dart';
+import 'package:notes_bucket/features/user/data/models/user.dart';
 import 'package:notes_bucket/features/auth/data/remote_data_source/auth_remote_datasource.dart';
 import 'package:notes_bucket/features/auth/data/repository/auth_repository_impl.dart';
 import 'package:notes_bucket/features/auth/domain/repositories/auth_repository.dart';
@@ -133,31 +130,3 @@ class AuthController extends _$AuthController {
   }
 }
 
-// @Riverpod(keepAlive: true)
-// class AuthStateProvider extends _$AuthStateProvider {
-//   @override
-//   Future<AuthState> build() async => await init();
-//
-//   Future<AuthState> init() async {
-//     final secureStorageHelper = ref.watch(secureStorageHelperProvider);
-//     final secureString = await secureStorageHelper.get(
-//       SecureStorageKeys.secureStorageKey,
-//     );
-//     final secureData = secureString == null
-//         ? null
-//         : SecureStorageModelMapper.fromJson(secureString);
-//     if (secureData != null) {
-//       return AuthState.loggedIn;
-//     } else {
-//       return AuthState.loggedOut;
-//     }
-//   }
-//
-//   Future<void> refreshAccessToken() async {
-//     state = const AsyncValue.loading();
-//   }
-//
-//   Future<void> logout() async {
-//     state = const AsyncValue.loading();
-//   }
-// }

@@ -1,6 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:notes_bucket/core/secure_storage/secure_storage_model.dart';
-import 'package:notes_bucket/features/auth/data/models/user.dart';
+import 'package:notes_bucket/features/user/data/models/user.dart';
 
 abstract final class SecureStorageKeys {
   static const String secureStorageKey = 'secureStorageKey';

@@ -1,5 +1,5 @@
 import 'package:dart_mappable/dart_mappable.dart';
-import 'package:notes_bucket/features/auth/data/models/user.dart';
+import 'package:notes_bucket/features/user/data/models/user.dart';
 
 part 'response_models.mapper.dart';
 

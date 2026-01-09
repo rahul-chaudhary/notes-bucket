@@ -3,7 +3,7 @@ import 'package:notes_bucket/core/errors/failures.dart';
 import 'package:notes_bucket/core/secure_storage/secure_storage_helper.dart';
 import 'package:notes_bucket/core/secure_storage/secure_storage_model.dart';
 import 'package:notes_bucket/core/usecases/use_case.dart';
-import 'package:notes_bucket/features/auth/data/models/user.dart';
+import 'package:notes_bucket/features/user/data/models/user.dart';
 import 'package:notes_bucket/features/auth/domain/repositories/auth_repository.dart';
 import 'package:notes_bucket/features/auth/presentation/widgets/common_auth_widget.dart';
 
