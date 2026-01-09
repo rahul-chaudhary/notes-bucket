@@ -23,4 +23,7 @@ abstract final class ApiEndpoints {
 
   //notifications & firebase endpoints
   static const String saveFCMToken = 'notification/saveFCMToken';
+
+  //others
+  static const String zenQuotes = 'https://zenquotes.io/api/today';
 }
