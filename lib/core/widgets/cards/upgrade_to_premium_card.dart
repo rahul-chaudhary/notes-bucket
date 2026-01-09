@@ -198,9 +198,10 @@ class UpgradeToPremiumCard extends HookConsumerWidget {
       }
     } catch (e) {
       if(context.mounted) {
+        Navigator.pop(context);
         AppSnackBar.showError(context, e.toString());
       }
-      throw Exception(e);
+      rethrow;
     } finally {
       isBtnLoading.value = false;
     }
