@@ -19,8 +19,6 @@ abstract interface class AuthRemoteDatasource {
 
   Future<String?> refreshAccessToken();
 
-  Future<User> fetchUser();
-
   Future<void> logout();
 }
 
@@ -108,18 +106,6 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       throw Exception(e.toString());
     }
     }
-
-  @override
-  Future<User> fetchUser() async {
-    try {
-      final response = await _apiClient.get(ApiEndpoints.userDetail);
-      return UserMapper.fromMap(response.data);
-    } on DioException catch (e) {
-      throw DioExceptionHandler.handleError(e);
-    } catch (e) {
-      throw Exception(e.toString());
-    }
-  }
 
   @override
   Future<void> logout() async {

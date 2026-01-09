@@ -5,6 +5,7 @@ import 'package:notes_bucket/features/auth/data/remote_data_source/auth_remote_d
 import 'package:notes_bucket/features/auth/data/repository/auth_repository_impl.dart';
 import 'package:notes_bucket/features/auth/domain/repositories/auth_repository.dart';
 import 'package:notes_bucket/features/auth/domain/usecases/auth_usecases.dart';
+import 'package:notes_bucket/features/user/presentation/providers/user_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_provider.g.dart';
@@ -110,8 +111,6 @@ class AuthController extends _$AuthController {
     try {
       final usecase = await ref.read(authUseCaseProvider.future);
       final useCaseResult = await usecase.call(params);
-
-      ref.invalidate(secureStorageControllerProvider);
 
       return useCaseResult.fold(
         (failure) {

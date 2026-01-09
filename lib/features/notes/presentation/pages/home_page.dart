@@ -18,17 +18,16 @@ import 'package:notes_bucket/features/notes/presentation/providers/folder_provid
 import 'package:notes_bucket/features/notes/presentation/widgets/folder_dialogs.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/home_page_header.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/recent_notes.dart';
+import 'package:notes_bucket/features/user/presentation/providers/user_provider.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final secureStorageController = ref.watch(secureStorageControllerProvider);
+    final userPvdr = ref.watch(userProvider);
     final user = useState<User?>(null);
-    secureStorageController.whenData(
-      (data) => user.value = data?.authResponseModel?.user,
-    );
+    userPvdr.whenData((data) => user.value = data);
     return Container(
       decoration: BoxDecoration(gradient: AppGradient.scaffoldBackground),
       child: Scaffold(

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:notes_bucket/core/secure_storage/secure_storage_providers.dart';
+import 'package:notes_bucket/core/constants/app_routes.dart';
+import 'package:notes_bucket/core/widgets/app_snackbar.dart';
 import 'package:notes_bucket/core/widgets/cards/app_container.dart';
+import 'package:notes_bucket/features/user/presentation/providers/user_provider.dart';
 
 class UpgradeToPremiumCard extends HookConsumerWidget {
   const UpgradeToPremiumCard({super.key});
@@ -10,7 +12,6 @@ class UpgradeToPremiumCard extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final secureDataProvider = ref.watch(secureStorageControllerProvider);
     final isBtnLoading = useState(false);
     return AppContainer(
       outerPadding: const EdgeInsets.all(0),
@@ -42,7 +43,7 @@ class UpgradeToPremiumCard extends HookConsumerWidget {
                     Text(
                       'Unlock powerful features',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        color: theme.colorScheme.onSurface.withAlpha(150),
                       ),
                     ),
                   ],
@@ -54,7 +55,12 @@ class UpgradeToPremiumCard extends HookConsumerWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () => _showPremiumBottomSheet(context, theme, isBtnLoading.value),
+              onPressed: () => _showPremiumBottomSheet(
+                context,
+                theme,
+                isBtnLoading,
+                ref,
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.primary,
                 foregroundColor: theme.colorScheme.onPrimary,
@@ -78,8 +84,11 @@ class UpgradeToPremiumCard extends HookConsumerWidget {
   }
 
   void _showPremiumBottomSheet(
-      BuildContext context, ThemeData theme, bool isBtnLoading) {
-
+    BuildContext context,
+    ThemeData theme,
+    ValueNotifier<bool> isBtnLoading,
+    WidgetRef ref,
+  ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -141,26 +150,27 @@ class UpgradeToPremiumCard extends HookConsumerWidget {
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
-              child: isBtnLoading
+              child: isBtnLoading.value
                   ? const Center(child: CircularProgressIndicator())
                   : ElevatedButton(
-                onPressed: () => onPressUpgrade,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.secondary,
-                  foregroundColor: theme.colorScheme.onSecondary,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Text(
-                  'Upgrade Now',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.onPrimary,
-                  ),
-                ),
-              ),
+                      onPressed: () =>
+                          onPressUpgrade(isBtnLoading, context, ref),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.colorScheme.secondary,
+                        foregroundColor: theme.colorScheme.onSecondary,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        'Upgrade Now',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.onPrimary,
+                        ),
+                      ),
+                    ),
             ),
             const SizedBox(height: 8),
           ],
@@ -169,16 +179,39 @@ class UpgradeToPremiumCard extends HookConsumerWidget {
     );
   }
 
-  Future<void> onPressUpgrade() async {
-
+  Future<void> onPressUpgrade(
+    ValueNotifier<bool> isBtnLoading,
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    try {
+      isBtnLoading.value = true;
+      final userNotifier = ref.read(userProvider.notifier);
+      final user = await ref.read(userProvider.future);
+      if (user != null) {
+        await userNotifier.activateUserSubscription();
+        if (context.mounted) Navigator.pop(context);
+      } else {
+        if (context.mounted) {
+          Navigator.pushNamed(context, AppRoutes.welcome);
+        }
+      }
+    } catch (e) {
+      if(context.mounted) {
+        AppSnackBar.showError(context, e.toString());
+      }
+      throw Exception(e);
+    } finally {
+      isBtnLoading.value = false;
+    }
   }
 
   Widget _benefitItem(
-      ThemeData theme,
-      IconData icon,
-      String title,
-      String subtitle,
-      ) {
+    ThemeData theme,
+    IconData icon,
+    String title,
+    String subtitle,
+  ) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -205,7 +238,7 @@ class UpgradeToPremiumCard extends HookConsumerWidget {
               Text(
                 subtitle,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  color: theme.colorScheme.onSurface.withAlpha(150),
                 ),
               ),
             ],

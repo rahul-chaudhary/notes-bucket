@@ -8,6 +8,7 @@ import 'package:notes_bucket/core/widgets/cards/app_container.dart';
 import 'package:notes_bucket/core/widgets/cards/upgrade_to_premium_card.dart';
 import 'package:notes_bucket/core/widgets/notes_app_bar.dart';
 import 'package:notes_bucket/features/user/data/models/user.dart';
+import 'package:notes_bucket/features/user/presentation/providers/user_provider.dart';
 
 class SettingsPage extends HookConsumerWidget {
   const SettingsPage({super.key});
@@ -15,11 +16,9 @@ class SettingsPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final secureDataProvider = ref.watch(secureStorageControllerProvider);
+    final userPvdr = ref.watch(userProvider);
     final user = useState<User?>(null);
-    secureDataProvider.whenData(
-      (value) => user.value = value?.authResponseModel?.user,
-    );
+    userPvdr.whenData((value) => user.value = value);
     return Container(
       decoration: BoxDecoration(gradient: AppGradient.scaffoldBackground),
       child: Scaffold(
@@ -89,9 +88,9 @@ class SettingsPage extends HookConsumerWidget {
                               : theme.colorScheme.secondary,
                           onTap: () async {
                             await ref
-                                .read(secureStorageControllerProvider.notifier)
-                                .clear();
-                            ref.invalidate(secureStorageControllerProvider);
+                                .read(secureStorageHelperProvider)
+                                .deleteAll();
+                            ref.invalidate(secureStorageHelperProvider);
                             Navigator.pushNamed(context, AppRoutes.welcome);
                           },
                         ),
@@ -218,8 +217,6 @@ class SettingsPage extends HookConsumerWidget {
       flexibleSpace: FlexibleSpaceBar(background: UpgradeToPremiumCard()),
     );
   }
-
-
 }
 
 class SettingMenuOption extends StatelessWidget {

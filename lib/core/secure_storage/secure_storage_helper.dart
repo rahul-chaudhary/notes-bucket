@@ -11,18 +11,19 @@ class SecureStorageHelper {
 
   SecureStorageHelper(this._secureStorage);
 
-  Future<void> save(String key, SecureStorageModel value) async {
+  String get _key => SecureStorageKeys.secureStorageKey;
+
+  Future<void> save(SecureStorageModel value) async {
     try {
-      final jsonString = value.toJson();
-      await _secureStorage.write(key: key, value: jsonString);
+      await _secureStorage.write(key: _key, value: value.toJson());
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<SecureStorageModel?> get(String key) async {
+  Future<SecureStorageModel?> get() async {
     try {
-      final jsonString = await _secureStorage.read(key: key);
+      final jsonString = await _secureStorage.read(key: _key);
       if (jsonString == null) return null;
       return SecureStorageModelMapper.fromJson(jsonString);
     } catch (e) {
@@ -32,12 +33,12 @@ class SecureStorageHelper {
 
   Future<void> updateUser(User user) async {
     try{
-      final secureStorageModel = await get(SecureStorageKeys.secureStorageKey);
+      final secureStorageModel = await get();
       if(secureStorageModel == null) return;
       final authResponseModel = secureStorageModel.authResponseModel;
       if(authResponseModel == null) return;
       final updatedSecureStorageModel = secureStorageModel.copyWith(authResponseModel: authResponseModel.copyWith(user: user));
-      await save(SecureStorageKeys.secureStorageKey, updatedSecureStorageModel);
+      await save(updatedSecureStorageModel);
     } catch (e) {
       rethrow;
     }
@@ -45,7 +46,7 @@ class SecureStorageHelper {
 
   Future<void> delete(String key) async {
     try {
-      await _secureStorage.delete(key: key);
+      await _secureStorage.delete(key: _key);
     } catch (e) {
       rethrow;
     }
@@ -58,4 +59,5 @@ class SecureStorageHelper {
       rethrow;
     }
   }
+
 }
