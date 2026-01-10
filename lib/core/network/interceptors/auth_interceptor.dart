@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:notes_bucket/core/errors/failures.dart';
 import 'package:notes_bucket/core/network/constants/api_endpoints.dart';
+import 'package:notes_bucket/core/utils/app_utils_func.dart';
 
 class AuthInterceptor extends Interceptor {
   final String? _accessToken;
@@ -78,7 +79,8 @@ class AuthInterceptor extends Interceptor {
         data: {'refresh_token': _refreshToken},
       );
 
-      final newAccessToken = response.data['data']['access_token'] as String?;
+      final newAccessToken = response.data['access_token'] as String?;
+      dbPrint('New Access token $newAccessToken');
 
       if (newAccessToken != null) _saveAccessToken(newAccessToken);
 
@@ -92,7 +94,9 @@ class AuthInterceptor extends Interceptor {
     final publicEndpoints = [
       ApiEndpoints.login,
       ApiEndpoints.register,
-      ApiEndpoints.refreshAccessToken,
+      ApiEndpoints.sendOtp,
+      ApiEndpoints.doesEmailExist,
+      ApiEndpoints.googleSignIn,
     ];
     return publicEndpoints.any((endpoint) => path.contains(endpoint));
   }
