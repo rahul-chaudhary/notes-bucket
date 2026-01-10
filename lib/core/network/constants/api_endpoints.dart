@@ -10,7 +10,7 @@ abstract final class ApiEndpoints {
 
   // User endpoints
   static const String userDetail = '/user/detail';
-  static const String activateUserSubscription = '/user/activateSubscription';
+  static const String activateUserSubscription = '/user/activate-user-subscription';
   static const String updateProfile = '/user/profile';
 
   // Notes endpoints
