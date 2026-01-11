@@ -4,6 +4,7 @@ import 'package:notes_bucket/core/network/constants/api_constants.dart';
 import 'package:notes_bucket/core/network/interceptors/auth_interceptor.dart';
 import 'package:notes_bucket/core/network/interceptors/error_interceptor.dart';
 import 'package:notes_bucket/core/network/interceptors/logger_interceptor.dart';
+import 'package:notes_bucket/core/network/interceptors/retry_interceptor.dart';
 import 'package:notes_bucket/core/secure_storage/secure_storage_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -35,6 +36,7 @@ Future<Dio> dio(Ref ref) async {
 
   baseDio.interceptors.addAll([
     LoggerInterceptor(),
+    RetryInterceptor(dio: baseDio),
     AuthInterceptor(
       accessToken: secureData?.authResponseModel?.accessToken,
       refreshToken: secureData?.authResponseModel?.refreshToken,

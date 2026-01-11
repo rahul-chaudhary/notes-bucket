@@ -80,7 +80,7 @@ final class DioProvider
   }
 }
 
-String _$dioHash() => r'10b2946bae303a78158b784224030668c77eb216';
+String _$dioHash() => r'05b5768d35e6942304afd3fee05732d6a0191a2d';
 
 @ProviderFor(apiClient)
 const apiClientProvider = ApiClientProvider._();
