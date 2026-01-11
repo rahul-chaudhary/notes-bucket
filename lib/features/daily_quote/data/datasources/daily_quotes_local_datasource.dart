@@ -1,9 +1,11 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:notes_bucket/core/secure_storage/secure_storage_helper.dart';
+import 'package:notes_bucket/features/daily_quote/data/models/cached_daily_quote.dart';
 import 'package:notes_bucket/features/daily_quote/data/models/daily_quote.dart';
 
 abstract interface class DailyQuoteLocalDatasource {
   Future<DailyQuote?> getTodayQuote();
-  Future<void> saveTodayQuote(DailyQuote quote);
+  Future<void> saveTodayQuote(CachedDailyQuote quote);
 }
 class DailyQuoteLocalDatasourceImpl
     implements DailyQuoteLocalDatasource {
@@ -12,33 +14,28 @@ class DailyQuoteLocalDatasourceImpl
 
   DailyQuoteLocalDatasourceImpl(this.secureStorage);
 
-  static const _quoteKey = 'daily_quote';
-  static const _dateKey = 'daily_quote_date';
 
   @override
   Future<DailyQuote?> getTodayQuote() async {
-    final savedDate = await secureStorage.read(key: _dateKey);
-    if (savedDate == null) return null;
+    final savedCachedJson = await secureStorage.read(key: SecureStorageKeys.cachedQuoteKey);
+    if (savedCachedJson == null) return null;
 
-    final date = DateTime.parse(savedDate);
+    final cachedQuote = CachedDailyQuoteMapper.fromJson(savedCachedJson);
+    final cachedDate = cachedQuote.fetchedAt;
     final now = DateTime.now();
 
     final isSameDay =
-        date.year == now.year &&
-            date.month == now.month &&
-            date.day == now.day;
+        cachedDate.year == now.year &&
+            cachedDate.month == now.month &&
+            cachedDate.day == now.day;
 
     if (!isSameDay) return null;
 
-    final json = await secureStorage.read(key: _quoteKey);
-    if (json == null) return null;
-
-    return DailyQuoteMapper.fromJson(json);
+    return cachedQuote.quote;
   }
 
   @override
-  Future<void> saveTodayQuote(DailyQuote quote) async {
-    await secureStorage.write(key: _quoteKey, value: quote.toJson());
-    await secureStorage.write(key: _dateKey, value: DateTime.now().toIso8601String());
+  Future<void> saveTodayQuote(CachedDailyQuote quote) async {
+    await secureStorage.write(key: SecureStorageKeys.cachedQuoteKey, value: quote.toJson());
   }
 }

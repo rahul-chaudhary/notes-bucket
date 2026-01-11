@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:notes_bucket/core/errors/failures.dart';
 import 'package:notes_bucket/features/daily_quote/data/datasources/daily_quotes_local_datasource.dart';
 import 'package:notes_bucket/features/daily_quote/data/datasources/daily_quote_remote_datasource.dart';
+import 'package:notes_bucket/features/daily_quote/data/models/cached_daily_quote.dart';
 import 'package:notes_bucket/features/daily_quote/data/models/daily_quote.dart';
 import 'package:notes_bucket/features/daily_quote/domain/repositories/daily_quotes_repository.dart';
 
@@ -19,9 +20,9 @@ class DailyQuoteRepositoryImpl implements DailyQuoteRepository {
         return Right(cached);
       }
 
-      final fresh = await remote.fetchDailyQuote();
-      await local.saveTodayQuote(fresh);
-      return Right(fresh);
+      final newQuote = await remote.fetchDailyQuote();
+      await local.saveTodayQuote(CachedDailyQuote(quote: newQuote, fetchedAt: DateTime.now()));
+      return Right(newQuote);
     } catch(e){
       return Left(ServerFailure(e.toString()));
     }

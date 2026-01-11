@@ -4,6 +4,7 @@ import 'package:notes_bucket/features/user/data/models/user.dart';
 
 abstract final class SecureStorageKeys {
   static const String secureStorageKey = 'secureStorageKey';
+  static const String cachedQuoteKey = 'daily_quote_cached';
 }
 
 class SecureStorageHelper {

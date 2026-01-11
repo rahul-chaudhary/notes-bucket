@@ -1,6 +1,10 @@
+import 'package:dart_mappable/dart_mappable.dart';
 import 'package:notes_bucket/features/daily_quote/data/models/daily_quote.dart';
 
-class CachedDailyQuote {
+part 'cached_daily_quote.mapper.dart';
+
+@MappableClass()
+class CachedDailyQuote with CachedDailyQuoteMappable {
   final DailyQuote quote;
   final DateTime fetchedAt;
 
