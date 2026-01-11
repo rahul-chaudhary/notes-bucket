@@ -4,9 +4,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:notes_bucket/core/constants/app_routes.dart';
 import 'package:notes_bucket/core/secure_storage/secure_storage_providers.dart';
 import 'package:notes_bucket/core/theme/app_color.dart';
+import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/core/widgets/cards/app_container.dart';
 import 'package:notes_bucket/core/widgets/cards/upgrade_to_premium_card.dart';
 import 'package:notes_bucket/core/widgets/notes_app_bar.dart';
+import 'package:notes_bucket/features/daily_quote/presentation/providers/daily_quote_provider.dart';
 import 'package:notes_bucket/features/user/data/models/user.dart';
 import 'package:notes_bucket/features/user/presentation/providers/user_provider.dart';
 
@@ -29,7 +31,7 @@ class SettingsPage extends HookConsumerWidget {
             NotesAppBar(title: 'Settings', isBackButtonVisible: true),
             SliverPadding(
               padding: const EdgeInsets.all(16.0),
-              sliver: _profileCard(theme, user.value?.email ?? ''),
+              sliver: _profileCard(theme, user.value?.email ?? '', ref),
             ),
             SliverPadding(
               padding: const EdgeInsets.all(16.0),
@@ -106,7 +108,9 @@ class SettingsPage extends HookConsumerWidget {
     );
   }
 
-  SliverAppBar _profileCard(ThemeData theme, String email) {
+  SliverAppBar _profileCard(ThemeData theme, String email, WidgetRef ref) {
+    final dailyQuoteAsync = ref.watch(dailyQuoteProvider);
+
     return SliverAppBar(
       automaticallyImplyLeading: false,
       pinned: false,
@@ -179,15 +183,26 @@ class SettingsPage extends HookConsumerWidget {
                           ),
                           const SizedBox(width: 6),
                           Flexible(
-                            child: SelectableText(
-                              '"Every note is a step forward" \n- Alan Turning',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.primary,
-                                fontStyle: FontStyle.italic,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              maxLines: 2,
-                            ),
+                            child:
+                            dailyQuoteAsync.when(
+                                data: (quote) =>
+                                    SelectableText(
+                                      '${quote.quote} \n- ${quote.author}',
+                                      style: theme.textTheme.bodySmall?.copyWith(
+                                        color: theme.colorScheme.primary,
+                                        fontStyle: FontStyle.italic,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      maxLines: 2,
+                                    ),
+                                error: (error, stackTrace) {
+                                  dbPrint('DailyQuote error:', e: error, st: stackTrace);
+                                  return SizedBox.shrink();
+                                },
+                                loading: () => SizedBox(
+                                    height: 8,
+                                    width: 8,
+                                    child: const CircularProgressIndicator())),
                           ),
                         ],
                       ),
