@@ -71,8 +71,7 @@ class UserNotifier extends _$UserNotifier {
   }
 
   Future<User?> _fetchFromApi() async {
-    final repository = await ref.read(userRepositoryProvider.future);
-    final usecase = FetchUser(repository);
+    final usecase =  await ref.read(fetchUserUseCaseProvider.future);
     final res = await usecase.call(null);
 
     return res.fold(
@@ -94,12 +93,12 @@ class UserNotifier extends _$UserNotifier {
 
   Future<void> activateUserSubscription() async {
     final repository = await ref.read(userRepositoryProvider.future);
-    final usecase = ActivateUserSubscription(repository);
+    final usecase = await ref.read(activateUserSubscriptionUseCaseProvider.future);
     final res = await usecase.call(null);
 
     await res.fold(
-          (failure) => throw Exception(failure.toString()),
-          (_) async => await refresh(), // Refresh user data after activation
+          (failure) => throw failure.toString(),
+          (_) async => await refresh(),
     );
   }
 }

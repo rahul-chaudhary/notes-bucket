@@ -15,7 +15,11 @@ class DailyQuoteRemoteDatasourceImpl implements DailyQuoteRemoteDatasource {
   Future<DailyQuote> fetchDailyQuote() async {
     try{
       final response = await _apiClient.get(ApiEndpoints.zenQuotes);
-      return DailyQuoteMapper.fromJson(response.data);
+      final List<dynamic> jsonList = response.data;
+      final List<DailyQuote> quotes = jsonList
+          .map((json) => DailyQuoteMapper.fromMap(json as Map<String, dynamic>))
+          .toList();
+      return quotes.first;
     } catch (e) {
       rethrow;
     }

@@ -93,7 +93,9 @@ class SettingsPage extends HookConsumerWidget {
                                 .read(secureStorageHelperProvider)
                                 .deleteAll();
                             ref.invalidate(secureStorageHelperProvider);
-                            Navigator.pushNamed(context, AppRoutes.welcome);
+                            if(context.mounted) {
+                              Navigator.pushNamed(context, AppRoutes.welcome);
+                            }
                           },
                         ),
                       ],
@@ -108,114 +110,102 @@ class SettingsPage extends HookConsumerWidget {
     );
   }
 
-  SliverAppBar _profileCard(ThemeData theme, String email, WidgetRef ref) {
+  Widget _profileCard(ThemeData theme, String email, WidgetRef ref) {
     final dailyQuoteAsync = ref.watch(dailyQuoteProvider);
 
-    return SliverAppBar(
-      automaticallyImplyLeading: false,
-      pinned: false,
-      floating: true,
-      elevation: 12,
-      backgroundColor: Colors.transparent,
-      expandedHeight: 100,
-      toolbarHeight: 0,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(12)),
-      ),
-      flexibleSpace: FlexibleSpaceBar(
-        background: AppContainer(
-          outerPadding: const EdgeInsets.all(0),
-          innerPadding: const EdgeInsets.all(12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Avatar
-              SizedBox(
-                width: 100,
-                height: 100,
-                child: AppContainer(
-                  borderRadius: 100,
-                  outerPadding: const EdgeInsets.all(0),
-                  innerPadding: const EdgeInsets.all(0),
-                  child: Icon(Icons.person_2_rounded),
-                ),
+    return SliverToBoxAdapter(
+      child: AppContainer(
+        outerPadding: const EdgeInsets.all(0),
+        innerPadding: const EdgeInsets.all(12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Avatar
+            SizedBox(
+              width: 80,
+              height: 80,
+              child: AppContainer(
+                borderRadius: 100,
+                outerPadding: const EdgeInsets.all(0),
+                innerPadding: const EdgeInsets.all(0),
+                child: Icon(Icons.person_2_rounded),
               ),
-              const SizedBox(width: 16),
-              // User Info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+            ),
+            const SizedBox(width: 16),
+            // User Info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Hello! 👋',
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  if (email.isNotEmpty)
                     Text(
-                      'Hello! 👋',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.onSurface,
+                      email,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface.withAlpha(120),
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    if (email.isNotEmpty)
-                      Text(
-                        email,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary.withAlpha(20),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.lightbulb_outline_rounded,
+                          size: 16,
+                          color: theme.colorScheme.primary,
                         ),
-                      ),
-                    const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withAlpha(20),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.lightbulb_outline_rounded,
-                            size: 16,
-                            color: theme.colorScheme.primary,
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: dailyQuoteAsync.when(
+                            data: (quote) => SelectableText(
+                              '"${quote.quote}" - ${quote.author}',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.primary,
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            error: (error, stackTrace) {
+                              dbPrint('DailyQuote error:', e: error, st: stackTrace);
+                              return SizedBox.shrink();
+                            },
+                            loading: () => SizedBox(
+                              height: 16,
+                              width: 16,
+                              child: const CircularProgressIndicator(strokeWidth: 2),
+                            ),
                           ),
-                          const SizedBox(width: 6),
-                          Flexible(
-                            child:
-                            dailyQuoteAsync.when(
-                                data: (quote) =>
-                                    SelectableText(
-                                      '${quote.quote} \n- ${quote.author}',
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        color: theme.colorScheme.primary,
-                                        fontStyle: FontStyle.italic,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      maxLines: 2,
-                                    ),
-                                error: (error, stackTrace) {
-                                  dbPrint('DailyQuote error:', e: error, st: stackTrace);
-                                  return SizedBox.shrink();
-                                },
-                                loading: () => SizedBox(
-                                    height: 8,
-                                    width: 8,
-                                    child: const CircularProgressIndicator())),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
+
 
   SliverAppBar _premiumCard(ThemeData theme) {
     return SliverAppBar(
