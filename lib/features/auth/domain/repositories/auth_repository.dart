@@ -14,7 +14,7 @@ abstract interface class AuthRepository {
 
   Future<Either<Failure, AuthResponseModel>> googleSignIn(String email);
 
-  Future<Either<Failure, String>> refreshAccessToken();
+  // Future<Either<Failure, String>> refreshAccessToken();
 
   Future<Either<Failure, void>> logout();
 

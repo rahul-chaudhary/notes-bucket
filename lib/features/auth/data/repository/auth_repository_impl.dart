@@ -81,19 +81,19 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  @override
-  Future<Either<Failure, String>> refreshAccessToken() async {
-    try {
-      final accessToken = await _remoteDatasource.refreshAccessToken();
-      if (accessToken == null) throw 'Access token is null';
-      return Right(accessToken);
-    } on Failure catch (e) {
-      return Left(e);
-    }
-    catch (e) {
-      return Left(UnknownFailure(e.toString()));
-    }
-  }
+  // @override
+  // Future<Either<Failure, String>> refreshAccessToken() async {
+  //   try {
+  //     final accessToken = await _remoteDatasource.refreshAccessToken();
+  //     if (accessToken == null) throw 'Access token is null';
+  //     return Right(accessToken);
+  //   } on Failure catch (e) {
+  //     return Left(e);
+  //   }
+  //   catch (e) {
+  //     return Left(UnknownFailure(e.toString()));
+  //   }
+  // }
 
   @override
   Future<Either<Failure, void>> logout() async {
