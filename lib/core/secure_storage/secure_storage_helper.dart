@@ -32,6 +32,20 @@ class SecureStorageHelper {
     }
   }
 
+  Future<SecureStorageModel?> updateAccessToken(String accessToken) async {
+    try{
+      final secureStorageModel = await get();
+      if(secureStorageModel == null) return null;
+      final authResponseModel = secureStorageModel.authResponseModel;
+      if(authResponseModel == null) return null;
+      final updatedSecureStorageModel = secureStorageModel.copyWith(authResponseModel: authResponseModel.copyWith(accessToken: accessToken));
+      await save(updatedSecureStorageModel);
+      return updatedSecureStorageModel;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> updateUser(User user) async {
     try{
       final secureStorageModel = await get();
