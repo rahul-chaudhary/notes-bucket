@@ -92,7 +92,6 @@ class UserNotifier extends _$UserNotifier {
   }
 
   Future<void> activateUserSubscription() async {
-    final repository = await ref.read(userRepositoryProvider.future);
     final usecase = await ref.read(activateUserSubscriptionUseCaseProvider.future);
     final res = await usecase.call(null);
 
