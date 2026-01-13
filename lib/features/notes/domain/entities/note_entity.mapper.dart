@@ -35,6 +35,8 @@ class NoteEntityMapper extends ClassMapperBase<NoteEntity> {
     'content',
     _$content,
   );
+  static bool _$synced(NoteEntity v) => v.synced;
+  static const Field<NoteEntity, bool> _f$synced = Field('synced', _$synced);
   static DateTime _$createdAt(NoteEntity v) => v.createdAt;
   static const Field<NoteEntity, DateTime> _f$createdAt = Field(
     'createdAt',
@@ -52,6 +54,7 @@ class NoteEntityMapper extends ClassMapperBase<NoteEntity> {
     #folderId: _f$folderId,
     #title: _f$title,
     #content: _f$content,
+    #synced: _f$synced,
     #createdAt: _f$createdAt,
     #updatedAt: _f$updatedAt,
   };
@@ -62,6 +65,7 @@ class NoteEntityMapper extends ClassMapperBase<NoteEntity> {
       folderId: data.dec(_f$folderId),
       title: data.dec(_f$title),
       content: data.dec(_f$content),
+      synced: data.dec(_f$synced),
       createdAt: data.dec(_f$createdAt),
       updatedAt: data.dec(_f$updatedAt),
     );
@@ -132,6 +136,7 @@ abstract class NoteEntityCopyWith<$R, $In extends NoteEntity, $Out>
     int? folderId,
     String? title,
     String? content,
+    bool? synced,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -152,6 +157,7 @@ class _NoteEntityCopyWithImpl<$R, $Out>
     int? folderId,
     Object? title = $none,
     Object? content = $none,
+    bool? synced,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) => $apply(
@@ -160,6 +166,7 @@ class _NoteEntityCopyWithImpl<$R, $Out>
       if (folderId != null) #folderId: folderId,
       if (title != $none) #title: title,
       if (content != $none) #content: content,
+      if (synced != null) #synced: synced,
       if (createdAt != null) #createdAt: createdAt,
       if (updatedAt != null) #updatedAt: updatedAt,
     }),
@@ -170,6 +177,7 @@ class _NoteEntityCopyWithImpl<$R, $Out>
     folderId: data.get(#folderId, or: $value.folderId),
     title: data.get(#title, or: $value.title),
     content: data.get(#content, or: $value.content),
+    synced: data.get(#synced, or: $value.synced),
     createdAt: data.get(#createdAt, or: $value.createdAt),
     updatedAt: data.get(#updatedAt, or: $value.updatedAt),
   );

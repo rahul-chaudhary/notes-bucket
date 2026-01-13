@@ -408,6 +408,18 @@ class $NotesItemsTable extends NotesItems
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _syncedMeta = const VerificationMeta('synced');
+  @override
+  late final GeneratedColumn<bool> synced = GeneratedColumn<bool>(
+    'synced',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("synced" IN (0, 1))',
+    ),
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -438,6 +450,7 @@ class $NotesItemsTable extends NotesItems
     folderID,
     title,
     content,
+    synced,
     createdAt,
     updatedAt,
   ];
@@ -476,6 +489,14 @@ class $NotesItemsTable extends NotesItems
         content.isAcceptableOrUnknown(data['content']!, _contentMeta),
       );
     }
+    if (data.containsKey('synced')) {
+      context.handle(
+        _syncedMeta,
+        synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_syncedMeta);
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -513,6 +534,10 @@ class $NotesItemsTable extends NotesItems
         DriftSqlType.string,
         data['${effectivePrefix}content'],
       ),
+      synced: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}synced'],
+      )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -535,6 +560,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
   final int folderID;
   final String? title;
   final String? content;
+  final bool synced;
   final DateTime createdAt;
   final DateTime updatedAt;
   const NotesItem({
@@ -542,6 +568,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
     required this.folderID,
     this.title,
     this.content,
+    required this.synced,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -556,6 +583,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
     if (!nullToAbsent || content != null) {
       map['content'] = Variable<String>(content);
     }
+    map['synced'] = Variable<bool>(synced);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
@@ -571,6 +599,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
       content: content == null && nullToAbsent
           ? const Value.absent()
           : Value(content),
+      synced: Value(synced),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );
@@ -586,6 +615,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
       folderID: serializer.fromJson<int>(json['folderID']),
       title: serializer.fromJson<String?>(json['title']),
       content: serializer.fromJson<String?>(json['content']),
+      synced: serializer.fromJson<bool>(json['synced']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -598,6 +628,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
       'folderID': serializer.toJson<int>(folderID),
       'title': serializer.toJson<String?>(title),
       'content': serializer.toJson<String?>(content),
+      'synced': serializer.toJson<bool>(synced),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
@@ -608,6 +639,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
     int? folderID,
     Value<String?> title = const Value.absent(),
     Value<String?> content = const Value.absent(),
+    bool? synced,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) => NotesItem(
@@ -615,6 +647,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
     folderID: folderID ?? this.folderID,
     title: title.present ? title.value : this.title,
     content: content.present ? content.value : this.content,
+    synced: synced ?? this.synced,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -624,6 +657,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
       folderID: data.folderID.present ? data.folderID.value : this.folderID,
       title: data.title.present ? data.title.value : this.title,
       content: data.content.present ? data.content.value : this.content,
+      synced: data.synced.present ? data.synced.value : this.synced,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -636,6 +670,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
           ..write('folderID: $folderID, ')
           ..write('title: $title, ')
           ..write('content: $content, ')
+          ..write('synced: $synced, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -644,7 +679,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
 
   @override
   int get hashCode =>
-      Object.hash(id, folderID, title, content, createdAt, updatedAt);
+      Object.hash(id, folderID, title, content, synced, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -653,6 +688,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
           other.folderID == this.folderID &&
           other.title == this.title &&
           other.content == this.content &&
+          other.synced == this.synced &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -662,6 +698,7 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
   final Value<int> folderID;
   final Value<String?> title;
   final Value<String?> content;
+  final Value<bool> synced;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   const NotesItemsCompanion({
@@ -669,6 +706,7 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
     this.folderID = const Value.absent(),
     this.title = const Value.absent(),
     this.content = const Value.absent(),
+    this.synced = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
@@ -677,14 +715,17 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
     required int folderID,
     this.title = const Value.absent(),
     this.content = const Value.absent(),
+    required bool synced,
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
-  }) : folderID = Value(folderID);
+  }) : folderID = Value(folderID),
+       synced = Value(synced);
   static Insertable<NotesItem> custom({
     Expression<int>? id,
     Expression<int>? folderID,
     Expression<String>? title,
     Expression<String>? content,
+    Expression<bool>? synced,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
   }) {
@@ -693,6 +734,7 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
       if (folderID != null) 'folder_i_d': folderID,
       if (title != null) 'title': title,
       if (content != null) 'content': content,
+      if (synced != null) 'synced': synced,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
     });
@@ -703,6 +745,7 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
     Value<int>? folderID,
     Value<String?>? title,
     Value<String?>? content,
+    Value<bool>? synced,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
   }) {
@@ -711,6 +754,7 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
       folderID: folderID ?? this.folderID,
       title: title ?? this.title,
       content: content ?? this.content,
+      synced: synced ?? this.synced,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -731,6 +775,9 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
     if (content.present) {
       map['content'] = Variable<String>(content.value);
     }
+    if (synced.present) {
+      map['synced'] = Variable<bool>(synced.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -747,6 +794,7 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
           ..write('folderID: $folderID, ')
           ..write('title: $title, ')
           ..write('content: $content, ')
+          ..write('synced: $synced, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -1077,6 +1125,7 @@ typedef $$NotesItemsTableCreateCompanionBuilder =
       required int folderID,
       Value<String?> title,
       Value<String?> content,
+      required bool synced,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
     });
@@ -1086,6 +1135,7 @@ typedef $$NotesItemsTableUpdateCompanionBuilder =
       Value<int> folderID,
       Value<String?> title,
       Value<String?> content,
+      Value<bool> synced,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
     });
@@ -1135,6 +1185,11 @@ class $$NotesItemsTableFilterComposer
 
   ColumnFilters<String> get content => $composableBuilder(
     column: $table.content,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get synced => $composableBuilder(
+    column: $table.synced,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1196,6 +1251,11 @@ class $$NotesItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -1247,6 +1307,9 @@ class $$NotesItemsTableAnnotationComposer
 
   GeneratedColumn<String> get content =>
       $composableBuilder(column: $table.content, builder: (column) => column);
+
+  GeneratedColumn<bool> get synced =>
+      $composableBuilder(column: $table.synced, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -1310,6 +1373,7 @@ class $$NotesItemsTableTableManager
                 Value<int> folderID = const Value.absent(),
                 Value<String?> title = const Value.absent(),
                 Value<String?> content = const Value.absent(),
+                Value<bool> synced = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => NotesItemsCompanion(
@@ -1317,6 +1381,7 @@ class $$NotesItemsTableTableManager
                 folderID: folderID,
                 title: title,
                 content: content,
+                synced: synced,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
               ),
@@ -1326,6 +1391,7 @@ class $$NotesItemsTableTableManager
                 required int folderID,
                 Value<String?> title = const Value.absent(),
                 Value<String?> content = const Value.absent(),
+                required bool synced,
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => NotesItemsCompanion.insert(
@@ -1333,6 +1399,7 @@ class $$NotesItemsTableTableManager
                 folderID: folderID,
                 title: title,
                 content: content,
+                synced: synced,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
               ),

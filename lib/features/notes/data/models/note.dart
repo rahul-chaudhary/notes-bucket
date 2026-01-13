@@ -28,6 +28,7 @@ class Note with NoteMappable {
       folderId: folderId,
       title: title,
       content: content,
+      synced: true,
       createdAt: createdAt,
       updatedAt: updatedAt,
     );

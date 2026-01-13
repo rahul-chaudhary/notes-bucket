@@ -8,6 +8,7 @@ class NoteEntity with NoteEntityMappable {
   final int folderId;
   final String? title;
   final String? content;
+  final bool synced;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -16,6 +17,7 @@ class NoteEntity with NoteEntityMappable {
     required this.folderId,
     required this.title,
     required this.content,
+    required this.synced,
     required this.createdAt,
     required this.updatedAt,
   });

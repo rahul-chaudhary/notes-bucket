@@ -1,21 +1,25 @@
 import 'package:drift/drift.dart';
 import 'package:notes_bucket/core/db/app_database.dart';
-import 'package:notes_bucket/features/notes/data/models/note.dart';
+import 'package:notes_bucket/features/notes/domain/entities/note_entity.dart';
 
 abstract interface class NoteLocalDataSource {
-  Future<Note> addNote(Note note);
+  Future<NoteEntity> addNote(NoteEntity note);
 
-  Future<List<Note>> fetchNotesByFolderId(int folderId);
+  Future<List<NoteEntity>> fetchNotesByFolderId(int folderId);
 
-  Future<Note?> fetchNoteById(int noteId);
+  Future<NoteEntity?> fetchNoteById(int noteId);
 
-  Future<void> updateNote(Note note);
+  Future<NoteEntity> updateNote(NoteEntity note);
 
   Future<void> deleteNote(int noteId);
 
-  Future<List<Note>> fetchAllNotes({required int limit,required int offset});
+  Future<List<NoteEntity>> fetchAllNotes({required int limit,required int offset});
 
   Future<int> fetchNotesCountByFolderId(int folderId);
+
+  Future<NoteEntity> markNoteAsSynced(int noteId);
+
+  Future<List<NoteEntity>> fetchUnsyncedNotes();
 
 }
 
@@ -25,23 +29,25 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
   NoteLocalDataSourceImpl({required this.database});
 
   @override
-  Future<Note> addNote(Note note) async {
-    await database
+  Future<NoteEntity> addNote(NoteEntity note) async {
+    final id = await database
         .into(database.notesItems)
         .insert(
       NotesItemsCompanion.insert(
         folderID: note.folderId,
         title: Value(note.title),
         content: Value(note.content),
+        synced: note.synced,
         createdAt: Value(note.createdAt),
         updatedAt: Value(note.updatedAt),
       ),
     );
-    return note;
+    final n = await fetchNoteById(id);
+    return n!;
   }
 
   @override
-  Future<List<Note>> fetchNotesByFolderId(int folderId) async {
+  Future<List<NoteEntity>> fetchNotesByFolderId(int folderId) async {
     final queryResult = await (database.select(
       database.notesItems,
     )
@@ -49,11 +55,12 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
     final notes = queryResult
         .map(
           (row) =>
-          Note(
+          NoteEntity(
             id: row.id,
             folderId: row.folderID,
             title: row.title,
             content: row.content,
+            synced: row.synced,
             createdAt: row.createdAt,
             updatedAt: row.updatedAt,
           ),
@@ -63,17 +70,18 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
   }
 
   @override
-  Future<Note?> fetchNoteById(int noteId) async {
+  Future<NoteEntity?> fetchNoteById(int noteId) async {
     final queryResult = await (database.select(
       database.notesItems,
     )
       ..where((tbl) => tbl.id.equals(noteId))).getSingleOrNull();
     if (queryResult == null) return null;
-    final note = Note(
+    final note = NoteEntity(
       id: queryResult.id,
       folderId: queryResult.folderID,
       title: queryResult.title,
       content: queryResult.content,
+      synced: queryResult.synced,
       createdAt: queryResult.createdAt,
       updatedAt: queryResult.updatedAt,
     );
@@ -81,8 +89,8 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
   }
 
   @override
-  Future<void> updateNote(Note note) async {
-    await database
+  Future<NoteEntity> updateNote(NoteEntity note) async {
+     await database
         .update(database.notesItems)
         .replace(
       NotesItemsCompanion.insert(
@@ -90,10 +98,13 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
         folderID: note.folderId,
         title: Value(note.title),
         content: Value(note.content),
+        synced: note.synced,
         createdAt: Value(note.createdAt),
         updatedAt: Value(note.updatedAt),
       ),
     );
+     final n = await fetchNoteById(note.id);
+     return n!;
   }
 
   @override
@@ -104,16 +115,17 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
   }
 
   @override
-  Future<List<Note>> fetchAllNotes({required int limit,required int offset}) async {
+  Future<List<NoteEntity>> fetchAllNotes({required int limit,required int offset}) async {
     final queryResult = await (database.select(
       database.notesItems,
     )..limit(limit, offset: offset)).get();
 
-    final notes = queryResult.map((row) => Note(
+    final notes = queryResult.map((row) => NoteEntity(
       id: row.id,
       folderId: row.folderID,
       title: row.title,
       content: row.content,
+      synced: row.synced,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     )).toList();
@@ -127,6 +139,31 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
       database.notesItems,
     )..where((tbl) => tbl.folderID.equals(folderId))).get();
     return queryResult.length;
+  }
+
+  @override
+  Future<NoteEntity> markNoteAsSynced(int noteId) async {
+     await (database.update(database.notesItems)
+      ..where((tbl) => tbl.id.equals(noteId)))
+        .write(const NotesItemsCompanion(synced: Value(true)));
+
+    final n = await fetchNoteById(noteId);
+    return n!;
+  }
+
+  @override
+  Future<List<NoteEntity>> fetchUnsyncedNotes() async {
+    final queryResult = await (database.select(database.notesItems)
+      ..where((tbl) => tbl.synced.equals(false))).get();
+    return queryResult.map((row) => NoteEntity(
+      id: row.id,
+      folderId: row.folderID,
+      title: row.title,
+      content: row.content,
+      synced: row.synced,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    )).toList();
   }
 
 }

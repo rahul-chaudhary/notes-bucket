@@ -2,7 +2,6 @@ import 'package:fpdart/fpdart.dart';
 import 'package:notes_bucket/core/errors/exceptions.dart';
 import 'package:notes_bucket/core/errors/failures.dart';
 import 'package:notes_bucket/features/notes/data/datasource/local_data/note_local_datasource.dart';
-import 'package:notes_bucket/features/notes/data/models/note.dart';
 import 'package:notes_bucket/features/notes/domain/entities/note_entity.dart';
 import 'package:notes_bucket/features/notes/domain/repositories/note_repo.dart';
 
@@ -14,9 +13,8 @@ class NoteRepositoryImpl implements NoteRepository {
   @override
   Future<Either<Failure, NoteEntity>> addNote(NoteEntity note) async {
     try {
-      final noteToInsert = Note.fromEntity(note);
-      await noteLocalDataSource.addNote(noteToInsert);
-      return Right(noteToInsert.toEntity());
+      final res = await noteLocalDataSource.addNote(note);
+      return Right(res);
     } on DatabaseException catch (e, st) {
       return Left(DatabaseFailure(e.message, st));
     }
@@ -28,8 +26,7 @@ class NoteRepositoryImpl implements NoteRepository {
   ) async {
     try {
       final notes = await noteLocalDataSource.fetchNotesByFolderId(folderId);
-      final noteEntities = notes.map((note) => note.toEntity()).toList();
-      return Right(noteEntities);
+      return Right(notes);
     } on DatabaseException catch (e, st) {
       return Left(DatabaseFailure(e.message, st));
     }
@@ -41,7 +38,7 @@ class NoteRepositoryImpl implements NoteRepository {
       final note = await noteLocalDataSource.fetchNoteById(noteId);
       if (note == null) return const Right(null);
 
-      return Right(note.toEntity());
+      return Right(note);
     } on DatabaseException catch (e, st) {
       return Left(DatabaseFailure(e.message, st));
     }
@@ -50,9 +47,8 @@ class NoteRepositoryImpl implements NoteRepository {
   @override
   Future<Either<Failure, NoteEntity>> updateNote(NoteEntity note) async {
     try {
-      final noteToUpdate = Note.fromEntity(note);
-      await noteLocalDataSource.updateNote(noteToUpdate);
-      return Right(noteToUpdate.toEntity());
+      final updateNote = await noteLocalDataSource.updateNote(note);
+      return Right(updateNote);
     } on DatabaseException catch (e, st) {
       return Left(DatabaseFailure(e.message, st));
     }
@@ -78,8 +74,7 @@ class NoteRepositoryImpl implements NoteRepository {
         limit: limit,
         offset: offset,
       );
-      final noteEntities = notes.map((note) => note.toEntity()).toList();
-      return Right(noteEntities);
+      return Right(notes);
     } on DatabaseException catch (e, st) {
       return Left(DatabaseFailure(e.message, st));
     }
@@ -94,4 +89,25 @@ class NoteRepositoryImpl implements NoteRepository {
       return Left(DatabaseFailure(e.message, st));
     }
   }
+
+  @override
+  Future<Either<Failure, NoteEntity>> markNoteAsSynced(int noteId) async {
+    try {
+      final syncedNote = await noteLocalDataSource.markNoteAsSynced(noteId);
+      return Right(syncedNote);
+    } on DatabaseException catch (e, st) {
+      return Left(DatabaseFailure(e.message, st));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<NoteEntity>>> fetchUnsyncedNotes() async {
+    try {
+      final notes = await noteLocalDataSource.fetchUnsyncedNotes();
+      return Right(notes);
+    } on DatabaseException catch (e, st) {
+      return Left(DatabaseFailure(e.message, st));
+    }
+  }
+
 }

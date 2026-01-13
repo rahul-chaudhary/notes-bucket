@@ -22,6 +22,7 @@ class NotesItems extends Table {
       min: AppConstants.minNoteTitleLength,
       max: AppConstants.maxNoteTitleLength)();
   TextColumn get content => text().nullable()();
+  BoolColumn get synced => boolean()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 }
