@@ -33,12 +33,14 @@ class SecureStorageHelper {
   }
 
   Future<SecureStorageModel?> updateAccessToken(String accessToken) async {
-    try{
+    try {
       final secureStorageModel = await get();
-      if(secureStorageModel == null) return null;
+      if (secureStorageModel == null) return null;
       final authResponseModel = secureStorageModel.authResponseModel;
-      if(authResponseModel == null) return null;
-      final updatedSecureStorageModel = secureStorageModel.copyWith(authResponseModel: authResponseModel.copyWith(accessToken: accessToken));
+      if (authResponseModel == null) return null;
+      final updatedSecureStorageModel = secureStorageModel.copyWith(
+        authResponseModel: authResponseModel.copyWith(accessToken: accessToken),
+      );
       await save(updatedSecureStorageModel);
       return updatedSecureStorageModel;
     } catch (e) {
@@ -46,13 +48,27 @@ class SecureStorageHelper {
     }
   }
 
-  Future<void> updateUser(User user) async {
-    try{
+  Future<String?> getRefreshToken() async {
+    try {
       final secureStorageModel = await get();
-      if(secureStorageModel == null) return;
+      if (secureStorageModel == null) return null;
       final authResponseModel = secureStorageModel.authResponseModel;
-      if(authResponseModel == null) return;
-      final updatedSecureStorageModel = secureStorageModel.copyWith(authResponseModel: authResponseModel.copyWith(user: user));
+      if (authResponseModel == null) return null;
+      return authResponseModel.refreshToken;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> updateUser(User user) async {
+    try {
+      final secureStorageModel = await get();
+      if (secureStorageModel == null) return;
+      final authResponseModel = secureStorageModel.authResponseModel;
+      if (authResponseModel == null) return;
+      final updatedSecureStorageModel = secureStorageModel.copyWith(
+        authResponseModel: authResponseModel.copyWith(user: user),
+      );
       await save(updatedSecureStorageModel);
     } catch (e) {
       rethrow;
@@ -74,5 +90,4 @@ class SecureStorageHelper {
       rethrow;
     }
   }
-
 }
