@@ -13,13 +13,8 @@ part of 'token_service.dart';
 const tokenServiceProvider = TokenServiceProvider._();
 
 final class TokenServiceProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<TokenService>,
-          TokenService,
-          FutureOr<TokenService>
-        >
-    with $FutureModifier<TokenService>, $FutureProvider<TokenService> {
+    extends $FunctionalProvider<TokenService, TokenService, TokenService>
+    with $Provider<TokenService> {
   const TokenServiceProvider._()
     : super(
         from: null,
@@ -36,14 +31,21 @@ final class TokenServiceProvider
 
   @$internal
   @override
-  $FutureProviderElement<TokenService> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  $ProviderElement<TokenService> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
-  FutureOr<TokenService> create(Ref ref) {
+  TokenService create(Ref ref) {
     return tokenService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(TokenService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<TokenService>(value),
+    );
   }
 }
 
-String _$tokenServiceHash() => r'9143ae973b7e0e462afc6e153b4acd57def38170';
+String _$tokenServiceHash() => r'a4ebbcff7b19a09ce5156d0f1756839d755a1f27';

@@ -20,7 +20,7 @@ final class BaseDioProvider extends $FunctionalProvider<Dio, Dio, Dio>
         argument: null,
         retry: null,
         name: r'baseDioProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -47,40 +47,48 @@ final class BaseDioProvider extends $FunctionalProvider<Dio, Dio, Dio>
   }
 }
 
-String _$baseDioHash() => r'dbaee855de94b8fe5d4ae9cc2101ca392465de47';
+String _$baseDioHash() => r'bd93f89e587514116c32e43c963938f006702c58';
 
-@ProviderFor(dio)
-const dioProvider = DioProvider._();
+@ProviderFor(baseApiClient)
+const baseApiClientProvider = BaseApiClientProvider._();
 
-final class DioProvider
-    extends $FunctionalProvider<AsyncValue<Dio>, Dio, FutureOr<Dio>>
-    with $FutureModifier<Dio>, $FutureProvider<Dio> {
-  const DioProvider._()
+final class BaseApiClientProvider
+    extends $FunctionalProvider<ApiClient, ApiClient, ApiClient>
+    with $Provider<ApiClient> {
+  const BaseApiClientProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'dioProvider',
-        isAutoDispose: true,
+        name: r'baseApiClientProvider',
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$dioHash();
+  String debugGetCreateSourceHash() => _$baseApiClientHash();
 
   @$internal
   @override
-  $FutureProviderElement<Dio> $createElement($ProviderPointer pointer) =>
-      $FutureProviderElement(pointer);
+  $ProviderElement<ApiClient> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
-  FutureOr<Dio> create(Ref ref) {
-    return dio(ref);
+  ApiClient create(Ref ref) {
+    return baseApiClient(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ApiClient value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ApiClient>(value),
+    );
   }
 }
 
-String _$dioHash() => r'05b5768d35e6942304afd3fee05732d6a0191a2d';
+String _$baseApiClientHash() => r'9d68a583c3e9a4abdbb16571b978ec92338de1b9';
 
 @ProviderFor(apiClient)
 const apiClientProvider = ApiClientProvider._();
@@ -119,3 +127,36 @@ final class ApiClientProvider
 }
 
 String _$apiClientHash() => r'074dfc916db82e3d6dc31d60b56315c75626de9b';
+
+@ProviderFor(dio)
+const dioProvider = DioProvider._();
+
+final class DioProvider
+    extends $FunctionalProvider<AsyncValue<Dio>, Dio, FutureOr<Dio>>
+    with $FutureModifier<Dio>, $FutureProvider<Dio> {
+  const DioProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'dioProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$dioHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<Dio> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<Dio> create(Ref ref) {
+    return dio(ref);
+  }
+}
+
+String _$dioHash() => r'109c3437e8b5718e84d8e4e6dff0aa1c5c3446f0';

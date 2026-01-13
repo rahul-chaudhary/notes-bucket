@@ -1,26 +1,21 @@
 import 'package:dio/dio.dart';
 import 'package:notes_bucket/core/errors/failures.dart';
 import 'package:notes_bucket/core/network/constants/api_endpoints.dart';
+import 'package:notes_bucket/core/network/token_service.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
 
 class AuthInterceptor extends Interceptor {
-  final String? _accessToken;
-  final String? _refreshToken;
-  final Function(String) _saveAccessToken;
-  final Future<void> Function() _clearTokens;
-  final Dio _dio;
+  final String? accessToken;
+  final Dio dio;
+  final Future<String?> Function() fetchNewAccessToken;
+  final Future<void> Function() clearTokens;
 
   AuthInterceptor({
-    required String? accessToken,
-    required String? refreshToken,
-    required Function(String) saveAccessToken,
-    required Future<void> Function() clearTokens,
-    required Dio dio,
-  }) : _accessToken = accessToken,
-        _refreshToken = refreshToken,
-       _saveAccessToken = saveAccessToken,
-       _clearTokens = clearTokens,
-       _dio = dio;
+    required this.accessToken,
+    required this.dio,
+    required this.fetchNewAccessToken,
+    required this.clearTokens,
+  });
 
   @override
   Future<void> onRequest(
@@ -32,8 +27,8 @@ class AuthInterceptor extends Interceptor {
       return handler.next(options);
     }
 
-    if (_accessToken != null) {
-      options.headers['Authorization'] = 'Bearer $_accessToken';
+    if (accessToken != null) {
+      options.headers['Authorization'] = 'Bearer $accessToken';
     }
 
     return handler.next(options);
@@ -48,46 +43,24 @@ class AuthInterceptor extends Interceptor {
     if (err.response?.statusCode == 401) {
       try {
         // Try to refresh the token
-        final newAccessToken = await _fetchAccessToken();
+        final newAccessToken = await fetchNewAccessToken();
 
         if (newAccessToken != null) {
           // Retry the original request with new token
           final options = err.requestOptions;
           options.headers['Authorization'] = 'Bearer $newAccessToken';
 
-          final response = await _dio.fetch(options);
+          final response = await dio.fetch(options);
           return handler.resolve(response);
         }
       } catch (e) {
         // Refresh failed - clear tokens and redirect to login
-        await _clearTokens();
+        await clearTokens();
         return handler.reject(err);
       }
     }
 
     return handler.next(err);
-  }
-
-  Future<String?> _fetchAccessToken() async {
-    try {
-      if (_refreshToken == null) {
-        throw AuthenticationFailure('Refresh token is null');
-      }
-
-      final response = await _dio.post(
-        ApiEndpoints.refreshAccessToken,
-        data: {'refresh_token': _refreshToken},
-      );
-
-      final newAccessToken = response.data['access_token'] as String?;
-      dbPrint('New Access token $newAccessToken');
-
-      if (newAccessToken != null) _saveAccessToken(newAccessToken);
-
-      return newAccessToken;
-    } catch (e) {
-      rethrow;
-    }
   }
 
   bool _isPublicEndpoint(String path) {

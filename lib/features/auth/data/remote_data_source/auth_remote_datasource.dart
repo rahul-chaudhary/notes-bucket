@@ -17,8 +17,6 @@ abstract interface class AuthRemoteDatasource {
 
   Future<AuthResponseModel> googleSignIn(String email);
 
-  Future<String?> refreshAccessToken();
-
   Future<void> logout();
 }
 
@@ -94,18 +92,6 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   Future<AuthResponseModel> googleSignIn(String email) async {
     throw UnimplementedError();
   }
-
-  @override
-  Future<String?> refreshAccessToken() async {
-    try {
-      final response = await _apiClient.post(ApiEndpoints.refreshAccessToken);
-      return response.data['access_token'];
-  } on DioException catch (e) {
-      throw DioExceptionHandler.handleError(e);
-    } catch (e) {
-      throw Exception(e.toString());
-    }
-    }
 
   @override
   Future<void> logout() async {
