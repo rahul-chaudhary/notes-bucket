@@ -1,5 +1,6 @@
 import 'package:notes_bucket/core/network/providers/network_providers.dart';
 import 'package:notes_bucket/core/secure_storage/secure_storage_providers.dart';
+import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/features/user/data/datasource/user_remote_datasource.dart';
 import 'package:notes_bucket/features/user/data/models/user.dart';
 import 'package:notes_bucket/features/user/data/repository/user_repository_impl.dart';
@@ -55,14 +56,15 @@ class UserNotifier extends _$UserNotifier {
   }
 
   Future<User?> _getUser() async {
-    final secureStorageHelper = ref.read(secureStorageHelperProvider);
+    final secureStorageHelper = ref.watch(secureStorageHelperProvider);
 
     // Try fetching from API first
     try {
       final user = await _fetchFromApi();
       if (user != null) return user;
-    } catch (_) {
+    } catch (e) {
       // Fall back to cached user if API fails
+      dbPrint('Failed to fetch user from API:', e:  e);
     }
 
     // Fallback to stored user
