@@ -249,6 +249,7 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
             folderId: selectedFolderId,
             title: titleController.text,
             content: bodyController.text,
+            synced: false,
             createdAt: DateTime.now(),
             updatedAt: DateTime.now(),
           );
