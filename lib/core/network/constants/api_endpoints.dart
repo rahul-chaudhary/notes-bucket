@@ -14,7 +14,7 @@ abstract final class ApiEndpoints {
   static const String updateProfile = '/user/profile';
 
   // Notes endpoints
-  static const String notes = '/notes';
+  static const String note = '/note';
   static String noteById(int id) => '/notes/$id';
 
   // Folders endpoints
