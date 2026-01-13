@@ -47,6 +47,8 @@ class LoggerInterceptor extends Interceptor {
       print('║ Status Code: ${err.response?.statusCode}');
       print('║ Error Type: ${err.type}');
       print('║ Error Message: ${err.message}');
+      print('║ Error Stacktrace: ${err.stackTrace}');
+      print('║ Error Request Options: ${err.requestOptions.data}');
       if (err.response != null) {
         print('║ Response Data: ${err.response?.data}');
       }
@@ -58,9 +60,9 @@ class LoggerInterceptor extends Interceptor {
   Map<String, dynamic> _sanitizeHeaders(Map<String, dynamic> headers) {
     final sanitized = Map<String, dynamic>.from(headers);
     // Hide sensitive information
-    if (sanitized.containsKey('Authorization')) {
-      sanitized['Authorization'] = 'Bearer ***';
-    }
+    // if (sanitized.containsKey('Authorization')) {
+    //   sanitized['Authorization'] = 'Bearer ***';
+    // }
     return sanitized;
   }
 
@@ -68,12 +70,12 @@ class LoggerInterceptor extends Interceptor {
     if (body is Map<String, dynamic>) {
       final sanitized = Map<String, dynamic>.from(body);
       // Hide sensitive fields
-      final sensitiveFields = ['password', 'token', 'secret', 'apiKey'];
-      for (final field in sensitiveFields) {
-        if (sanitized.containsKey(field)) {
-          sanitized[field] = '***';
-        }
-      }
+      // final sensitiveFields = ['password', 'token', 'secret', 'apiKey'];
+      // for (final field in sensitiveFields) {
+      //   if (sanitized.containsKey(field)) {
+      //     sanitized[field] = '***';
+      //   }
+      // }
       return sanitized;
     }
     return body;
