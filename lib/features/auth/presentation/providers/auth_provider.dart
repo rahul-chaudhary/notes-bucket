@@ -125,6 +125,8 @@ class AuthController extends _$AuthController {
     } catch (e, st) {
       state = AsyncValue.error(e, st);
       rethrow;
+    } finally {
+      ref.invalidate(userProvider);
     }
   }
 }

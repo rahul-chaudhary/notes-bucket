@@ -64,21 +64,15 @@ Future<ApiClient> apiClient(Ref ref) async {
 
 @Riverpod(keepAlive: true)
 Future<Dio> dio(Ref ref) async {
-  // Get base dio
   final baseDio = ref.watch(baseDioProvider);
-
-  // Clone it to avoid modifying the base
   final dio = Dio(baseDio.options);
-
-  // Get token service
   final tokenService = ref.watch(tokenServiceProvider);
 
-  // Add ALL interceptors (including auth)
   dio.interceptors.addAll([
     LoggerInterceptor(),
     AuthInterceptor(
-      accessToken: await tokenService.getAccessToken(),
-      dio: baseDio, // ← Use BASE dio for refresh requests!
+      getAccessToken: tokenService.getAccessToken, // Pass function reference
+      dio: baseDio,
       fetchNewAccessToken: tokenService.refreshAccessToken,
       clearTokens: tokenService.clearTokens,
     ),
