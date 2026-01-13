@@ -39,7 +39,12 @@ class TokenServiceImpl implements TokenService {
   @override
   Future<String> refreshAccessToken() async {
     try {
-      final response = await apiClient.post(ApiEndpoints.refreshAccessToken);
+      final refreshToken = await storage.getRefreshToken();
+      if (refreshToken == null) throw CacheFailure('Refresh token is null');
+      final response = await apiClient.post(
+          ApiEndpoints.refreshAccessToken,
+          data: {"refresh_token" : refreshToken},
+      );
       final token = response.data['access_token'];
       if (token == null) throw ServerFailure('Token is null');
       await storage.updateAccessToken(token);
