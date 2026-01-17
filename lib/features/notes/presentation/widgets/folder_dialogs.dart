@@ -18,7 +18,6 @@ class _CommonFolderDialog extends StatelessWidget {
   final String errorMessage;
 
   const _CommonFolderDialog({
-    super.key,
     required this.onPressPrimaryBtn,
     required this.controller,
     required this.showError,
@@ -82,7 +81,7 @@ Future<void> _handleFolderOperation({
 }
 
 class CreateFolderDialog extends HookConsumerWidget {
-  final int? parentId;
+  final String? parentId;
 
   const CreateFolderDialog({required this.parentId, super.key});
 
@@ -107,14 +106,7 @@ class CreateFolderDialog extends HookConsumerWidget {
         controller: controller,
         showError: showError,
         operation: () async {
-          final newFolder = FolderEntity(
-            id: 0,
-            name: controller.text.trim(),
-            parentId: parentId,
-            createdAt: DateTime.now(),
-            updatedAt: DateTime.now(),
-          );
-          await folderController.create(newFolder);
+          await folderController.create(name: controller.text.trim(), parentId: parentId);
           ref.invalidate(totalItemsCountProvider);
         },
         successMessage: 'Folder created successfully!',

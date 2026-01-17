@@ -4,8 +4,19 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:uuid/uuid.dart';
 
 import '../constants/app_strings.dart';
+
+///ID generator
+String generateId() {
+  try{
+    return const Uuid().v7();
+  } catch(e) {
+    rethrow;
+  }
+}
+
 ///Get device type
 String get getDeviceType {
   if (kIsWeb) {

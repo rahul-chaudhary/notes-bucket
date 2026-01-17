@@ -4,8 +4,8 @@ import 'package:notes_bucket/features/notes/domain/entities/folder_entity.dart';
 
 class PathNavigationWidget extends StatelessWidget {
   final List<FolderEntity> folders;
-  final int? selectedFolderId;
-  final Function(int?) onPathSelected;
+  final String? selectedFolderId;
+  final Function(String?) onPathSelected;
 
   const PathNavigationWidget({
     super.key,
@@ -55,7 +55,7 @@ class PathNavigationWidget extends StatelessWidget {
   Widget _buildPathButton({
     required BuildContext context,
     required String label,
-    required int? folderId,
+    required String? folderId,
     required VoidCallback onPressed,
   }) {
     final isSelected = folderId == selectedFolderId;

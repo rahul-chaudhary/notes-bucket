@@ -4,13 +4,13 @@ part 'note_entity.mapper.dart';
 
 @MappableClass()
 class NoteEntity with NoteEntityMappable {
-  final int id;
-  final int folderId;
+  final String id;
+  final String folderId;
   final String? title;
   final String? content;
   final bool synced;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   NoteEntity({
     required this.id,
@@ -18,7 +18,7 @@ class NoteEntity with NoteEntityMappable {
     required this.title,
     required this.content,
     required this.synced,
-    required this.createdAt,
-    required this.updatedAt,
+    this.createdAt,
+    this.updatedAt,
   });
 }

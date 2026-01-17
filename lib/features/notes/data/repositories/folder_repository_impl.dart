@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:notes_bucket/core/errors/exceptions.dart';
 import 'package:notes_bucket/core/errors/failures.dart';
+import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/features/notes/data/datasource/local_data/folder_local_datasource.dart';
 import 'package:notes_bucket/features/notes/data/models/folder.dart';
 import 'package:notes_bucket/features/notes/domain/entities/folder_entity.dart';
@@ -13,20 +14,12 @@ class FolderRepositoryImpl implements FolderRepository {
 
   @override
   Future<Either<Failure, FolderEntity>> createFolder({
-    required int? parentId,
+    required String? parentId,
     required String name,
-}) async {
+  }) async {
     try {
-      final folderToInsert = Folder(
-        id: 0,
-        parentId: parentId,
-        name: name,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-
-      );
-      final res = await folderLocalDataSource.createFolder(folderToInsert);
-      return Right(res.toEntity());
+      final res = await folderLocalDataSource.createFolder(name, parentId);
+      return Right(res);
     } on DatabaseException catch (e, st) {
       return Left(DatabaseFailure(e.message, st));
     }
@@ -34,7 +27,7 @@ class FolderRepositoryImpl implements FolderRepository {
 
   @override
   Future<Either<Failure, List<FolderEntity>>> fetchFoldersByParentId({
-    required int? parentId,
+    required String? parentId,
     required int limit,
     required int offset,
   }) async {
@@ -44,10 +37,7 @@ class FolderRepositoryImpl implements FolderRepository {
         limit: limit,
         offset: offset,
       );
-      final folderEntities = folders
-          .map((folder) => folder.toEntity())
-          .toList();
-      return Right(folderEntities);
+      return Right(folders);
     } on DatabaseException catch (e, st) {
       return Left(DatabaseFailure(e.message, st));
     }
@@ -63,10 +53,7 @@ class FolderRepositoryImpl implements FolderRepository {
         limit: limit,
         offset: offset,
       );
-      final folderEntities = folders
-          .map((folder) => folder.toEntity())
-          .toList();
-      return Right(folderEntities);
+      return Right(folders);
     } on DatabaseException catch (e, st) {
       return Left(DatabaseFailure(e.message, st));
     }
@@ -74,7 +61,7 @@ class FolderRepositoryImpl implements FolderRepository {
 
   @override
   Future<Either<Failure, void>> renameFolder(
-    int folderId,
+    String folderId,
     String newName,
   ) async {
     try {
@@ -86,7 +73,7 @@ class FolderRepositoryImpl implements FolderRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteFolder(int folderId) async {
+  Future<Either<Failure, void>> deleteFolder(String folderId) async {
     try {
       await folderLocalDataSource.deleteFolder(folderId);
       return const Right(null);
@@ -97,7 +84,7 @@ class FolderRepositoryImpl implements FolderRepository {
 
   @override
   Future<Either<Failure, bool>> folderExists(
-    int? folderParentID,
+    String? folderParentID,
     String folderName,
   ) async {
     try {
@@ -112,20 +99,26 @@ class FolderRepositoryImpl implements FolderRepository {
   }
 
   @override
-  Future<Either<Failure, FolderEntity?>> fetchFolderById(int folderId) async {
+  Future<Either<Failure, FolderEntity?>> fetchFolderById(
+    String folderId,
+  ) async {
     try {
       final folder = await folderLocalDataSource.fetchFolderById(folderId);
-      if(folder == null) return const Right(null);
-      return Right(folder.toEntity());
+      if (folder == null) return const Right(null);
+      return Right(folder);
     } catch (e, st) {
       return Left(DatabaseFailure(e.toString(), st));
     }
   }
 
   @override
-  Future<Either<Failure, int>> fetchFoldersCountByFolderId({required int folderId}) async {
+  Future<Either<Failure, int>> fetchFoldersCountByFolderId({
+    required String folderId,
+  }) async {
     try {
-      final count = await folderLocalDataSource.fetchFoldersCountByFolderId(folderId: folderId);
+      final count = await folderLocalDataSource.fetchFoldersCountByFolderId(
+        folderId: folderId,
+      );
       return Right(count);
     } catch (e, st) {
       return Left(DatabaseFailure(e.toString(), st));

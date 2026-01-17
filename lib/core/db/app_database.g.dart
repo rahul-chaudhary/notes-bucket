@@ -11,26 +11,22 @@ class $FolderItemsTable extends FolderItems
   $FolderItemsTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _parentIDMeta = const VerificationMeta(
     'parentID',
   );
   @override
-  late final GeneratedColumn<int> parentID = GeneratedColumn<int>(
+  late final GeneratedColumn<String> parentID = GeneratedColumn<String>(
     'parent_i_d',
     aliasedName,
     true,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
@@ -50,10 +46,9 @@ class $FolderItemsTable extends FolderItems
   late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
     'created_at',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
-    defaultValue: currentDateAndTime,
   );
   static const VerificationMeta _updatedAtMeta = const VerificationMeta(
     'updatedAt',
@@ -88,6 +83,8 @@ class $FolderItemsTable extends FolderItems
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
     }
     if (data.containsKey('parent_i_d')) {
       context.handle(
@@ -125,11 +122,11 @@ class $FolderItemsTable extends FolderItems
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return FolderItem(
       id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
       parentID: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}parent_i_d'],
       ),
       name: attachedDatabase.typeMapping.read(
@@ -139,7 +136,7 @@ class $FolderItemsTable extends FolderItems
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
-      )!,
+      ),
       updatedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
@@ -154,27 +151,29 @@ class $FolderItemsTable extends FolderItems
 }
 
 class FolderItem extends DataClass implements Insertable<FolderItem> {
-  final int id;
-  final int? parentID;
+  final String id;
+  final String? parentID;
   final String name;
-  final DateTime createdAt;
+  final DateTime? createdAt;
   final DateTime? updatedAt;
   const FolderItem({
     required this.id,
     this.parentID,
     required this.name,
-    required this.createdAt,
+    this.createdAt,
     this.updatedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    map['id'] = Variable<String>(id);
     if (!nullToAbsent || parentID != null) {
-      map['parent_i_d'] = Variable<int>(parentID);
+      map['parent_i_d'] = Variable<String>(parentID);
     }
     map['name'] = Variable<String>(name);
-    map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || createdAt != null) {
+      map['created_at'] = Variable<DateTime>(createdAt);
+    }
     if (!nullToAbsent || updatedAt != null) {
       map['updated_at'] = Variable<DateTime>(updatedAt);
     }
@@ -188,7 +187,9 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
           ? const Value.absent()
           : Value(parentID),
       name: Value(name),
-      createdAt: Value(createdAt),
+      createdAt: createdAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdAt),
       updatedAt: updatedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(updatedAt),
@@ -201,10 +202,10 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return FolderItem(
-      id: serializer.fromJson<int>(json['id']),
-      parentID: serializer.fromJson<int?>(json['parentID']),
+      id: serializer.fromJson<String>(json['id']),
+      parentID: serializer.fromJson<String?>(json['parentID']),
       name: serializer.fromJson<String>(json['name']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
     );
   }
@@ -212,25 +213,25 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'parentID': serializer.toJson<int?>(parentID),
+      'id': serializer.toJson<String>(id),
+      'parentID': serializer.toJson<String?>(parentID),
       'name': serializer.toJson<String>(name),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'createdAt': serializer.toJson<DateTime?>(createdAt),
       'updatedAt': serializer.toJson<DateTime?>(updatedAt),
     };
   }
 
   FolderItem copyWith({
-    int? id,
-    Value<int?> parentID = const Value.absent(),
+    String? id,
+    Value<String?> parentID = const Value.absent(),
     String? name,
-    DateTime? createdAt,
+    Value<DateTime?> createdAt = const Value.absent(),
     Value<DateTime?> updatedAt = const Value.absent(),
   }) => FolderItem(
     id: id ?? this.id,
     parentID: parentID.present ? parentID.value : this.parentID,
     name: name ?? this.name,
-    createdAt: createdAt ?? this.createdAt,
+    createdAt: createdAt.present ? createdAt.value : this.createdAt,
     updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
   );
   FolderItem copyWithCompanion(FolderItemsCompanion data) {
@@ -269,31 +270,36 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
 }
 
 class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
-  final Value<int> id;
-  final Value<int?> parentID;
+  final Value<String> id;
+  final Value<String?> parentID;
   final Value<String> name;
-  final Value<DateTime> createdAt;
+  final Value<DateTime?> createdAt;
   final Value<DateTime?> updatedAt;
+  final Value<int> rowid;
   const FolderItemsCompanion({
     this.id = const Value.absent(),
     this.parentID = const Value.absent(),
     this.name = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   FolderItemsCompanion.insert({
-    this.id = const Value.absent(),
+    required String id,
     this.parentID = const Value.absent(),
     required String name,
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
-  }) : name = Value(name);
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       name = Value(name);
   static Insertable<FolderItem> custom({
-    Expression<int>? id,
-    Expression<int>? parentID,
+    Expression<String>? id,
+    Expression<String>? parentID,
     Expression<String>? name,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -301,15 +307,17 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
       if (name != null) 'name': name,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   FolderItemsCompanion copyWith({
-    Value<int>? id,
-    Value<int?>? parentID,
+    Value<String>? id,
+    Value<String?>? parentID,
     Value<String>? name,
-    Value<DateTime>? createdAt,
+    Value<DateTime?>? createdAt,
     Value<DateTime?>? updatedAt,
+    Value<int>? rowid,
   }) {
     return FolderItemsCompanion(
       id: id ?? this.id,
@@ -317,6 +325,7 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
       name: name ?? this.name,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -324,10 +333,10 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (parentID.present) {
-      map['parent_i_d'] = Variable<int>(parentID.value);
+      map['parent_i_d'] = Variable<String>(parentID.value);
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
@@ -337,6 +346,9 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
     }
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -348,7 +360,8 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
           ..write('parentID: $parentID, ')
           ..write('name: $name, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -362,26 +375,22 @@ class $NotesItemsTable extends NotesItems
   $NotesItemsTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _folderIDMeta = const VerificationMeta(
     'folderID',
   );
   @override
-  late final GeneratedColumn<int> folderID = GeneratedColumn<int>(
+  late final GeneratedColumn<String> folderID = GeneratedColumn<String>(
     'folder_i_d',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.string,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'REFERENCES folder_items (id) ON DELETE CASCADE',
@@ -427,10 +436,9 @@ class $NotesItemsTable extends NotesItems
   late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
     'created_at',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
-    defaultValue: currentDateAndTime,
   );
   static const VerificationMeta _updatedAtMeta = const VerificationMeta(
     'updatedAt',
@@ -439,10 +447,9 @@ class $NotesItemsTable extends NotesItems
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
     'updated_at',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
-    defaultValue: currentDateAndTime,
   );
   @override
   List<GeneratedColumn> get $columns => [
@@ -468,6 +475,8 @@ class $NotesItemsTable extends NotesItems
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
     }
     if (data.containsKey('folder_i_d')) {
       context.handle(
@@ -519,11 +528,11 @@ class $NotesItemsTable extends NotesItems
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return NotesItem(
       id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
       folderID: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}folder_i_d'],
       )!,
       title: attachedDatabase.typeMapping.read(
@@ -541,11 +550,11 @@ class $NotesItemsTable extends NotesItems
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
-      )!,
+      ),
       updatedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
-      )!,
+      ),
     );
   }
 
@@ -556,27 +565,27 @@ class $NotesItemsTable extends NotesItems
 }
 
 class NotesItem extends DataClass implements Insertable<NotesItem> {
-  final int id;
-  final int folderID;
+  final String id;
+  final String folderID;
   final String? title;
   final String? content;
   final bool synced;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
   const NotesItem({
     required this.id,
     required this.folderID,
     this.title,
     this.content,
     required this.synced,
-    required this.createdAt,
-    required this.updatedAt,
+    this.createdAt,
+    this.updatedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['folder_i_d'] = Variable<int>(folderID);
+    map['id'] = Variable<String>(id);
+    map['folder_i_d'] = Variable<String>(folderID);
     if (!nullToAbsent || title != null) {
       map['title'] = Variable<String>(title);
     }
@@ -584,8 +593,12 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
       map['content'] = Variable<String>(content);
     }
     map['synced'] = Variable<bool>(synced);
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || createdAt != null) {
+      map['created_at'] = Variable<DateTime>(createdAt);
+    }
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<DateTime>(updatedAt);
+    }
     return map;
   }
 
@@ -600,8 +613,12 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
           ? const Value.absent()
           : Value(content),
       synced: Value(synced),
-      createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
+      createdAt: createdAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdAt),
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
     );
   }
 
@@ -611,45 +628,45 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return NotesItem(
-      id: serializer.fromJson<int>(json['id']),
-      folderID: serializer.fromJson<int>(json['folderID']),
+      id: serializer.fromJson<String>(json['id']),
+      folderID: serializer.fromJson<String>(json['folderID']),
       title: serializer.fromJson<String?>(json['title']),
       content: serializer.fromJson<String?>(json['content']),
       synced: serializer.fromJson<bool>(json['synced']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'folderID': serializer.toJson<int>(folderID),
+      'id': serializer.toJson<String>(id),
+      'folderID': serializer.toJson<String>(folderID),
       'title': serializer.toJson<String?>(title),
       'content': serializer.toJson<String?>(content),
       'synced': serializer.toJson<bool>(synced),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'createdAt': serializer.toJson<DateTime?>(createdAt),
+      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
     };
   }
 
   NotesItem copyWith({
-    int? id,
-    int? folderID,
+    String? id,
+    String? folderID,
     Value<String?> title = const Value.absent(),
     Value<String?> content = const Value.absent(),
     bool? synced,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    Value<DateTime?> createdAt = const Value.absent(),
+    Value<DateTime?> updatedAt = const Value.absent(),
   }) => NotesItem(
     id: id ?? this.id,
     folderID: folderID ?? this.folderID,
     title: title.present ? title.value : this.title,
     content: content.present ? content.value : this.content,
     synced: synced ?? this.synced,
-    createdAt: createdAt ?? this.createdAt,
-    updatedAt: updatedAt ?? this.updatedAt,
+    createdAt: createdAt.present ? createdAt.value : this.createdAt,
+    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
   );
   NotesItem copyWithCompanion(NotesItemsCompanion data) {
     return NotesItem(
@@ -694,13 +711,14 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
 }
 
 class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
-  final Value<int> id;
-  final Value<int> folderID;
+  final Value<String> id;
+  final Value<String> folderID;
   final Value<String?> title;
   final Value<String?> content;
   final Value<bool> synced;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
+  final Value<DateTime?> createdAt;
+  final Value<DateTime?> updatedAt;
+  final Value<int> rowid;
   const NotesItemsCompanion({
     this.id = const Value.absent(),
     this.folderID = const Value.absent(),
@@ -709,25 +727,29 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
     this.synced = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   NotesItemsCompanion.insert({
-    this.id = const Value.absent(),
-    required int folderID,
+    required String id,
+    required String folderID,
     this.title = const Value.absent(),
     this.content = const Value.absent(),
     required bool synced,
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
-  }) : folderID = Value(folderID),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       folderID = Value(folderID),
        synced = Value(synced);
   static Insertable<NotesItem> custom({
-    Expression<int>? id,
-    Expression<int>? folderID,
+    Expression<String>? id,
+    Expression<String>? folderID,
     Expression<String>? title,
     Expression<String>? content,
     Expression<bool>? synced,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -737,17 +759,19 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
       if (synced != null) 'synced': synced,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   NotesItemsCompanion copyWith({
-    Value<int>? id,
-    Value<int>? folderID,
+    Value<String>? id,
+    Value<String>? folderID,
     Value<String?>? title,
     Value<String?>? content,
     Value<bool>? synced,
-    Value<DateTime>? createdAt,
-    Value<DateTime>? updatedAt,
+    Value<DateTime?>? createdAt,
+    Value<DateTime?>? updatedAt,
+    Value<int>? rowid,
   }) {
     return NotesItemsCompanion(
       id: id ?? this.id,
@@ -757,6 +781,7 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
       synced: synced ?? this.synced,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -764,10 +789,10 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (folderID.present) {
-      map['folder_i_d'] = Variable<int>(folderID.value);
+      map['folder_i_d'] = Variable<String>(folderID.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -784,6 +809,9 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -796,7 +824,8 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
           ..write('content: $content, ')
           ..write('synced: $synced, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -826,19 +855,21 @@ abstract class _$AppDatabase extends GeneratedDatabase {
 
 typedef $$FolderItemsTableCreateCompanionBuilder =
     FolderItemsCompanion Function({
-      Value<int> id,
-      Value<int?> parentID,
+      required String id,
+      Value<String?> parentID,
       required String name,
-      Value<DateTime> createdAt,
+      Value<DateTime?> createdAt,
       Value<DateTime?> updatedAt,
+      Value<int> rowid,
     });
 typedef $$FolderItemsTableUpdateCompanionBuilder =
     FolderItemsCompanion Function({
-      Value<int> id,
-      Value<int?> parentID,
+      Value<String> id,
+      Value<String?> parentID,
       Value<String> name,
-      Value<DateTime> createdAt,
+      Value<DateTime?> createdAt,
       Value<DateTime?> updatedAt,
+      Value<int> rowid,
     });
 
 final class $$FolderItemsTableReferences
@@ -855,7 +886,7 @@ final class $$FolderItemsTableReferences
     final manager = $$NotesItemsTableTableManager(
       $_db,
       $_db.notesItems,
-    ).filter((f) => f.folderID.id.sqlEquals($_itemColumn<int>('id')!));
+    ).filter((f) => f.folderID.id.sqlEquals($_itemColumn<String>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_notesItemsRefsTable($_db));
     return ProcessedTableManager(
@@ -873,12 +904,12 @@ class $$FolderItemsTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
+  ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get parentID => $composableBuilder(
+  ColumnFilters<String> get parentID => $composableBuilder(
     column: $table.parentID,
     builder: (column) => ColumnFilters(column),
   );
@@ -933,12 +964,12 @@ class $$FolderItemsTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
+  ColumnOrderings<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get parentID => $composableBuilder(
+  ColumnOrderings<String> get parentID => $composableBuilder(
     column: $table.parentID,
     builder: (column) => ColumnOrderings(column),
   );
@@ -968,10 +999,10 @@ class $$FolderItemsTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
+  GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<int> get parentID =>
+  GeneratedColumn<String> get parentID =>
       $composableBuilder(column: $table.parentID, builder: (column) => column);
 
   GeneratedColumn<String> get name =>
@@ -1037,31 +1068,35 @@ class $$FolderItemsTableTableManager
               $$FolderItemsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
-                Value<int?> parentID = const Value.absent(),
+                Value<String> id = const Value.absent(),
+                Value<String?> parentID = const Value.absent(),
                 Value<String> name = const Value.absent(),
-                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime?> createdAt = const Value.absent(),
                 Value<DateTime?> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => FolderItemsCompanion(
                 id: id,
                 parentID: parentID,
                 name: name,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
-                Value<int?> parentID = const Value.absent(),
+                required String id,
+                Value<String?> parentID = const Value.absent(),
                 required String name,
-                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime?> createdAt = const Value.absent(),
                 Value<DateTime?> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => FolderItemsCompanion.insert(
                 id: id,
                 parentID: parentID,
                 name: name,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -1121,23 +1156,25 @@ typedef $$FolderItemsTableProcessedTableManager =
     >;
 typedef $$NotesItemsTableCreateCompanionBuilder =
     NotesItemsCompanion Function({
-      Value<int> id,
-      required int folderID,
+      required String id,
+      required String folderID,
       Value<String?> title,
       Value<String?> content,
       required bool synced,
-      Value<DateTime> createdAt,
-      Value<DateTime> updatedAt,
+      Value<DateTime?> createdAt,
+      Value<DateTime?> updatedAt,
+      Value<int> rowid,
     });
 typedef $$NotesItemsTableUpdateCompanionBuilder =
     NotesItemsCompanion Function({
-      Value<int> id,
-      Value<int> folderID,
+      Value<String> id,
+      Value<String> folderID,
       Value<String?> title,
       Value<String?> content,
       Value<bool> synced,
-      Value<DateTime> createdAt,
-      Value<DateTime> updatedAt,
+      Value<DateTime?> createdAt,
+      Value<DateTime?> updatedAt,
+      Value<int> rowid,
     });
 
 final class $$NotesItemsTableReferences
@@ -1150,7 +1187,7 @@ final class $$NotesItemsTableReferences
       );
 
   $$FolderItemsTableProcessedTableManager get folderID {
-    final $_column = $_itemColumn<int>('folder_i_d')!;
+    final $_column = $_itemColumn<String>('folder_i_d')!;
 
     final manager = $$FolderItemsTableTableManager(
       $_db,
@@ -1173,7 +1210,7 @@ class $$NotesItemsTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
+  ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnFilters(column),
   );
@@ -1236,7 +1273,7 @@ class $$NotesItemsTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
+  ColumnOrderings<String> get id => $composableBuilder(
     column: $table.id,
     builder: (column) => ColumnOrderings(column),
   );
@@ -1299,7 +1336,7 @@ class $$NotesItemsTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
+  GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
   GeneratedColumn<String> get title =>
@@ -1369,13 +1406,14 @@ class $$NotesItemsTableTableManager
               $$NotesItemsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
-                Value<int> folderID = const Value.absent(),
+                Value<String> id = const Value.absent(),
+                Value<String> folderID = const Value.absent(),
                 Value<String?> title = const Value.absent(),
                 Value<String?> content = const Value.absent(),
                 Value<bool> synced = const Value.absent(),
-                Value<DateTime> createdAt = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> createdAt = const Value.absent(),
+                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => NotesItemsCompanion(
                 id: id,
                 folderID: folderID,
@@ -1384,16 +1422,18 @@ class $$NotesItemsTableTableManager
                 synced: synced,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
-                required int folderID,
+                required String id,
+                required String folderID,
                 Value<String?> title = const Value.absent(),
                 Value<String?> content = const Value.absent(),
                 required bool synced,
-                Value<DateTime> createdAt = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> createdAt = const Value.absent(),
+                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => NotesItemsCompanion.insert(
                 id: id,
                 folderID: folderID,
@@ -1402,6 +1442,7 @@ class $$NotesItemsTableTableManager
                 synced: synced,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map(

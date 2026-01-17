@@ -21,20 +21,21 @@ class FolderEntityMapper extends ClassMapperBase<FolderEntity> {
   @override
   final String id = 'FolderEntity';
 
-  static int _$id(FolderEntity v) => v.id;
-  static const Field<FolderEntity, int> _f$id = Field('id', _$id);
-  static int? _$parentId(FolderEntity v) => v.parentId;
-  static const Field<FolderEntity, int> _f$parentId = Field(
+  static String _$id(FolderEntity v) => v.id;
+  static const Field<FolderEntity, String> _f$id = Field('id', _$id);
+  static String? _$parentId(FolderEntity v) => v.parentId;
+  static const Field<FolderEntity, String> _f$parentId = Field(
     'parentId',
     _$parentId,
     opt: true,
   );
   static String _$name(FolderEntity v) => v.name;
   static const Field<FolderEntity, String> _f$name = Field('name', _$name);
-  static DateTime _$createdAt(FolderEntity v) => v.createdAt;
+  static DateTime? _$createdAt(FolderEntity v) => v.createdAt;
   static const Field<FolderEntity, DateTime> _f$createdAt = Field(
     'createdAt',
     _$createdAt,
+    opt: true,
   );
   static DateTime? _$updatedAt(FolderEntity v) => v.updatedAt;
   static const Field<FolderEntity, DateTime> _f$updatedAt = Field(
@@ -125,8 +126,8 @@ extension FolderEntityValueCopy<$R, $Out>
 abstract class FolderEntityCopyWith<$R, $In extends FolderEntity, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   $R call({
-    int? id,
-    int? parentId,
+    String? id,
+    String? parentId,
     String? name,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -144,17 +145,17 @@ class _FolderEntityCopyWithImpl<$R, $Out>
       FolderEntityMapper.ensureInitialized();
   @override
   $R call({
-    int? id,
+    String? id,
     Object? parentId = $none,
     String? name,
-    DateTime? createdAt,
+    Object? createdAt = $none,
     Object? updatedAt = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
       if (parentId != $none) #parentId: parentId,
       if (name != null) #name: name,
-      if (createdAt != null) #createdAt: createdAt,
+      if (createdAt != $none) #createdAt: createdAt,
       if (updatedAt != $none) #updatedAt: updatedAt,
     }),
   );

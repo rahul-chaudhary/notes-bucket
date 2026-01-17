@@ -6,33 +6,48 @@ import 'package:notes_bucket/core/usecases/use_case.dart';
 import 'package:notes_bucket/features/notes/domain/entities/note_entity.dart';
 import 'package:notes_bucket/features/notes/domain/repositories/note_repo.dart';
 
-class AddNote implements UseCase<NoteEntity, NoteEntity> {
+class AddNoteParams extends Equatable {
+  final String? title;
+  final String? content;
+  final String folderId;
+
+  const AddNoteParams({
+    required this.title,
+    required this.content,
+    required this.folderId,
+  });
+
+  @override
+  List<Object?> get props => [title, content, folderId];
+}
+
+class AddNote implements UseCase<NoteEntity, AddNoteParams> {
   final NoteRepository repository;
   AddNote(this.repository);
 
   @override
-  Future<Either<Failure, NoteEntity>> call(NoteEntity params) async {
+  Future<Either<Failure, NoteEntity>> call(AddNoteParams params) async {
     return await repository.addNote(params);
   }
 }
 
-class FetchNotesByFolderId implements UseCase<List<NoteEntity>, int> {
+class FetchNotesByFolderId implements UseCase<List<NoteEntity>, String> {
   final NoteRepository repository;
   FetchNotesByFolderId(this.repository);
 
   @override
-  Future<Either<Failure, List<NoteEntity>>> call(int params) async {
+  Future<Either<Failure, List<NoteEntity>>> call(String params) async {
     return await repository.fetchNotesByFolderId(params);
   }
 }
 
-class FetchNoteById implements UseCase<NoteEntity?, int> {
+class FetchNoteById implements UseCase<NoteEntity?, String> {
   final NoteRepository repository;
 
   FetchNoteById(this.repository);
 
   @override
-  Future<Either<Failure, NoteEntity?>> call(int params) async {
+  Future<Either<Failure, NoteEntity?>> call(String params) async {
     return await repository.fetchNoteById(params);
   }
 }
@@ -47,13 +62,13 @@ class UpdateNote implements UseCase<NoteEntity, NoteEntity> {
   }
 }
 
-class DeleteNote implements UseCase<void, int> {
+class DeleteNote implements UseCase<void, String> {
   final NoteRepository repository;
 
   DeleteNote(this.repository);
 
   @override
-  Future<Either<Failure, void>> call(int params) async {
+  Future<Either<Failure, void>> call(String params) async {
     return await repository.deleteNote(params);
   }
 }
@@ -73,13 +88,13 @@ class FetchAllNotes implements UseCase<List<NoteEntity>, FetchAllNotesParams> {
   }
 }
 
-class FetchNotesCountByFolderId implements UseCase<int, int> {
+class FetchNotesCountByFolderId implements UseCase<int, String> {
   final NoteRepository repository;
 
   FetchNotesCountByFolderId(this.repository);
 
   @override
-  Future<Either<Failure, int>> call(int params) async {
+  Future<Either<Failure, int>> call(String params) async {
     return await repository.fetchNotesCountByFolderId(folderId: params);
   }
 }

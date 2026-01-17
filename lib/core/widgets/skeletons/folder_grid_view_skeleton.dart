@@ -29,16 +29,12 @@ class FolderGridVewSkeleton extends StatelessWidget {
           mainAxisExtent: 120,
         ),
         itemBuilder: (context, index) {
-          final folder = FolderEntity(
-            id: 0,
-            name: 'Folder $index',
-            createdAt: DateTime.now(),
-          );
+          final sampleFolder = FolderEntity(id: '', name: 'Loading...');
           return SizedBox(
             height: 100,
             child: FolderButton(
               color: AppColors.shimmer,
-              folder: folder,
+              folder: sampleFolder,
               itemCount: 0,
               onTap: () {},
             ),

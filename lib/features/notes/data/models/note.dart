@@ -5,8 +5,8 @@ part 'note.mapper.dart';
 
 @MappableClass()
 class Note with NoteMappable {
-  final int id;
-  final int folderId;
+  final String id;
+  final String folderId;
   final String? title;
   final String? content;
   final DateTime createdAt;
@@ -31,17 +31,6 @@ class Note with NoteMappable {
       synced: true,
       createdAt: createdAt,
       updatedAt: updatedAt,
-    );
-  }
-  //fromEntity method
-  factory Note.fromEntity(NoteEntity entity) {
-    return Note(
-      id: entity.id,
-      folderId: entity.folderId,
-      title: entity.title,
-      content: entity.content,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
     );
   }
 }

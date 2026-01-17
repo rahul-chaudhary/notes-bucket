@@ -21,10 +21,10 @@ class NoteEntityMapper extends ClassMapperBase<NoteEntity> {
   @override
   final String id = 'NoteEntity';
 
-  static int _$id(NoteEntity v) => v.id;
-  static const Field<NoteEntity, int> _f$id = Field('id', _$id);
-  static int _$folderId(NoteEntity v) => v.folderId;
-  static const Field<NoteEntity, int> _f$folderId = Field(
+  static String _$id(NoteEntity v) => v.id;
+  static const Field<NoteEntity, String> _f$id = Field('id', _$id);
+  static String _$folderId(NoteEntity v) => v.folderId;
+  static const Field<NoteEntity, String> _f$folderId = Field(
     'folderId',
     _$folderId,
   );
@@ -37,15 +37,17 @@ class NoteEntityMapper extends ClassMapperBase<NoteEntity> {
   );
   static bool _$synced(NoteEntity v) => v.synced;
   static const Field<NoteEntity, bool> _f$synced = Field('synced', _$synced);
-  static DateTime _$createdAt(NoteEntity v) => v.createdAt;
+  static DateTime? _$createdAt(NoteEntity v) => v.createdAt;
   static const Field<NoteEntity, DateTime> _f$createdAt = Field(
     'createdAt',
     _$createdAt,
+    opt: true,
   );
-  static DateTime _$updatedAt(NoteEntity v) => v.updatedAt;
+  static DateTime? _$updatedAt(NoteEntity v) => v.updatedAt;
   static const Field<NoteEntity, DateTime> _f$updatedAt = Field(
     'updatedAt',
     _$updatedAt,
+    opt: true,
   );
 
   @override
@@ -132,8 +134,8 @@ extension NoteEntityValueCopy<$R, $Out>
 abstract class NoteEntityCopyWith<$R, $In extends NoteEntity, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   $R call({
-    int? id,
-    int? folderId,
+    String? id,
+    String? folderId,
     String? title,
     String? content,
     bool? synced,
@@ -153,13 +155,13 @@ class _NoteEntityCopyWithImpl<$R, $Out>
       NoteEntityMapper.ensureInitialized();
   @override
   $R call({
-    int? id,
-    int? folderId,
+    String? id,
+    String? folderId,
     Object? title = $none,
     Object? content = $none,
     bool? synced,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    Object? createdAt = $none,
+    Object? updatedAt = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
@@ -167,8 +169,8 @@ class _NoteEntityCopyWithImpl<$R, $Out>
       if (title != $none) #title: title,
       if (content != $none) #content: content,
       if (synced != null) #synced: synced,
-      if (createdAt != null) #createdAt: createdAt,
-      if (updatedAt != null) #updatedAt: updatedAt,
+      if (createdAt != $none) #createdAt: createdAt,
+      if (updatedAt != $none) #updatedAt: updatedAt,
     }),
   );
   @override

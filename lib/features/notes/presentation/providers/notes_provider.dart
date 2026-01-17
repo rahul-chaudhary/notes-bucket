@@ -61,9 +61,9 @@ class NoteController extends _$NoteController {
   @override
   void build() {}
 
-    Future<NoteEntity> addNote(NoteEntity note) async {
+    Future<NoteEntity> addNote(AddNoteParams params) async {
     final usecase = ref.read(addNoteProvider);
-    final result = await usecase.call(note);
+    final result = await usecase.call(params);
     return result.fold(
             (failure) => throw Exception(failure.message),
             (note) => note);
@@ -77,7 +77,7 @@ class NoteController extends _$NoteController {
             (note) => note);
     }
 
-    Future<void> deleteNote(int noteId) async {
+    Future<void> deleteNote(String noteId) async {
     final usecase = ref.read(deleteNoteProvider);
     final result = await usecase.call(noteId);
     return result.fold(
@@ -89,9 +89,9 @@ class NoteController extends _$NoteController {
 @riverpod
 class FetchNotesByFolderIdNotifier extends _$FetchNotesByFolderIdNotifier {
   @override
-  Future<List<NoteEntity>> build(int? folderId) async => _load(folderId);
+  Future<List<NoteEntity>> build(String? folderId) async => _load(folderId);
 
-  Future<List<NoteEntity>> _load(int? folderId) async {
+  Future<List<NoteEntity>> _load(String? folderId) async {
     if(folderId == null) return [];
     final usecase = ref.read(fetchNotesByFolderIdUseCaseProvider);
     final result = await usecase.call(folderId);
@@ -106,9 +106,9 @@ class FetchNotesByFolderIdNotifier extends _$FetchNotesByFolderIdNotifier {
 @riverpod
 class FetchNoteByIdNotifier extends _$FetchNoteByIdNotifier {
   @override
-  Future<NoteEntity?> build(int noteId) async => _load(noteId);
+  Future<NoteEntity?> build(String noteId) async => _load(noteId);
 
-  Future<NoteEntity?> _load(int noteId) async {
+  Future<NoteEntity?> _load(String noteId) async {
     final usecase = ref.read(fetchNoteByIdUseCaseProvider);
     final result = await usecase.call(noteId);
 
@@ -139,9 +139,9 @@ class FetchAllNotesNotifier extends _$FetchAllNotesNotifier {
 class FetchNotesCountByFolderIdNotifier extends _$FetchNotesCountByFolderIdNotifier {
 
   @override
-  Future<int> build(int folderId) async => _load(folderId);
+  Future<int> build(String folderId) async => _load(folderId);
 
-  Future<int> _load(int folderId) async {
+  Future<int> _load(String folderId) async {
     final usecase = ref.read(fetchNotesCountByFolderIdUseCaseProvider);
     final result = await usecase.call(folderId);
     return result.fold(

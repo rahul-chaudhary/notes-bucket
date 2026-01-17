@@ -5,8 +5,8 @@ part 'folder.mapper.dart';
 
 @MappableClass()
 class Folder with FolderMappable {
-  final int id;
-  final int? parentId; // null = root folder
+  final String id;
+  final String? parentId; // null = root folder
   final String name;
   final DateTime createdAt;
   final DateTime? updatedAt;
@@ -27,16 +27,6 @@ class Folder with FolderMappable {
       name: name,
       createdAt: createdAt,
       updatedAt: updatedAt,
-    );
-  }
-  //fromEntity method
-  factory Folder.fromEntity(FolderEntity entity) {
-    return Folder(
-      id: entity.id,
-      parentId: entity.parentId,
-      name: entity.name,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
     );
   }
 }

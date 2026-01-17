@@ -16,7 +16,7 @@ class SelectFolderDialog extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentFolderId = useState<int?>(null);
+    final currentFolderId = useState<String?>(null);
     final warningText = useState<String>('');
     final pageOffset = useState(0);
     final currentPathAsync = ref.watch(

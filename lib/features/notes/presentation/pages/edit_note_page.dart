@@ -7,12 +7,13 @@ import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
 import 'package:notes_bucket/core/widgets/app_snackbar.dart';
 import 'package:notes_bucket/core/widgets/cards/app_container.dart';
 import 'package:notes_bucket/features/notes/domain/entities/note_entity.dart';
+import 'package:notes_bucket/features/notes/domain/usecases/note_usecases.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/folder_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/providers/notes_provider.dart';
 import 'package:notes_bucket/features/notes/presentation/widgets/select_folder_dialog.dart';
 
 class EditNotePage extends ConsumerStatefulWidget {
-  final int? noteId;
+  final String? noteId;
 
   const EditNotePage({super.key, required this.noteId});
 
@@ -84,9 +85,7 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
   Widget build(BuildContext context) {
     final noteController = ref.read(noteControllerProvider.notifier);
     return Container(
-      decoration: BoxDecoration(
-        gradient: AppGradient.scaffoldBackground,
-      ),
+      decoration: BoxDecoration(gradient: AppGradient.scaffoldBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: _buildAppBar(context, noteController),
@@ -117,7 +116,10 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
           onTap: () async => await _handleSaveNote(noteController),
           child: AppContainer(
             borderRadius: 12,
-            child: Icon(Icons.save_rounded, color: Theme.of(context).colorScheme.secondary),
+            child: Icon(
+              Icons.save_rounded,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
           ),
         ),
         _buildPopUpMenu(noteController),
@@ -145,9 +147,12 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
   Widget _buildPopUpMenu(NoteController noteController) {
     return PopupMenuButton<EditNoteMenuOptions>(
       color: Theme.of(context).cardColor,
-      icon: Icon(Icons.more_vert_rounded, color: Theme.of(context).colorScheme.onSurface,),
+      icon: Icon(
+        Icons.more_vert_rounded,
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
       onSelected: (value) async {
-        switch(value) {
+        switch (value) {
           case EditNoteMenuOptions.delete:
             if (note != null) {
               final confirmed = await showDialog<bool>(
@@ -172,7 +177,10 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
                   ref.invalidate(fetchAllNotesProvider);
                   ref.invalidate(totalItemsCountProvider);
                   if (context.mounted) {
-                    AppSnackBar.showSuccess(context, 'Note deleted successfully');
+                    AppSnackBar.showSuccess(
+                      context,
+                      'Note deleted successfully',
+                    );
                     Navigator.of(context).pop();
                   }
                 } catch (e) {
@@ -236,7 +244,7 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
           ref.invalidate(fetchAllNotesProvider);
         }
       } else {
-        final selectedFolderId = await showDialog<int?>(
+        final selectedFolderId = await showDialog<String?>(
           context: context,
           builder: (BuildContext context) {
             return const SelectFolderDialog();
@@ -244,16 +252,8 @@ class _EditNotePageState extends ConsumerState<EditNotePage> {
         );
         dbPrint('Selected folder id is $selectedFolderId');
         if (selectedFolderId != null) {
-          final newNote = NoteEntity(
-            id: 0,
-            folderId: selectedFolderId,
-            title: titleController.text,
-            content: bodyController.text,
-            synced: false,
-            createdAt: DateTime.now(),
-            updatedAt: DateTime.now(),
-          );
-          note = await noteController.addNote(newNote);
+          final params = AddNoteParams(title: titleController.text, content: bodyController.text, folderId: selectedFolderId);
+          note = await noteController.addNote(params);
           ref.invalidate(fetchAllNotesProvider);
           ref.invalidate(totalItemsCountProvider);
           if (context.mounted) {
@@ -297,8 +297,8 @@ class AppEditNoteTextField extends StatelessWidget {
 
 enum EditNoteMenuOptions {
   delete('Delete');
+
   final String value;
+
   const EditNoteMenuOptions(this.value);
-
-
 }

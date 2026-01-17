@@ -21,7 +21,7 @@ import 'package:notes_bucket/features/notes/presentation/widgets/path_navigation
 import 'package:notes_bucket/features/notes/presentation/widgets/recent_notes.dart';
 
 class ViewAllPage extends HookConsumerWidget {
-  final int? folderId;
+  final String? folderId;
 
   const ViewAllPage({super.key, this.folderId});
 
@@ -108,7 +108,7 @@ class ViewAllPage extends HookConsumerWidget {
     AsyncValue folderAsync,
     AsyncValue notesAsync,
     WidgetRef ref,
-    ValueNotifier<int?> currentFolderId,
+    ValueNotifier<String?> currentFolderId,
   ) {
     if (folderAsync.isLoading || notesAsync.isLoading) {
       return FolderGridVewSkeleton(itemCount: 20);

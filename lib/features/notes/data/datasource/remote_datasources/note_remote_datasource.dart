@@ -5,11 +5,11 @@ import 'package:notes_bucket/features/notes/data/models/note.dart';
 abstract interface class NoteRemoteDatasource {
   Future<Note> addNote(Note note);
   Future<Note> updateNote(Note note);
-  Future<void> deleteNote(int noteId);
-  Future<List<Note>> fetchNotesByFolderId(int folderId);
-  Future<Note?> fetchNoteById(int noteId);
+  Future<void> deleteNote(String noteId);
+  Future<List<Note>> fetchNotesByFolderId(String folderId);
+  Future<Note?> fetchNoteById(String noteId);
   Future<List<Note>> fetchAllNotes({required int limit, required int offset});
-  Future<int> fetchNotesCountByFolderId(int folderId);
+  Future<int> fetchNotesCountByFolderId(String folderId);
 }
 
 class NoteRemoteDatasourceImpl implements NoteRemoteDatasource {
@@ -37,7 +37,7 @@ class NoteRemoteDatasourceImpl implements NoteRemoteDatasource {
     }
   }
   @override
-  Future<void> deleteNote(int noteId) async {
+  Future<void> deleteNote(String noteId) async {
     try{
       await apiClient.delete(ApiEndpoints.noteById(noteId));
     } catch(e){
@@ -46,7 +46,7 @@ class NoteRemoteDatasourceImpl implements NoteRemoteDatasource {
   }
 
   @override
-  Future<List<Note>> fetchNotesByFolderId(int folderId) async {
+  Future<List<Note>> fetchNotesByFolderId(String folderId) async {
     try{
       final res = await apiClient.get('${ApiEndpoints.folders}/$folderId/notes');
       final data = res.data['data'] as List;
@@ -57,7 +57,7 @@ class NoteRemoteDatasourceImpl implements NoteRemoteDatasource {
   }
 
   @override
-  Future<Note?> fetchNoteById(int noteId) async {
+  Future<Note?> fetchNoteById(String noteId) async {
     try{
       final res = await apiClient.get(ApiEndpoints.noteById(noteId));
       return NoteMapper.fromJson(res.data);
@@ -78,7 +78,7 @@ class NoteRemoteDatasourceImpl implements NoteRemoteDatasource {
   }
 
   @override
-  Future<int> fetchNotesCountByFolderId(int folderId) async {
+  Future<int> fetchNotesCountByFolderId(String folderId) async {
     try{
       final res = await apiClient.get('${ApiEndpoints.folders}/$folderId/notes/count');
       return res.data['data'];

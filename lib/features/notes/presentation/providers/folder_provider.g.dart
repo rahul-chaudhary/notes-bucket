@@ -616,7 +616,7 @@ final class FoldersByParentProvider
   /// Folders by parent ID provider
   const FoldersByParentProvider._({
     required FoldersByParentFamily super.from,
-    required ({int? parentId, int limit, int offset}) super.argument,
+    required ({String? parentId, int limit, int offset}) super.argument,
   }) : super(
          retry: null,
          name: r'foldersByParentProvider',
@@ -650,7 +650,7 @@ final class FoldersByParentProvider
   }
 }
 
-String _$foldersByParentHash() => r'009c21202bb60180dfa2de072054f263fd35a697';
+String _$foldersByParentHash() => r'0b303a5ffdb9761df32f59d86955bc499790780e';
 
 /// Folders by parent ID provider
 
@@ -661,7 +661,7 @@ final class FoldersByParentFamily extends $Family
           AsyncValue<List<FolderEntity>>,
           List<FolderEntity>,
           FutureOr<List<FolderEntity>>,
-          ({int? parentId, int limit, int offset})
+          ({String? parentId, int limit, int offset})
         > {
   const FoldersByParentFamily._()
     : super(
@@ -675,7 +675,7 @@ final class FoldersByParentFamily extends $Family
   /// Folders by parent ID provider
 
   FoldersByParentProvider call({
-    required int? parentId,
+    required String? parentId,
     required int limit,
     required int offset,
   }) => FoldersByParentProvider._(
@@ -690,13 +690,13 @@ final class FoldersByParentFamily extends $Family
 /// Folders by parent ID provider
 
 abstract class _$FoldersByParent extends $AsyncNotifier<List<FolderEntity>> {
-  late final _$args = ref.$arg as ({int? parentId, int limit, int offset});
-  int? get parentId => _$args.parentId;
+  late final _$args = ref.$arg as ({String? parentId, int limit, int offset});
+  String? get parentId => _$args.parentId;
   int get limit => _$args.limit;
   int get offset => _$args.offset;
 
   FutureOr<List<FolderEntity>> build({
-    required int? parentId,
+    required String? parentId,
     required int limit,
     required int offset,
   });
@@ -758,7 +758,7 @@ final class FolderControllerProvider
   }
 }
 
-String _$folderControllerHash() => r'573e18f10c9f2f2e932f62c5ce74fc77f338cf97';
+String _$folderControllerHash() => r'1359cc781071deea72913b395940dc78548e6446';
 
 /// Controller for mutations (create/delete/rename)
 
@@ -788,7 +788,7 @@ final class CurrentPathProvider
     extends $AsyncNotifierProvider<CurrentPath, List<FolderEntity>> {
   const CurrentPathProvider._({
     required CurrentPathFamily super.from,
-    required int? super.argument,
+    required String? super.argument,
   }) : super(
          retry: null,
          name: r'currentPathProvider',
@@ -822,7 +822,7 @@ final class CurrentPathProvider
   }
 }
 
-String _$currentPathHash() => r'a62dd0b0bc1ec6764af1146962b6f0f34456c213';
+String _$currentPathHash() => r'0450bfa288633b666b5995eb3e46e7196af061c9';
 
 final class CurrentPathFamily extends $Family
     with
@@ -831,7 +831,7 @@ final class CurrentPathFamily extends $Family
           AsyncValue<List<FolderEntity>>,
           List<FolderEntity>,
           FutureOr<List<FolderEntity>>,
-          int?
+          String?
         > {
   const CurrentPathFamily._()
     : super(
@@ -842,7 +842,7 @@ final class CurrentPathFamily extends $Family
         isAutoDispose: true,
       );
 
-  CurrentPathProvider call({required int? folderParentId}) =>
+  CurrentPathProvider call({required String? folderParentId}) =>
       CurrentPathProvider._(argument: folderParentId, from: this);
 
   @override
@@ -850,10 +850,10 @@ final class CurrentPathFamily extends $Family
 }
 
 abstract class _$CurrentPath extends $AsyncNotifier<List<FolderEntity>> {
-  late final _$args = ref.$arg as int?;
-  int? get folderParentId => _$args;
+  late final _$args = ref.$arg as String?;
+  String? get folderParentId => _$args;
 
-  FutureOr<List<FolderEntity>> build({required int? folderParentId});
+  FutureOr<List<FolderEntity>> build({required String? folderParentId});
   @$mustCallSuper
   @override
   void runBuild() {
@@ -883,7 +883,7 @@ final class FolderByIdProvider
   /// Folder by Id provider
   const FolderByIdProvider._({
     required FolderByIdFamily super.from,
-    required int super.argument,
+    required String super.argument,
   }) : super(
          retry: null,
          name: r'folderByIdProvider',
@@ -917,7 +917,7 @@ final class FolderByIdProvider
   }
 }
 
-String _$folderByIdHash() => r'df410a58ecca13458a91c0d8b60e2cd8436de427';
+String _$folderByIdHash() => r'df396e151dba04c414736dae8507aab068a7f5ff';
 
 /// Folder by Id provider
 
@@ -928,7 +928,7 @@ final class FolderByIdFamily extends $Family
           AsyncValue<FolderEntity?>,
           FolderEntity?,
           FutureOr<FolderEntity?>,
-          int
+          String
         > {
   const FolderByIdFamily._()
     : super(
@@ -941,7 +941,7 @@ final class FolderByIdFamily extends $Family
 
   /// Folder by Id provider
 
-  FolderByIdProvider call(int folderId) =>
+  FolderByIdProvider call(String folderId) =>
       FolderByIdProvider._(argument: folderId, from: this);
 
   @override
@@ -951,10 +951,10 @@ final class FolderByIdFamily extends $Family
 /// Folder by Id provider
 
 abstract class _$FolderById extends $AsyncNotifier<FolderEntity?> {
-  late final _$args = ref.$arg as int;
-  int get folderId => _$args;
+  late final _$args = ref.$arg as String;
+  String get folderId => _$args;
 
-  FutureOr<FolderEntity?> build(int folderId);
+  FutureOr<FolderEntity?> build(String folderId);
   @$mustCallSuper
   @override
   void runBuild() {
@@ -979,7 +979,7 @@ final class FoldersCountByFolderIdProvider
     extends $AsyncNotifierProvider<FoldersCountByFolderId, int> {
   const FoldersCountByFolderIdProvider._({
     required FoldersCountByFolderIdFamily super.from,
-    required int super.argument,
+    required String super.argument,
   }) : super(
          retry: null,
          name: r'foldersCountByFolderIdProvider',
@@ -1015,7 +1015,7 @@ final class FoldersCountByFolderIdProvider
 }
 
 String _$foldersCountByFolderIdHash() =>
-    r'dc21f1d8b668c28a8429197550b58f3785d7ef2f';
+    r'dabba4e1ac92fe3e87c182308221a61dc4c73769';
 
 final class FoldersCountByFolderIdFamily extends $Family
     with
@@ -1024,7 +1024,7 @@ final class FoldersCountByFolderIdFamily extends $Family
           AsyncValue<int>,
           int,
           FutureOr<int>,
-          int
+          String
         > {
   const FoldersCountByFolderIdFamily._()
     : super(
@@ -1035,7 +1035,7 @@ final class FoldersCountByFolderIdFamily extends $Family
         isAutoDispose: true,
       );
 
-  FoldersCountByFolderIdProvider call(int folderId) =>
+  FoldersCountByFolderIdProvider call(String folderId) =>
       FoldersCountByFolderIdProvider._(argument: folderId, from: this);
 
   @override
@@ -1043,10 +1043,10 @@ final class FoldersCountByFolderIdFamily extends $Family
 }
 
 abstract class _$FoldersCountByFolderId extends $AsyncNotifier<int> {
-  late final _$args = ref.$arg as int;
-  int get folderId => _$args;
+  late final _$args = ref.$arg as String;
+  String get folderId => _$args;
 
-  FutureOr<int> build(int folderId);
+  FutureOr<int> build(String folderId);
   @$mustCallSuper
   @override
   void runBuild() {
@@ -1071,7 +1071,7 @@ final class TotalItemsCountProvider
     extends $AsyncNotifierProvider<TotalItemsCount, int> {
   const TotalItemsCountProvider._({
     required TotalItemsCountFamily super.from,
-    required int super.argument,
+    required String super.argument,
   }) : super(
          retry: null,
          name: r'totalItemsCountProvider',
@@ -1105,7 +1105,7 @@ final class TotalItemsCountProvider
   }
 }
 
-String _$totalItemsCountHash() => r'7befc7f14157498f08384cc04fc687d31dce0ca2';
+String _$totalItemsCountHash() => r'9b6447dc62b5057cd0c5f3a4a33a425a6f7454b3';
 
 final class TotalItemsCountFamily extends $Family
     with
@@ -1114,7 +1114,7 @@ final class TotalItemsCountFamily extends $Family
           AsyncValue<int>,
           int,
           FutureOr<int>,
-          int
+          String
         > {
   const TotalItemsCountFamily._()
     : super(
@@ -1125,7 +1125,7 @@ final class TotalItemsCountFamily extends $Family
         isAutoDispose: true,
       );
 
-  TotalItemsCountProvider call(int folderId) =>
+  TotalItemsCountProvider call(String folderId) =>
       TotalItemsCountProvider._(argument: folderId, from: this);
 
   @override
@@ -1133,10 +1133,10 @@ final class TotalItemsCountFamily extends $Family
 }
 
 abstract class _$TotalItemsCount extends $AsyncNotifier<int> {
-  late final _$args = ref.$arg as int;
-  int get folderId => _$args;
+  late final _$args = ref.$arg as String;
+  String get folderId => _$args;
 
-  FutureOr<int> build(int folderId);
+  FutureOr<int> build(String folderId);
   @$mustCallSuper
   @override
   void runBuild() {

@@ -21,10 +21,10 @@ class NoteMapper extends ClassMapperBase<Note> {
   @override
   final String id = 'Note';
 
-  static int _$id(Note v) => v.id;
-  static const Field<Note, int> _f$id = Field('id', _$id);
-  static int _$folderId(Note v) => v.folderId;
-  static const Field<Note, int> _f$folderId = Field('folderId', _$folderId);
+  static String _$id(Note v) => v.id;
+  static const Field<Note, String> _f$id = Field('id', _$id);
+  static String _$folderId(Note v) => v.folderId;
+  static const Field<Note, String> _f$folderId = Field('folderId', _$folderId);
   static String? _$title(Note v) => v.title;
   static const Field<Note, String> _f$title = Field('title', _$title);
   static String? _$content(Note v) => v.content;
@@ -108,8 +108,8 @@ extension NoteValueCopy<$R, $Out> on ObjectCopyWith<$R, Note, $Out> {
 abstract class NoteCopyWith<$R, $In extends Note, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   $R call({
-    int? id,
-    int? folderId,
+    String? id,
+    String? folderId,
     String? title,
     String? content,
     DateTime? createdAt,
@@ -126,8 +126,8 @@ class _NoteCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Note, $Out>
   late final ClassMapperBase<Note> $mapper = NoteMapper.ensureInitialized();
   @override
   $R call({
-    int? id,
-    int? folderId,
+    String? id,
+    String? folderId,
     Object? title = $none,
     Object? content = $none,
     DateTime? createdAt,

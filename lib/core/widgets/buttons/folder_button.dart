@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notes_bucket/core/constants/app_assets.dart';
-import 'package:notes_bucket/core/constants/app_routes.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/core/widgets/app_alert_dialog.dart';
 import 'package:notes_bucket/core/widgets/app_snackbar.dart';
@@ -87,18 +86,24 @@ class FolderButton extends ConsumerWidget {
         onPressPrimary: () async {
           try {
             await folderController.delete(folder.id, folder.parentId);
-            AppSnackBar.showSuccess(
+            if(context.mounted) {
+              AppSnackBar.showSuccess(
               context,
               '"${folder.name}" deleted successfully!',
             );
+            }
             ref.invalidate(foldersByParentProvider);
             ref.invalidate(rootFoldersProvider);
           } catch (e, st) {
-            AppSnackBar.showError(context, 'Failed to delete folder: $e');
+            if(context.mounted) {
+              AppSnackBar.showError(context, 'Failed to delete folder: $e');
+            }
             dbPrint('Failed to delete the folder', e: e, st: st);
             rethrow;
           } finally {
-            Navigator.pop(context);
+            if(context.mounted) {
+              Navigator.pop(context);
+            }
           }
         },
         onPressSecondary: () {

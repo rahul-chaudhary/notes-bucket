@@ -21,10 +21,10 @@ class FolderMapper extends ClassMapperBase<Folder> {
   @override
   final String id = 'Folder';
 
-  static int _$id(Folder v) => v.id;
-  static const Field<Folder, int> _f$id = Field('id', _$id);
-  static int? _$parentId(Folder v) => v.parentId;
-  static const Field<Folder, int> _f$parentId = Field(
+  static String _$id(Folder v) => v.id;
+  static const Field<Folder, String> _f$id = Field('id', _$id);
+  static String? _$parentId(Folder v) => v.parentId;
+  static const Field<Folder, String> _f$parentId = Field(
     'parentId',
     _$parentId,
     opt: true,
@@ -109,8 +109,8 @@ extension FolderValueCopy<$R, $Out> on ObjectCopyWith<$R, Folder, $Out> {
 abstract class FolderCopyWith<$R, $In extends Folder, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   $R call({
-    int? id,
-    int? parentId,
+    String? id,
+    String? parentId,
     String? name,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -126,7 +126,7 @@ class _FolderCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Folder, $Out>
   late final ClassMapperBase<Folder> $mapper = FolderMapper.ensureInitialized();
   @override
   $R call({
-    int? id,
+    String? id,
     Object? parentId = $none,
     String? name,
     DateTime? createdAt,

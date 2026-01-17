@@ -1,23 +1,26 @@
 import 'package:drift/drift.dart';
 import 'package:notes_bucket/core/db/app_database.dart';
+import 'package:notes_bucket/core/errors/failures.dart';
+import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/features/notes/domain/entities/note_entity.dart';
+import 'package:notes_bucket/features/notes/domain/usecases/note_usecases.dart';
 
 abstract interface class NoteLocalDataSource {
-  Future<NoteEntity> addNote(NoteEntity note);
+  Future<NoteEntity> addNote(AddNoteParams params);
 
-  Future<List<NoteEntity>> fetchNotesByFolderId(int folderId);
+  Future<List<NoteEntity>> fetchNotesByFolderId(String folderId);
 
-  Future<NoteEntity?> fetchNoteById(int noteId);
+  Future<NoteEntity?> fetchNoteById(String noteId);
 
   Future<NoteEntity> updateNote(NoteEntity note);
 
-  Future<void> deleteNote(int noteId);
+  Future<void> deleteNote(String noteId);
 
   Future<List<NoteEntity>> fetchAllNotes({required int limit,required int offset});
 
-  Future<int> fetchNotesCountByFolderId(int folderId);
+  Future<int> fetchNotesCountByFolderId(String folderId);
 
-  Future<NoteEntity> markNoteAsSynced(int noteId);
+  Future<NoteEntity> markNoteAsSynced(String noteId);
 
   Future<List<NoteEntity>> fetchUnsyncedNotes();
 
@@ -29,25 +32,28 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
   NoteLocalDataSourceImpl({required this.database});
 
   @override
-  Future<NoteEntity> addNote(NoteEntity note) async {
-    final id = await database
+  Future<NoteEntity> addNote(AddNoteParams params) async {
+    final id = generateId();
+     await database
         .into(database.notesItems)
         .insert(
       NotesItemsCompanion.insert(
-        folderID: note.folderId,
-        title: Value(note.title),
-        content: Value(note.content),
-        synced: note.synced,
-        createdAt: Value(note.createdAt),
-        updatedAt: Value(note.updatedAt),
+        id: id,
+        folderID: params.folderId,
+        title: Value(params.title),
+        content: Value(params.content),
+        synced: false,
+        createdAt: Value(null),
+        updatedAt: Value(null),
       ),
     );
     final n = await fetchNoteById(id);
+    if (n == null) throw DatabaseFailure('Fail to add note', null);
     return n!;
   }
 
   @override
-  Future<List<NoteEntity>> fetchNotesByFolderId(int folderId) async {
+  Future<List<NoteEntity>> fetchNotesByFolderId(String folderId) async {
     final queryResult = await (database.select(
       database.notesItems,
     )
@@ -70,7 +76,7 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
   }
 
   @override
-  Future<NoteEntity?> fetchNoteById(int noteId) async {
+  Future<NoteEntity?> fetchNoteById(String noteId) async {
     final queryResult = await (database.select(
       database.notesItems,
     )
@@ -94,7 +100,7 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
         .update(database.notesItems)
         .replace(
       NotesItemsCompanion.insert(
-        id: Value(note.id),
+        id: note.id,
         folderID: note.folderId,
         title: Value(note.title),
         content: Value(note.content),
@@ -108,7 +114,7 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
   }
 
   @override
-  Future<void> deleteNote(int noteId) async {
+  Future<void> deleteNote(String noteId) async {
     await (database.delete(
         database.notesItems,
     )..where((tbl) => tbl.id.equals(noteId))).go();
@@ -134,7 +140,7 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
   }
 
   @override
-  Future<int> fetchNotesCountByFolderId(int folderId) async {
+  Future<int> fetchNotesCountByFolderId(String folderId) async {
     final queryResult = await (database.select(
       database.notesItems,
     )..where((tbl) => tbl.folderID.equals(folderId))).get();
@@ -142,7 +148,7 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
   }
 
   @override
-  Future<NoteEntity> markNoteAsSynced(int noteId) async {
+  Future<NoteEntity> markNoteAsSynced(String noteId) async {
      await (database.update(database.notesItems)
       ..where((tbl) => tbl.id.equals(noteId)))
         .write(const NotesItemsCompanion(synced: Value(true)));

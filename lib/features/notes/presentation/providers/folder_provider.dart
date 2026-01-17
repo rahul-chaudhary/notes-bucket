@@ -1,7 +1,6 @@
 import 'package:notes_bucket/core/constants/app_constants.dart';
 import 'package:notes_bucket/core/db/database_provider.dart';
 import 'package:notes_bucket/features/notes/data/datasource/local_data/folder_local_datasource.dart';
-import 'package:notes_bucket/features/notes/data/models/folder.dart';
 import 'package:notes_bucket/features/notes/data/repositories/folder_repository_impl.dart';
 import 'package:notes_bucket/features/notes/domain/entities/folder_entity.dart';
 import 'package:notes_bucket/features/notes/domain/repositories/folder_repo.dart';
@@ -108,12 +107,12 @@ class RootFolders extends _$RootFolders {
 class FoldersByParent extends _$FoldersByParent {
   @override
   Future<List<FolderEntity>> build({
-    required int? parentId,
+    required String? parentId,
     required int limit,
     required int offset,
   }) async => _load(parentId, limit, offset);
 
-  Future<List<FolderEntity>> _load(int? parentId, int limit, int offset) async {
+  Future<List<FolderEntity>> _load(String? parentId, int limit, int offset) async {
     final usecase = ref.read(fetchFoldersByParentProvider);
 
     final result = await usecase.call(
@@ -142,16 +141,16 @@ class FolderController extends _$FolderController {
   void build() {}
 
   // CREATE
-  Future<void> create(FolderEntity folder) async {
+  Future<void> create({required String name, required String? parentId}) async {
     final usecase = ref.read(createFolderProvider);
     final result = await usecase.call(
-      CreateFolderParams(name: folder.name, parentId: folder.parentId),
+      CreateFolderParams(name: name, parentId: parentId),
     );
 
     result.fold((f) => throw Exception(f.message), (_) {
       if (!ref.mounted) return;
 
-      folder.parentId == null
+      parentId == null
           ? ref.invalidate(
               rootFoldersProvider(
                 limit: AppConstants.folderPageLimit,
@@ -160,7 +159,7 @@ class FolderController extends _$FolderController {
             )
           : ref.invalidate(
               foldersByParentProvider(
-                parentId: folder.parentId!,
+                parentId: parentId,
                 limit: AppConstants.folderPageLimit,
                 offset: 0,
               ),
@@ -169,7 +168,7 @@ class FolderController extends _$FolderController {
   }
 
   // DELETE
-  Future<void> delete(int folderId, int? parentId) async {
+  Future<void> delete(String folderId, String? parentId) async {
     final usecase = ref.read(deleteFolderProvider);
     final result = await usecase.call(folderId);
 
@@ -214,10 +213,10 @@ class FolderController extends _$FolderController {
 @riverpod
 class CurrentPath extends _$CurrentPath {
   @override
-  Future<List<FolderEntity>> build({required int? folderParentId}) async =>
+  Future<List<FolderEntity>> build({required String? folderParentId}) async =>
       _load(folderParentId);
 
-  Future<List<FolderEntity>> _load(int? folderParentId) async {
+  Future<List<FolderEntity>> _load(String? folderParentId) async {
     final usecase = ref.read(getCurrentPathProvider);
 
     final result = await usecase.call(folderParentId);
@@ -233,9 +232,9 @@ class CurrentPath extends _$CurrentPath {
 @riverpod
 class FolderById extends _$FolderById {
   @override
-  Future<FolderEntity?> build(int folderId) async => _load(folderId);
+  Future<FolderEntity?> build(String folderId) async => _load(folderId);
 
-  Future<FolderEntity?> _load(int folderId) async {
+  Future<FolderEntity?> _load(String folderId) async {
     final usecase = ref.read(fetchFolderByIdProvider);
 
     final result = await usecase.call(folderId);
@@ -250,9 +249,9 @@ class FolderById extends _$FolderById {
 @riverpod
 class FoldersCountByFolderId extends _$FoldersCountByFolderId {
   @override
-  Future<int> build(int folderId) async => _load(folderId);
+  Future<int> build(String folderId) async => _load(folderId);
 
-  Future<int> _load(int folderId) async {
+  Future<int> _load(String folderId) async {
     final usecase = ref.read(fetchFoldersCountByFolderIdProvider);
     final result = await usecase.call(folderId);
     return result.fold(
@@ -265,7 +264,7 @@ class FoldersCountByFolderId extends _$FoldersCountByFolderId {
 @riverpod
 class TotalItemsCount extends _$TotalItemsCount {
   @override
-  Future<int> build(int folderId) async {
+  Future<int> build(String folderId) async {
     final usecase = ref.read(fetchTotalItemsCountProvider);
     final result = await usecase.call(folderId);
     return result.fold(

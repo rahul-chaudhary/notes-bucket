@@ -6,25 +6,31 @@ import 'package:path_provider/path_provider.dart';
 part 'app_database.g.dart';
 
 class FolderItems extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  IntColumn get parentID => integer().nullable()();
+  TextColumn get id => text()();
+  TextColumn get parentID => text().nullable()();
   TextColumn get name => text().withLength(
       min: AppConstants.minFolderNameLength,
       max: AppConstants.maxFolderNameLength)();
-  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get createdAt => dateTime().nullable()();
   DateTimeColumn get updatedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
 }
 
 class NotesItems extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  IntColumn get folderID => integer().references(FolderItems, #id, onDelete: KeyAction.cascade)();
+  TextColumn get id => text()();
+  TextColumn get folderID => text().references(FolderItems, #id, onDelete: KeyAction.cascade)();
   TextColumn get title => text().nullable().withLength(
       min: AppConstants.minNoteTitleLength,
       max: AppConstants.maxNoteTitleLength)();
   TextColumn get content => text().nullable()();
   BoolColumn get synced => boolean()();
-  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
-  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get createdAt => dateTime().nullable()();
+  DateTimeColumn get updatedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
 }
 
 @DriftDatabase(tables: [FolderItems, NotesItems])

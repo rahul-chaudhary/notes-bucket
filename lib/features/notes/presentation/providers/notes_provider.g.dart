@@ -435,7 +435,7 @@ final class NoteControllerProvider
   }
 }
 
-String _$noteControllerHash() => r'f5fcc70545b88111738dcfb689b4be441317122b';
+String _$noteControllerHash() => r'e08c99aca5aabe7337f749f44e0a38bc817d41d5';
 
 abstract class _$NoteController extends $Notifier<void> {
   void build();
@@ -464,7 +464,7 @@ final class FetchNotesByFolderIdNotifierProvider
         $AsyncNotifierProvider<FetchNotesByFolderIdNotifier, List<NoteEntity>> {
   const FetchNotesByFolderIdNotifierProvider._({
     required FetchNotesByFolderIdNotifierFamily super.from,
-    required int? super.argument,
+    required String? super.argument,
   }) : super(
          retry: null,
          name: r'fetchNotesByFolderIdProvider',
@@ -500,7 +500,7 @@ final class FetchNotesByFolderIdNotifierProvider
 }
 
 String _$fetchNotesByFolderIdNotifierHash() =>
-    r'528e195d9d41c025c9432bb7b2f37cfb8e0018f6';
+    r'e1165ce201c1ace53c40a1a0c340822a609b12d4';
 
 final class FetchNotesByFolderIdNotifierFamily extends $Family
     with
@@ -509,7 +509,7 @@ final class FetchNotesByFolderIdNotifierFamily extends $Family
           AsyncValue<List<NoteEntity>>,
           List<NoteEntity>,
           FutureOr<List<NoteEntity>>,
-          int?
+          String?
         > {
   const FetchNotesByFolderIdNotifierFamily._()
     : super(
@@ -520,7 +520,7 @@ final class FetchNotesByFolderIdNotifierFamily extends $Family
         isAutoDispose: true,
       );
 
-  FetchNotesByFolderIdNotifierProvider call(int? folderId) =>
+  FetchNotesByFolderIdNotifierProvider call(String? folderId) =>
       FetchNotesByFolderIdNotifierProvider._(argument: folderId, from: this);
 
   @override
@@ -529,10 +529,10 @@ final class FetchNotesByFolderIdNotifierFamily extends $Family
 
 abstract class _$FetchNotesByFolderIdNotifier
     extends $AsyncNotifier<List<NoteEntity>> {
-  late final _$args = ref.$arg as int?;
-  int? get folderId => _$args;
+  late final _$args = ref.$arg as String?;
+  String? get folderId => _$args;
 
-  FutureOr<List<NoteEntity>> build(int? folderId);
+  FutureOr<List<NoteEntity>> build(String? folderId);
   @$mustCallSuper
   @override
   void runBuild() {
@@ -558,7 +558,7 @@ final class FetchNoteByIdNotifierProvider
     extends $AsyncNotifierProvider<FetchNoteByIdNotifier, NoteEntity?> {
   const FetchNoteByIdNotifierProvider._({
     required FetchNoteByIdNotifierFamily super.from,
-    required int super.argument,
+    required String super.argument,
   }) : super(
          retry: null,
          name: r'fetchNoteByIdProvider',
@@ -593,7 +593,7 @@ final class FetchNoteByIdNotifierProvider
 }
 
 String _$fetchNoteByIdNotifierHash() =>
-    r'73227a1d9f4b07d131d34e0cbaddffd613ee5389';
+    r'b148fc9647c6e7fb615735e5f751a83f52510f9a';
 
 final class FetchNoteByIdNotifierFamily extends $Family
     with
@@ -602,7 +602,7 @@ final class FetchNoteByIdNotifierFamily extends $Family
           AsyncValue<NoteEntity?>,
           NoteEntity?,
           FutureOr<NoteEntity?>,
-          int
+          String
         > {
   const FetchNoteByIdNotifierFamily._()
     : super(
@@ -613,7 +613,7 @@ final class FetchNoteByIdNotifierFamily extends $Family
         isAutoDispose: true,
       );
 
-  FetchNoteByIdNotifierProvider call(int noteId) =>
+  FetchNoteByIdNotifierProvider call(String noteId) =>
       FetchNoteByIdNotifierProvider._(argument: noteId, from: this);
 
   @override
@@ -621,10 +621,10 @@ final class FetchNoteByIdNotifierFamily extends $Family
 }
 
 abstract class _$FetchNoteByIdNotifier extends $AsyncNotifier<NoteEntity?> {
-  late final _$args = ref.$arg as int;
-  int get noteId => _$args;
+  late final _$args = ref.$arg as String;
+  String get noteId => _$args;
 
-  FutureOr<NoteEntity?> build(int noteId);
+  FutureOr<NoteEntity?> build(String noteId);
   @$mustCallSuper
   @override
   void runBuild() {
@@ -743,7 +743,7 @@ final class FetchNotesCountByFolderIdNotifierProvider
     extends $AsyncNotifierProvider<FetchNotesCountByFolderIdNotifier, int> {
   const FetchNotesCountByFolderIdNotifierProvider._({
     required FetchNotesCountByFolderIdNotifierFamily super.from,
-    required int super.argument,
+    required String super.argument,
   }) : super(
          retry: null,
          name: r'fetchNotesCountByFolderIdProvider',
@@ -781,7 +781,7 @@ final class FetchNotesCountByFolderIdNotifierProvider
 }
 
 String _$fetchNotesCountByFolderIdNotifierHash() =>
-    r'8099dd0ba9cd5793a316f13bc7631221b7120823';
+    r'01b69ce2821afa3f946be16b4f668f5b722c8b48';
 
 final class FetchNotesCountByFolderIdNotifierFamily extends $Family
     with
@@ -790,7 +790,7 @@ final class FetchNotesCountByFolderIdNotifierFamily extends $Family
           AsyncValue<int>,
           int,
           FutureOr<int>,
-          int
+          String
         > {
   const FetchNotesCountByFolderIdNotifierFamily._()
     : super(
@@ -801,7 +801,7 @@ final class FetchNotesCountByFolderIdNotifierFamily extends $Family
         isAutoDispose: true,
       );
 
-  FetchNotesCountByFolderIdNotifierProvider call(int folderId) =>
+  FetchNotesCountByFolderIdNotifierProvider call(String folderId) =>
       FetchNotesCountByFolderIdNotifierProvider._(
         argument: folderId,
         from: this,
@@ -812,10 +812,10 @@ final class FetchNotesCountByFolderIdNotifierFamily extends $Family
 }
 
 abstract class _$FetchNotesCountByFolderIdNotifier extends $AsyncNotifier<int> {
-  late final _$args = ref.$arg as int;
-  int get folderId => _$args;
+  late final _$args = ref.$arg as String;
+  String get folderId => _$args;
 
-  FutureOr<int> build(int folderId);
+  FutureOr<int> build(String folderId);
   @$mustCallSuper
   @override
   void runBuild() {

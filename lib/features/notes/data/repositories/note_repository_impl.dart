@@ -4,6 +4,7 @@ import 'package:notes_bucket/core/errors/failures.dart';
 import 'package:notes_bucket/features/notes/data/datasource/local_data/note_local_datasource.dart';
 import 'package:notes_bucket/features/notes/domain/entities/note_entity.dart';
 import 'package:notes_bucket/features/notes/domain/repositories/note_repo.dart';
+import 'package:notes_bucket/features/notes/domain/usecases/note_usecases.dart';
 
 class NoteRepositoryImpl implements NoteRepository {
   final NoteLocalDataSource noteLocalDataSource;
@@ -11,7 +12,7 @@ class NoteRepositoryImpl implements NoteRepository {
   const NoteRepositoryImpl({required this.noteLocalDataSource});
 
   @override
-  Future<Either<Failure, NoteEntity>> addNote(NoteEntity note) async {
+  Future<Either<Failure, NoteEntity>> addNote(AddNoteParams note) async {
     try {
       final res = await noteLocalDataSource.addNote(note);
       return Right(res);
@@ -22,7 +23,7 @@ class NoteRepositoryImpl implements NoteRepository {
 
   @override
   Future<Either<Failure, List<NoteEntity>>> fetchNotesByFolderId(
-    int folderId,
+    String folderId,
   ) async {
     try {
       final notes = await noteLocalDataSource.fetchNotesByFolderId(folderId);
@@ -33,7 +34,7 @@ class NoteRepositoryImpl implements NoteRepository {
   }
 
   @override
-  Future<Either<Failure, NoteEntity?>> fetchNoteById(int noteId) async {
+  Future<Either<Failure, NoteEntity?>> fetchNoteById(String noteId) async {
     try {
       final note = await noteLocalDataSource.fetchNoteById(noteId);
       if (note == null) return const Right(null);
@@ -55,7 +56,7 @@ class NoteRepositoryImpl implements NoteRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteNote(int noteId) async {
+  Future<Either<Failure, void>> deleteNote(String noteId) async {
     try {
       await noteLocalDataSource.deleteNote(noteId);
       return const Right(null);
@@ -81,17 +82,21 @@ class NoteRepositoryImpl implements NoteRepository {
   }
 
   @override
-  Future<Either<Failure, int>> fetchNotesCountByFolderId({required int folderId}) async {
+  Future<Either<Failure, int>> fetchNotesCountByFolderId({
+    required String folderId,
+  }) async {
     try {
-      final count = await noteLocalDataSource.fetchNotesCountByFolderId(folderId);
+      final count = await noteLocalDataSource.fetchNotesCountByFolderId(
+        folderId,
+      );
       return Right(count);
-      } on DatabaseException catch (e, st) {
+    } on DatabaseException catch (e, st) {
       return Left(DatabaseFailure(e.message, st));
     }
   }
 
   @override
-  Future<Either<Failure, NoteEntity>> markNoteAsSynced(int noteId) async {
+  Future<Either<Failure, NoteEntity>> markNoteAsSynced(String noteId) async {
     try {
       final syncedNote = await noteLocalDataSource.markNoteAsSynced(noteId);
       return Right(syncedNote);
@@ -109,5 +114,4 @@ class NoteRepositoryImpl implements NoteRepository {
       return Left(DatabaseFailure(e.message, st));
     }
   }
-
 }

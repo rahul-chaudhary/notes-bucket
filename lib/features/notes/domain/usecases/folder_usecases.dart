@@ -7,7 +7,7 @@ import '../repositories/folder_repo.dart';
 
 class CreateFolderParams {
   final String name;
-  final int? parentId;
+  final String? parentId;
 
   CreateFolderParams({required this.name, this.parentId});
 }
@@ -57,7 +57,7 @@ class FetchRootFolders
 }
 
 class FetchFoldersByParentIdParams {
-  final int? parentId;
+  final String? parentId;
   final int limit;
   final int offset;
 
@@ -86,13 +86,13 @@ class FetchFoldersByParentId
   }
 }
 
-class DeleteFolder implements UseCase<void, int> {
+class DeleteFolder implements UseCase<void, String> {
   final FolderRepository repository;
 
   DeleteFolder(this.repository);
 
   @override
-  Future<Either<Failure, void>> call(int params) async {
+  Future<Either<Failure, void>> call(String params) async {
     final folderExist = await repository.fetchFolderById(params);
     return folderExist.fold(
       (l) => throw Exception(l.message),
@@ -117,8 +117,9 @@ class RenameFolder implements UseCase<void, RenameFolderParams> {
 
   @override
   Future<Either<Failure, void>> call(RenameFolderParams params) async {
-    if (params.newName.isEmpty)
+    if (params.newName.isEmpty) {
       return Left(ValidationFailure('Folder name cannot be empty'));
+    }
 
     final exists = await repository.folderExists(
       params.folder.parentId,
@@ -133,16 +134,16 @@ class RenameFolder implements UseCase<void, RenameFolderParams> {
   }
 }
 
-class GetCurrentPath implements UseCase<List<FolderEntity>, int?> {
+class GetCurrentPath implements UseCase<List<FolderEntity>, String?> {
   final FolderRepository repository;
 
   GetCurrentPath(this.repository);
 
   @override
-  Future<Either<Failure, List<FolderEntity>>> call(int? params) async {
+  Future<Either<Failure, List<FolderEntity>>> call(String? params) async {
     if (params == null) return const Right([]);
 
-    int? id = params;
+    String? id = params;
     final folders = <FolderEntity>[];
 
     while (id != null) {
@@ -167,24 +168,24 @@ class GetCurrentPath implements UseCase<List<FolderEntity>, int?> {
   }
 }
 
-class FetchFolderById implements UseCase<FolderEntity?, int> {
+class FetchFolderById implements UseCase<FolderEntity?, String> {
   final FolderRepository repository;
 
   FetchFolderById(this.repository);
 
   @override
-  Future<Either<Failure, FolderEntity?>> call(int params) async {
+  Future<Either<Failure, FolderEntity?>> call(String params) async {
     return repository.fetchFolderById(params);
   }
 }
 
-class FetchFoldersCountByFolderId implements UseCase<int, int> {
+class FetchFoldersCountByFolderId implements UseCase<int, String> {
   final FolderRepository repository;
 
   FetchFoldersCountByFolderId(this.repository);
 
   @override
-  Future<Either<Failure, int>> call(int params) async {
+  Future<Either<Failure, int>> call(String params) async {
     return repository.fetchFoldersCountByFolderId(folderId: params);
   }
 }
@@ -198,7 +199,7 @@ class FetchTotalItemsCount {
     required this.noteRepository,
   });
 
-  Future<Either<Failure, int>> call(int folderId) async {
+  Future<Either<Failure, int>> call(String folderId) async {
     final foldersResult = await folderRepository.fetchFoldersCountByFolderId(
       folderId: folderId,
     );
