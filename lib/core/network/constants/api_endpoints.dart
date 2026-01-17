@@ -15,11 +15,12 @@ abstract final class ApiEndpoints {
 
   // Notes endpoints
   static const String note = '/note';
-  static String noteById(String id) => '/notes/$id';
+  static String noteById(String id) => '/note/$id';
+  // static String notesByFolderId(String folderId) => '/note?folder_id=$folderId';
+  static String noteCountByFolderId = '/note/note-count';
 
   // Folders endpoints
-  static const String folders = '/folders';
-  static String folderById(String id) => '/folders/$id';
+  static const String folder = '/folder';
 
   //notifications & firebase endpoints
   static const String saveFCMToken = 'notification/saveFCMToken';
