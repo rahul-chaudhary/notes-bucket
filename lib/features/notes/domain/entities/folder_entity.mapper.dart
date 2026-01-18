@@ -31,6 +31,8 @@ class FolderEntityMapper extends ClassMapperBase<FolderEntity> {
   );
   static String _$name(FolderEntity v) => v.name;
   static const Field<FolderEntity, String> _f$name = Field('name', _$name);
+  static bool _$synced(FolderEntity v) => v.synced;
+  static const Field<FolderEntity, bool> _f$synced = Field('synced', _$synced);
   static DateTime? _$createdAt(FolderEntity v) => v.createdAt;
   static const Field<FolderEntity, DateTime> _f$createdAt = Field(
     'createdAt',
@@ -49,6 +51,7 @@ class FolderEntityMapper extends ClassMapperBase<FolderEntity> {
     #id: _f$id,
     #parentId: _f$parentId,
     #name: _f$name,
+    #synced: _f$synced,
     #createdAt: _f$createdAt,
     #updatedAt: _f$updatedAt,
   };
@@ -58,6 +61,7 @@ class FolderEntityMapper extends ClassMapperBase<FolderEntity> {
       id: data.dec(_f$id),
       parentId: data.dec(_f$parentId),
       name: data.dec(_f$name),
+      synced: data.dec(_f$synced),
       createdAt: data.dec(_f$createdAt),
       updatedAt: data.dec(_f$updatedAt),
     );
@@ -129,6 +133,7 @@ abstract class FolderEntityCopyWith<$R, $In extends FolderEntity, $Out>
     String? id,
     String? parentId,
     String? name,
+    bool? synced,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -148,6 +153,7 @@ class _FolderEntityCopyWithImpl<$R, $Out>
     String? id,
     Object? parentId = $none,
     String? name,
+    bool? synced,
     Object? createdAt = $none,
     Object? updatedAt = $none,
   }) => $apply(
@@ -155,6 +161,7 @@ class _FolderEntityCopyWithImpl<$R, $Out>
       if (id != null) #id: id,
       if (parentId != $none) #parentId: parentId,
       if (name != null) #name: name,
+      if (synced != null) #synced: synced,
       if (createdAt != $none) #createdAt: createdAt,
       if (updatedAt != $none) #updatedAt: updatedAt,
     }),
@@ -164,6 +171,7 @@ class _FolderEntityCopyWithImpl<$R, $Out>
     id: data.get(#id, or: $value.id),
     parentId: data.get(#parentId, or: $value.parentId),
     name: data.get(#name, or: $value.name),
+    synced: data.get(#synced, or: $value.synced),
     createdAt: data.get(#createdAt, or: $value.createdAt),
     updatedAt: data.get(#updatedAt, or: $value.updatedAt),
   );
