@@ -39,6 +39,18 @@ class $FolderItemsTable extends FolderItems
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _syncedMeta = const VerificationMeta('synced');
+  @override
+  late final GeneratedColumn<bool> synced = GeneratedColumn<bool>(
+    'synced',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("synced" IN (0, 1))',
+    ),
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -66,6 +78,7 @@ class $FolderItemsTable extends FolderItems
     id,
     parentID,
     name,
+    synced,
     createdAt,
     updatedAt,
   ];
@@ -100,6 +113,14 @@ class $FolderItemsTable extends FolderItems
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
+    if (data.containsKey('synced')) {
+      context.handle(
+        _syncedMeta,
+        synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_syncedMeta);
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -133,6 +154,10 @@ class $FolderItemsTable extends FolderItems
         DriftSqlType.string,
         data['${effectivePrefix}name'],
       )!,
+      synced: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}synced'],
+      )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -154,12 +179,14 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
   final String id;
   final String? parentID;
   final String name;
+  final bool synced;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   const FolderItem({
     required this.id,
     this.parentID,
     required this.name,
+    required this.synced,
     this.createdAt,
     this.updatedAt,
   });
@@ -171,6 +198,7 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
       map['parent_i_d'] = Variable<String>(parentID);
     }
     map['name'] = Variable<String>(name);
+    map['synced'] = Variable<bool>(synced);
     if (!nullToAbsent || createdAt != null) {
       map['created_at'] = Variable<DateTime>(createdAt);
     }
@@ -187,6 +215,7 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
           ? const Value.absent()
           : Value(parentID),
       name: Value(name),
+      synced: Value(synced),
       createdAt: createdAt == null && nullToAbsent
           ? const Value.absent()
           : Value(createdAt),
@@ -205,6 +234,7 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
       id: serializer.fromJson<String>(json['id']),
       parentID: serializer.fromJson<String?>(json['parentID']),
       name: serializer.fromJson<String>(json['name']),
+      synced: serializer.fromJson<bool>(json['synced']),
       createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
     );
@@ -216,6 +246,7 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
       'id': serializer.toJson<String>(id),
       'parentID': serializer.toJson<String?>(parentID),
       'name': serializer.toJson<String>(name),
+      'synced': serializer.toJson<bool>(synced),
       'createdAt': serializer.toJson<DateTime?>(createdAt),
       'updatedAt': serializer.toJson<DateTime?>(updatedAt),
     };
@@ -225,12 +256,14 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
     String? id,
     Value<String?> parentID = const Value.absent(),
     String? name,
+    bool? synced,
     Value<DateTime?> createdAt = const Value.absent(),
     Value<DateTime?> updatedAt = const Value.absent(),
   }) => FolderItem(
     id: id ?? this.id,
     parentID: parentID.present ? parentID.value : this.parentID,
     name: name ?? this.name,
+    synced: synced ?? this.synced,
     createdAt: createdAt.present ? createdAt.value : this.createdAt,
     updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
   );
@@ -239,6 +272,7 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
       id: data.id.present ? data.id.value : this.id,
       parentID: data.parentID.present ? data.parentID.value : this.parentID,
       name: data.name.present ? data.name.value : this.name,
+      synced: data.synced.present ? data.synced.value : this.synced,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -250,6 +284,7 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
           ..write('id: $id, ')
           ..write('parentID: $parentID, ')
           ..write('name: $name, ')
+          ..write('synced: $synced, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -257,7 +292,8 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
   }
 
   @override
-  int get hashCode => Object.hash(id, parentID, name, createdAt, updatedAt);
+  int get hashCode =>
+      Object.hash(id, parentID, name, synced, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -265,6 +301,7 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
           other.id == this.id &&
           other.parentID == this.parentID &&
           other.name == this.name &&
+          other.synced == this.synced &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -273,6 +310,7 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
   final Value<String> id;
   final Value<String?> parentID;
   final Value<String> name;
+  final Value<bool> synced;
   final Value<DateTime?> createdAt;
   final Value<DateTime?> updatedAt;
   final Value<int> rowid;
@@ -280,6 +318,7 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
     this.id = const Value.absent(),
     this.parentID = const Value.absent(),
     this.name = const Value.absent(),
+    this.synced = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -288,15 +327,18 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
     required String id,
     this.parentID = const Value.absent(),
     required String name,
+    required bool synced,
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
-       name = Value(name);
+       name = Value(name),
+       synced = Value(synced);
   static Insertable<FolderItem> custom({
     Expression<String>? id,
     Expression<String>? parentID,
     Expression<String>? name,
+    Expression<bool>? synced,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
@@ -305,6 +347,7 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
       if (id != null) 'id': id,
       if (parentID != null) 'parent_i_d': parentID,
       if (name != null) 'name': name,
+      if (synced != null) 'synced': synced,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
@@ -315,6 +358,7 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
     Value<String>? id,
     Value<String?>? parentID,
     Value<String>? name,
+    Value<bool>? synced,
     Value<DateTime?>? createdAt,
     Value<DateTime?>? updatedAt,
     Value<int>? rowid,
@@ -323,6 +367,7 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
       id: id ?? this.id,
       parentID: parentID ?? this.parentID,
       name: name ?? this.name,
+      synced: synced ?? this.synced,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
@@ -340,6 +385,9 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
+    }
+    if (synced.present) {
+      map['synced'] = Variable<bool>(synced.value);
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
@@ -359,6 +407,7 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
           ..write('id: $id, ')
           ..write('parentID: $parentID, ')
           ..write('name: $name, ')
+          ..write('synced: $synced, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
@@ -858,6 +907,7 @@ typedef $$FolderItemsTableCreateCompanionBuilder =
       required String id,
       Value<String?> parentID,
       required String name,
+      required bool synced,
       Value<DateTime?> createdAt,
       Value<DateTime?> updatedAt,
       Value<int> rowid,
@@ -867,6 +917,7 @@ typedef $$FolderItemsTableUpdateCompanionBuilder =
       Value<String> id,
       Value<String?> parentID,
       Value<String> name,
+      Value<bool> synced,
       Value<DateTime?> createdAt,
       Value<DateTime?> updatedAt,
       Value<int> rowid,
@@ -916,6 +967,11 @@ class $$FolderItemsTableFilterComposer
 
   ColumnFilters<String> get name => $composableBuilder(
     column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get synced => $composableBuilder(
+    column: $table.synced,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -979,6 +1035,11 @@ class $$FolderItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -1007,6 +1068,9 @@ class $$FolderItemsTableAnnotationComposer
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<bool> get synced =>
+      $composableBuilder(column: $table.synced, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -1071,6 +1135,7 @@ class $$FolderItemsTableTableManager
                 Value<String> id = const Value.absent(),
                 Value<String?> parentID = const Value.absent(),
                 Value<String> name = const Value.absent(),
+                Value<bool> synced = const Value.absent(),
                 Value<DateTime?> createdAt = const Value.absent(),
                 Value<DateTime?> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -1078,6 +1143,7 @@ class $$FolderItemsTableTableManager
                 id: id,
                 parentID: parentID,
                 name: name,
+                synced: synced,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -1087,6 +1153,7 @@ class $$FolderItemsTableTableManager
                 required String id,
                 Value<String?> parentID = const Value.absent(),
                 required String name,
+                required bool synced,
                 Value<DateTime?> createdAt = const Value.absent(),
                 Value<DateTime?> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -1094,6 +1161,7 @@ class $$FolderItemsTableTableManager
                 id: id,
                 parentID: parentID,
                 name: name,
+                synced: synced,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,

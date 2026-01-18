@@ -11,6 +11,7 @@ class FolderItems extends Table {
   TextColumn get name => text().withLength(
       min: AppConstants.minFolderNameLength,
       max: AppConstants.maxFolderNameLength)();
+  BoolColumn get synced => boolean()();
   DateTimeColumn get createdAt => dateTime().nullable()();
   DateTimeColumn get updatedAt => dateTime().nullable()();
 
