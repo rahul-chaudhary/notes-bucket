@@ -25,6 +25,7 @@ class Folder with FolderMappable {
       id: id,
       parentId: parentId,
       name: name,
+      synced: true,
       createdAt: createdAt,
       updatedAt: updatedAt,
     );
