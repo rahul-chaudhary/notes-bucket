@@ -29,7 +29,11 @@ class FolderGridVewSkeleton extends StatelessWidget {
           mainAxisExtent: 120,
         ),
         itemBuilder: (context, index) {
-          final sampleFolder = FolderEntity(id: '', name: 'Loading...');
+          final sampleFolder = FolderEntity(
+            id: '',
+            name: 'Loading...',
+            synced: false,
+          );
           return SizedBox(
             height: 100,
             child: FolderButton(
