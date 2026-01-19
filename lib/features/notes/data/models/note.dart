@@ -9,6 +9,7 @@ class Note with NoteMappable {
   final String folderId;
   final String? title;
   final String? content;
+  final int version;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -17,6 +18,7 @@ class Note with NoteMappable {
     required this.folderId,
     required this.title,
     required this.content,
+    required this.version,
     required this.createdAt,
     required this.updatedAt,
   });

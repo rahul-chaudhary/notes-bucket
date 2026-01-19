@@ -29,6 +29,8 @@ class NoteMapper extends ClassMapperBase<Note> {
   static const Field<Note, String> _f$title = Field('title', _$title);
   static String? _$content(Note v) => v.content;
   static const Field<Note, String> _f$content = Field('content', _$content);
+  static int _$version(Note v) => v.version;
+  static const Field<Note, int> _f$version = Field('version', _$version);
   static DateTime _$createdAt(Note v) => v.createdAt;
   static const Field<Note, DateTime> _f$createdAt = Field(
     'createdAt',
@@ -46,6 +48,7 @@ class NoteMapper extends ClassMapperBase<Note> {
     #folderId: _f$folderId,
     #title: _f$title,
     #content: _f$content,
+    #version: _f$version,
     #createdAt: _f$createdAt,
     #updatedAt: _f$updatedAt,
   };
@@ -56,6 +59,7 @@ class NoteMapper extends ClassMapperBase<Note> {
       folderId: data.dec(_f$folderId),
       title: data.dec(_f$title),
       content: data.dec(_f$content),
+      version: data.dec(_f$version),
       createdAt: data.dec(_f$createdAt),
       updatedAt: data.dec(_f$updatedAt),
     );
@@ -112,6 +116,7 @@ abstract class NoteCopyWith<$R, $In extends Note, $Out>
     String? folderId,
     String? title,
     String? content,
+    int? version,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -130,6 +135,7 @@ class _NoteCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Note, $Out>
     String? folderId,
     Object? title = $none,
     Object? content = $none,
+    int? version,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) => $apply(
@@ -138,6 +144,7 @@ class _NoteCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Note, $Out>
       if (folderId != null) #folderId: folderId,
       if (title != $none) #title: title,
       if (content != $none) #content: content,
+      if (version != null) #version: version,
       if (createdAt != null) #createdAt: createdAt,
       if (updatedAt != null) #updatedAt: updatedAt,
     }),
@@ -148,6 +155,7 @@ class _NoteCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Note, $Out>
     folderId: data.get(#folderId, or: $value.folderId),
     title: data.get(#title, or: $value.title),
     content: data.get(#content, or: $value.content),
+    version: data.get(#version, or: $value.version),
     createdAt: data.get(#createdAt, or: $value.createdAt),
     updatedAt: data.get(#updatedAt, or: $value.updatedAt),
   );
