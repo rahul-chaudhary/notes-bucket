@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:notes_bucket/core/constants/app_routes.dart';
 import 'package:notes_bucket/core/theme/app_text_style.dart';
 import 'package:notes_bucket/core/widgets/cards/app_container.dart';
+import 'package:notes_bucket/core/widgets/internet_connection_widget.dart';
 
 class NotesAppBar extends ConsumerWidget {
   final String title;
@@ -34,9 +35,16 @@ class NotesAppBar extends ConsumerWidget {
       )
           : null,
       flexibleSpace: FlexibleSpaceBar(
-        title: Text(
-          title,
-          style: AppTextStyles.headlineMedium(context),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              title,
+              style: AppTextStyles.headlineMedium(context),
+            ),
+            InternetConnectionWidget(),
+          ],
         ),
         centerTitle: true,
       ),
