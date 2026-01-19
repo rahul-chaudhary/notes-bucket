@@ -27,6 +27,12 @@ abstract interface class FolderLocalDataSource {
   Future<FolderEntity?> fetchFolderById(String folderId);
 
   Future<int> fetchFoldersCountByFolderId({required String folderId});
+
+  Future<List<FolderEntity>> fetchUnsyncedFolders();
+
+  Future<int> fetchUnsyncedFoldersCount();
+
+  Future<FolderEntity> markFolderAsSynced(String folderId);
 }
 
 class FolderLocalDataSourceImpl implements FolderLocalDataSource {
@@ -41,15 +47,15 @@ class FolderLocalDataSourceImpl implements FolderLocalDataSource {
     await database
         .into(database.folderItems)
         .insert(
-      FolderItemsCompanion.insert(
-        id: folderId,
-        parentID: Value(parentId),
-        name: name,
-        synced: false,
-        createdAt: Value(DateTime.now()),
-        updatedAt: Value(DateTime.now()),
-      ),
-    );
+          FolderItemsCompanion.insert(
+            id: folderId,
+            parentID: Value(parentId),
+            name: name,
+            synced: false,
+            createdAt: Value(DateTime.now()),
+            updatedAt: Value(DateTime.now()),
+          ),
+        );
 
     final folder = await fetchFolderById(folderId);
 
@@ -59,7 +65,6 @@ class FolderLocalDataSourceImpl implements FolderLocalDataSource {
 
     return folder;
   }
-
 
   @override
   Future<List<FolderEntity>> fetchRootFolders({
@@ -134,23 +139,26 @@ class FolderLocalDataSourceImpl implements FolderLocalDataSource {
 
   @override
   Future<bool> folderExists(String? folderParentID, String folderName) async {
-    final row = await (database.select(database.folderItems)
-      ..where((tbl) => tbl.name.equals(folderName))
-      ..where((tbl) => folderParentID == null
-          ? tbl.parentID.isNull()
-          : tbl.parentID.equals(folderParentID)))
-        .getSingleOrNull();
+    final row =
+        await (database.select(database.folderItems)
+              ..where((tbl) => tbl.name.equals(folderName))
+              ..where(
+                (tbl) => folderParentID == null
+                    ? tbl.parentID.isNull()
+                    : tbl.parentID.equals(folderParentID),
+              ))
+            .getSingleOrNull();
 
     return row != null;
   }
 
   @override
   Future<FolderEntity?> fetchFolderById(String folderId) async {
-    final row = await (database.select(database.folderItems)
-      ..where((tbl) => tbl.id.equals(folderId)))
-        .getSingleOrNull();
+    final row = await (database.select(
+      database.folderItems,
+    )..where((tbl) => tbl.id.equals(folderId))).getSingleOrNull();
 
-    if(row ==null) return null;
+    if (row == null) return null;
 
     return FolderEntity(
       id: row.id,
@@ -164,9 +172,54 @@ class FolderLocalDataSourceImpl implements FolderLocalDataSource {
 
   @override
   Future<int> fetchFoldersCountByFolderId({required String folderId}) async {
-    final queryResult = await (database.select(database.folderItems)
-        ..where((tbl) => tbl.parentID.equals(folderId))).get();
+    final queryResult = await (database.select(
+      database.folderItems,
+    )..where((tbl) => tbl.parentID.equals(folderId))).get();
     return queryResult.length;
   }
+
+  @override
+  Future<List<FolderEntity>> fetchUnsyncedFolders() async {
+    final queryResult = await (database.select(
+      database.folderItems,
+    )..where((tbl) => tbl.synced.equals(false))).get();
+
+    final folders = queryResult
+        .map(
+          (row) => FolderEntity(
+            id: row.id,
+            parentId: row.parentID,
+            name: row.name,
+            synced: row.synced,
+            createdAt: row.createdAt,
+            updatedAt: row.updatedAt,
+          ),
+        )
+        .toList();
+
+    return folders;
+  }
+
+  @override
+  Future<FolderEntity> markFolderAsSynced(String folderId) async {
+     await  (database.update(database.folderItems)
+      ..where((tbl) => tbl.id.equals(folderId)))
+      .write(const FolderItemsCompanion(synced: Value(true)));
+     final folder = await fetchFolderById(folderId);
+     return folder!;
+  }
+
+  @override
+  Future<int> fetchUnsyncedFoldersCount() async {
+    final countExp = countAll();
+
+    final row = await (database.selectOnly(database.folderItems)
+      ..addColumns([countExp])
+      ..where(database.folderItems.synced.equals(false)))
+        .getSingleOrNull();
+
+    return row?.read(countExp) ?? 0;
+  }
+
 
 }
