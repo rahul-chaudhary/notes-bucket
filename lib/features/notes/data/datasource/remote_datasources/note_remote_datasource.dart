@@ -3,7 +3,7 @@ import 'package:notes_bucket/core/network/constants/api_endpoints.dart';
 import 'package:notes_bucket/features/notes/data/models/note.dart';
 
 abstract interface class NoteRemoteDatasource {
-  Future<Note> addNote(Note note);
+  Future<Note> addNote(String id, String folderId, String? title, String? content);
 
   Future<Note> updateNote(Note note);
 
@@ -22,9 +22,14 @@ class NoteRemoteDatasourceImpl implements NoteRemoteDatasource {
   NoteRemoteDatasourceImpl({required this.apiClient});
 
   @override
-  Future<Note> addNote(Note note) async {
+  Future<Note> addNote(String id, String folderId, String? title, String? content) async {
     try {
-      final res = await apiClient.post(ApiEndpoints.note, data: note.toJson());
+      final res = await apiClient.post(ApiEndpoints.note, data: {
+        'id': id,
+        'folder_id': folderId,
+        'title': title,
+        'content': content,
+      });
       return NoteMapper.fromJson(res.data);
     } catch (e) {
       rethrow;
