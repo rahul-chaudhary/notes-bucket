@@ -59,3 +59,7 @@ class BadResponseFailure extends Failure {
 class AuthenticationFailure extends Failure {
   const AuthenticationFailure(super.message);
 }
+
+class SyncFailure extends Failure {
+  const SyncFailure(super.message);
+}
