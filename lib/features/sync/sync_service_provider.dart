@@ -12,10 +12,25 @@ Future<SyncService> syncService(Ref ref) async {
   final folderRemote = await ref.watch(folderRemoteDatasourceProvider.future);
   final folderLocal = ref.watch(folderLocalDataSourceProvider);
 
+  final monitor = ref.read(syncMonitorProvider.notifier);
+
   return SyncService(
     noteRemote: noteRemote,
     noteLocal: noteLocal,
     folderRemote: folderRemote,
     folderLocal: folderLocal,
+    onStateChanged: monitor.update,
   );
 }
+
+
+@Riverpod(keepAlive: true)
+class SyncMonitor extends _$SyncMonitor {
+  @override
+  SyncState build() => const SyncState.idle();
+
+  void update(SyncState state) {
+    this.state = state;
+  }
+}
+
