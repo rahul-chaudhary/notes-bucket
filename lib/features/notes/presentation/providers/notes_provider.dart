@@ -1,5 +1,7 @@
 import 'package:notes_bucket/core/db/database_provider.dart';
+import 'package:notes_bucket/core/network/providers/network_providers.dart';
 import 'package:notes_bucket/features/notes/data/datasource/local_data/note_local_datasource.dart';
+import 'package:notes_bucket/features/notes/data/datasource/remote_datasources/note_remote_datasource.dart';
 import 'package:notes_bucket/features/notes/data/repositories/note_repository_impl.dart';
 import 'package:notes_bucket/features/notes/domain/entities/note_entity.dart';
 import 'package:notes_bucket/features/notes/domain/repositories/note_repo.dart';
@@ -15,6 +17,12 @@ part 'notes_provider.g.dart';
 NoteLocalDataSource noteLocalDataSource(Ref ref) {
   final db = ref.watch(appDatabaseProvider);
   return NoteLocalDataSourceImpl(database: db);
+}
+
+@riverpod
+Future<NoteRemoteDatasource> noteRemoteDatasource(Ref ref) async {
+  final apiClient = await ref.watch(apiClientProvider.future);
+  return NoteRemoteDatasourceImpl(apiClient: apiClient);
 }
 
 @riverpod

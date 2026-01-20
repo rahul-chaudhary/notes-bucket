@@ -57,6 +57,48 @@ final class NoteLocalDataSourceProvider
 String _$noteLocalDataSourceHash() =>
     r'bc01ce831003458d5c4ce07cacead2efc4222451';
 
+@ProviderFor(noteRemoteDatasource)
+const noteRemoteDatasourceProvider = NoteRemoteDatasourceProvider._();
+
+final class NoteRemoteDatasourceProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<NoteRemoteDatasource>,
+          NoteRemoteDatasource,
+          FutureOr<NoteRemoteDatasource>
+        >
+    with
+        $FutureModifier<NoteRemoteDatasource>,
+        $FutureProvider<NoteRemoteDatasource> {
+  const NoteRemoteDatasourceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'noteRemoteDatasourceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$noteRemoteDatasourceHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<NoteRemoteDatasource> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<NoteRemoteDatasource> create(Ref ref) {
+    return noteRemoteDatasource(ref);
+  }
+}
+
+String _$noteRemoteDatasourceHash() =>
+    r'06c6ec394ff07bf9087bbffc9d9a830b879fdbee';
+
 @ProviderFor(noteRepository)
 const noteRepositoryProvider = NoteRepositoryProvider._();
 

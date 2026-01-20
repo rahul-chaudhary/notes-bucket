@@ -57,6 +57,48 @@ final class FolderLocalDataSourceProvider
 String _$folderLocalDataSourceHash() =>
     r'91d972a57d97a4336a315c82ca7a71a7056771b1';
 
+@ProviderFor(folderRemoteDatasource)
+const folderRemoteDatasourceProvider = FolderRemoteDatasourceProvider._();
+
+final class FolderRemoteDatasourceProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<FolderRemoteDatasource>,
+          FolderRemoteDatasource,
+          FutureOr<FolderRemoteDatasource>
+        >
+    with
+        $FutureModifier<FolderRemoteDatasource>,
+        $FutureProvider<FolderRemoteDatasource> {
+  const FolderRemoteDatasourceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'folderRemoteDatasourceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$folderRemoteDatasourceHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<FolderRemoteDatasource> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<FolderRemoteDatasource> create(Ref ref) {
+    return folderRemoteDatasource(ref);
+  }
+}
+
+String _$folderRemoteDatasourceHash() =>
+    r'310b6628d18f4ae7068ab6039320347326476c79';
+
 @ProviderFor(folderRepository)
 const folderRepositoryProvider = FolderRepositoryProvider._();
 
