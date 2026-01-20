@@ -41,6 +41,13 @@ class AppDatabase extends _$AppDatabase {
   @override
   int get schemaVersion => 1;
 
+  Future<void> deleteAllData() {
+    return transaction(() async {
+      await delete(notesItems).go();
+      await delete(folderItems).go();
+    });
+  }
+
   static QueryExecutor _openConnection() {
     return driftDatabase(
       name: 'my_database',
