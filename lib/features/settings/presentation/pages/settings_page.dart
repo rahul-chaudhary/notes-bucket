@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:notes_bucket/core/constants/app_routes.dart';
+import 'package:notes_bucket/core/db/database_provider.dart';
 import 'package:notes_bucket/core/secure_storage/secure_storage_providers.dart';
 import 'package:notes_bucket/core/theme/app_color.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
@@ -89,11 +90,13 @@ class SettingsPage extends HookConsumerWidget {
                               ? theme.colorScheme.error
                               : theme.colorScheme.secondary,
                           onTap: () async {
+                            await ref.read(appDatabaseProvider).deleteAllData();
+                            ref.invalidate(appDatabaseProvider);
                             await ref
                                 .read(secureStorageHelperProvider)
                                 .deleteAll();
                             ref.invalidate(secureStorageHelperProvider);
-                            if(context.mounted) {
+                            if (context.mounted) {
                               Navigator.pushNamed(context, AppRoutes.welcome);
                             }
                           },
@@ -184,13 +187,19 @@ class SettingsPage extends HookConsumerWidget {
                               ),
                             ),
                             error: (error, stackTrace) {
-                              dbPrint('DailyQuote error:', e: error, st: stackTrace);
+                              dbPrint(
+                                'DailyQuote error:',
+                                e: error,
+                                st: stackTrace,
+                              );
                               return SizedBox.shrink();
                             },
                             loading: () => SizedBox(
                               height: 16,
                               width: 16,
-                              child: const CircularProgressIndicator(strokeWidth: 2),
+                              child: const CircularProgressIndicator(
+                                strokeWidth: 2,
+                              ),
                             ),
                           ),
                         ),
@@ -205,7 +214,6 @@ class SettingsPage extends HookConsumerWidget {
       ),
     );
   }
-
 
   SliverAppBar _premiumCard(ThemeData theme) {
     return SliverAppBar(
