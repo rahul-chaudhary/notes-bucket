@@ -14,13 +14,15 @@ Future<SyncService> syncService(Ref ref) async {
 
   final monitor = ref.read(syncMonitorProvider.notifier);
 
-  return SyncService(
+  final service = SyncService(
     noteRemote: noteRemote,
     noteLocal: noteLocal,
     folderRemote: folderRemote,
     folderLocal: folderLocal,
     onStateChanged: monitor.update,
   );
+  await service.start();
+  return service;
 }
 
 
@@ -33,4 +35,3 @@ class SyncMonitor extends _$SyncMonitor {
     this.state = state;
   }
 }
-

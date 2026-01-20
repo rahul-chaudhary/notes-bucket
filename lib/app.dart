@@ -8,6 +8,7 @@ import 'package:notes_bucket/features/notes/presentation/pages/view_all_page.dar
 import 'package:notes_bucket/features/onboard/presentation/pages/welcome_page.dart';
 import 'package:notes_bucket/features/settings/presentation/pages/settings_page.dart';
 import 'package:notes_bucket/features/splash/presentation/pages/splash_page.dart';
+import 'package:notes_bucket/features/sync/sync_service_provider.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/pages/register_user_page.dart';
 import 'features/auth/presentation/pages/user_sign_in_page.dart';
@@ -18,7 +19,7 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
+    ref.watch(syncServiceProvider);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: AppTheme.lightTheme,
@@ -41,4 +42,3 @@ class MyApp extends ConsumerWidget {
     );
   }
 }
-

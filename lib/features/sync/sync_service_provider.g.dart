@@ -46,7 +46,7 @@ final class SyncServiceProvider
   }
 }
 
-String _$syncServiceHash() => r'0f5956aa745da67ae75ef768963e7fc4749033cf';
+String _$syncServiceHash() => r'2bf49a4545fb63ce10ffa4d854d86310aeeada4a';
 
 @ProviderFor(SyncMonitor)
 const syncMonitorProvider = SyncMonitorProvider._();
