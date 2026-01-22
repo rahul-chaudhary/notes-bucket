@@ -33,6 +33,11 @@ class FolderEntityMapper extends ClassMapperBase<FolderEntity> {
   static const Field<FolderEntity, String> _f$name = Field('name', _$name);
   static bool _$synced(FolderEntity v) => v.synced;
   static const Field<FolderEntity, bool> _f$synced = Field('synced', _$synced);
+  static int _$retryCount(FolderEntity v) => v.retryCount;
+  static const Field<FolderEntity, int> _f$retryCount = Field(
+    'retryCount',
+    _$retryCount,
+  );
   static DateTime? _$createdAt(FolderEntity v) => v.createdAt;
   static const Field<FolderEntity, DateTime> _f$createdAt = Field(
     'createdAt',
@@ -52,6 +57,7 @@ class FolderEntityMapper extends ClassMapperBase<FolderEntity> {
     #parentId: _f$parentId,
     #name: _f$name,
     #synced: _f$synced,
+    #retryCount: _f$retryCount,
     #createdAt: _f$createdAt,
     #updatedAt: _f$updatedAt,
   };
@@ -62,6 +68,7 @@ class FolderEntityMapper extends ClassMapperBase<FolderEntity> {
       parentId: data.dec(_f$parentId),
       name: data.dec(_f$name),
       synced: data.dec(_f$synced),
+      retryCount: data.dec(_f$retryCount),
       createdAt: data.dec(_f$createdAt),
       updatedAt: data.dec(_f$updatedAt),
     );
@@ -134,6 +141,7 @@ abstract class FolderEntityCopyWith<$R, $In extends FolderEntity, $Out>
     String? parentId,
     String? name,
     bool? synced,
+    int? retryCount,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -154,6 +162,7 @@ class _FolderEntityCopyWithImpl<$R, $Out>
     Object? parentId = $none,
     String? name,
     bool? synced,
+    int? retryCount,
     Object? createdAt = $none,
     Object? updatedAt = $none,
   }) => $apply(
@@ -162,6 +171,7 @@ class _FolderEntityCopyWithImpl<$R, $Out>
       if (parentId != $none) #parentId: parentId,
       if (name != null) #name: name,
       if (synced != null) #synced: synced,
+      if (retryCount != null) #retryCount: retryCount,
       if (createdAt != $none) #createdAt: createdAt,
       if (updatedAt != $none) #updatedAt: updatedAt,
     }),
@@ -172,6 +182,7 @@ class _FolderEntityCopyWithImpl<$R, $Out>
     parentId: data.get(#parentId, or: $value.parentId),
     name: data.get(#name, or: $value.name),
     synced: data.get(#synced, or: $value.synced),
+    retryCount: data.get(#retryCount, or: $value.retryCount),
     createdAt: data.get(#createdAt, or: $value.createdAt),
     updatedAt: data.get(#updatedAt, or: $value.updatedAt),
   );

@@ -24,6 +24,9 @@ abstract interface class NoteLocalDataSource {
 
   Future<List<NoteEntity>> fetchUnsyncedNotes();
 
+  Future<int> fetchUnsyncedNotesCount();
+
+  Future<void> incrementRetryCount(String noteId);
 }
 
 class NoteLocalDataSourceImpl implements NoteLocalDataSource {
@@ -67,6 +70,7 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
             title: row.title,
             content: row.content,
             synced: row.synced,
+            retryCount: row.retryCount,
             createdAt: row.createdAt,
             updatedAt: row.updatedAt,
           ),
@@ -88,6 +92,7 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
       title: queryResult.title,
       content: queryResult.content,
       synced: queryResult.synced,
+      retryCount: queryResult.retryCount,
       createdAt: queryResult.createdAt,
       updatedAt: queryResult.updatedAt,
     );
@@ -105,6 +110,7 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
         title: Value(note.title),
         content: Value(note.content),
         synced: note.synced,
+        retryCount: Value(note.retryCount),
         createdAt: Value(note.createdAt),
         updatedAt: Value(note.updatedAt),
       ),
@@ -132,6 +138,7 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
       title: row.title,
       content: row.content,
       synced: row.synced,
+      retryCount: row.retryCount,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     )).toList();
@@ -167,9 +174,30 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
       title: row.title,
       content: row.content,
       synced: row.synced,
+      retryCount: row.retryCount,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     )).toList();
   }
 
+  @override
+  Future<int> fetchUnsyncedNotesCount() async {
+    final countExp = countAll();
+
+    final row = await (database.selectOnly(database.notesItems)
+      ..addColumns([countExp])
+      ..where(database.notesItems.synced.equals(false)))
+        .getSingleOrNull();
+
+    return row?.read(countExp) ?? 0;
+  }
+
+  @override
+  Future<void> incrementRetryCount(String noteId) async {
+    final note = await fetchNoteById(noteId);
+    if (note == null) return;
+    await (database.update(database.notesItems)..where((tbl) => tbl.id.equals(noteId))).write(
+      NotesItemsCompanion(retryCount: Value(note.retryCount + 1)),
+    );
+  }
 }

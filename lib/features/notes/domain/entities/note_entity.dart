@@ -9,6 +9,7 @@ class NoteEntity with NoteEntityMappable {
   final String? title;
   final String? content;
   final bool synced;
+  final int retryCount;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -18,6 +19,7 @@ class NoteEntity with NoteEntityMappable {
     required this.title,
     required this.content,
     required this.synced,
+    required this.retryCount,
     this.createdAt,
     this.updatedAt,
   });

@@ -8,6 +8,7 @@ class FolderEntity with FolderEntityMappable {
   final String? parentId; // null = root folder
   final String name;
   final bool synced;
+  final int retryCount;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -16,6 +17,7 @@ class FolderEntity with FolderEntityMappable {
     this.parentId,
     required this.name,
     required this.synced,
+    required this.retryCount,
     this.createdAt,
     this.updatedAt,
   });

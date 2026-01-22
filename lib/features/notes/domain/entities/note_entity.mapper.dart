@@ -37,6 +37,11 @@ class NoteEntityMapper extends ClassMapperBase<NoteEntity> {
   );
   static bool _$synced(NoteEntity v) => v.synced;
   static const Field<NoteEntity, bool> _f$synced = Field('synced', _$synced);
+  static int _$retryCount(NoteEntity v) => v.retryCount;
+  static const Field<NoteEntity, int> _f$retryCount = Field(
+    'retryCount',
+    _$retryCount,
+  );
   static DateTime? _$createdAt(NoteEntity v) => v.createdAt;
   static const Field<NoteEntity, DateTime> _f$createdAt = Field(
     'createdAt',
@@ -57,6 +62,7 @@ class NoteEntityMapper extends ClassMapperBase<NoteEntity> {
     #title: _f$title,
     #content: _f$content,
     #synced: _f$synced,
+    #retryCount: _f$retryCount,
     #createdAt: _f$createdAt,
     #updatedAt: _f$updatedAt,
   };
@@ -68,6 +74,7 @@ class NoteEntityMapper extends ClassMapperBase<NoteEntity> {
       title: data.dec(_f$title),
       content: data.dec(_f$content),
       synced: data.dec(_f$synced),
+      retryCount: data.dec(_f$retryCount),
       createdAt: data.dec(_f$createdAt),
       updatedAt: data.dec(_f$updatedAt),
     );
@@ -139,6 +146,7 @@ abstract class NoteEntityCopyWith<$R, $In extends NoteEntity, $Out>
     String? title,
     String? content,
     bool? synced,
+    int? retryCount,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -160,6 +168,7 @@ class _NoteEntityCopyWithImpl<$R, $Out>
     Object? title = $none,
     Object? content = $none,
     bool? synced,
+    int? retryCount,
     Object? createdAt = $none,
     Object? updatedAt = $none,
   }) => $apply(
@@ -169,6 +178,7 @@ class _NoteEntityCopyWithImpl<$R, $Out>
       if (title != $none) #title: title,
       if (content != $none) #content: content,
       if (synced != null) #synced: synced,
+      if (retryCount != null) #retryCount: retryCount,
       if (createdAt != $none) #createdAt: createdAt,
       if (updatedAt != $none) #updatedAt: updatedAt,
     }),
@@ -180,6 +190,7 @@ class _NoteEntityCopyWithImpl<$R, $Out>
     title: data.get(#title, or: $value.title),
     content: data.get(#content, or: $value.content),
     synced: data.get(#synced, or: $value.synced),
+    retryCount: data.get(#retryCount, or: $value.retryCount),
     createdAt: data.get(#createdAt, or: $value.createdAt),
     updatedAt: data.get(#updatedAt, or: $value.updatedAt),
   );

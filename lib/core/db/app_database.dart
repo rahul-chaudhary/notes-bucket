@@ -12,6 +12,7 @@ class FolderItems extends Table {
       min: AppConstants.minFolderNameLength,
       max: AppConstants.maxFolderNameLength)();
   BoolColumn get synced => boolean()();
+  IntColumn get retryCount => integer().withDefault(const Constant(0))();
   DateTimeColumn get createdAt => dateTime().nullable()();
   DateTimeColumn get updatedAt => dateTime().nullable()();
 
@@ -27,6 +28,7 @@ class NotesItems extends Table {
       max: AppConstants.maxNoteTitleLength)();
   TextColumn get content => text().nullable()();
   BoolColumn get synced => boolean()();
+  IntColumn get retryCount => integer().withDefault(const Constant(0))();
   DateTimeColumn get createdAt => dateTime().nullable()();
   DateTimeColumn get updatedAt => dateTime().nullable()();
 
@@ -39,7 +41,18 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (m) => m.createAll(),
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        await m.addColumn(folderItems, folderItems.retryCount);
+        await m.addColumn(notesItems, notesItems.retryCount);
+      }
+    },
+  );
 
   Future<void> deleteAllData() {
     return transaction(() async {

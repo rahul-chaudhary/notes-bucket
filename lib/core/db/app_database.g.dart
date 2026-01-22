@@ -51,6 +51,18 @@ class $FolderItemsTable extends FolderItems
       'CHECK ("synced" IN (0, 1))',
     ),
   );
+  static const VerificationMeta _retryCountMeta = const VerificationMeta(
+    'retryCount',
+  );
+  @override
+  late final GeneratedColumn<int> retryCount = GeneratedColumn<int>(
+    'retry_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -79,6 +91,7 @@ class $FolderItemsTable extends FolderItems
     parentID,
     name,
     synced,
+    retryCount,
     createdAt,
     updatedAt,
   ];
@@ -121,6 +134,12 @@ class $FolderItemsTable extends FolderItems
     } else if (isInserting) {
       context.missing(_syncedMeta);
     }
+    if (data.containsKey('retry_count')) {
+      context.handle(
+        _retryCountMeta,
+        retryCount.isAcceptableOrUnknown(data['retry_count']!, _retryCountMeta),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -158,6 +177,10 @@ class $FolderItemsTable extends FolderItems
         DriftSqlType.bool,
         data['${effectivePrefix}synced'],
       )!,
+      retryCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}retry_count'],
+      )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -180,6 +203,7 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
   final String? parentID;
   final String name;
   final bool synced;
+  final int retryCount;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   const FolderItem({
@@ -187,6 +211,7 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
     this.parentID,
     required this.name,
     required this.synced,
+    required this.retryCount,
     this.createdAt,
     this.updatedAt,
   });
@@ -199,6 +224,7 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
     }
     map['name'] = Variable<String>(name);
     map['synced'] = Variable<bool>(synced);
+    map['retry_count'] = Variable<int>(retryCount);
     if (!nullToAbsent || createdAt != null) {
       map['created_at'] = Variable<DateTime>(createdAt);
     }
@@ -216,6 +242,7 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
           : Value(parentID),
       name: Value(name),
       synced: Value(synced),
+      retryCount: Value(retryCount),
       createdAt: createdAt == null && nullToAbsent
           ? const Value.absent()
           : Value(createdAt),
@@ -235,6 +262,7 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
       parentID: serializer.fromJson<String?>(json['parentID']),
       name: serializer.fromJson<String>(json['name']),
       synced: serializer.fromJson<bool>(json['synced']),
+      retryCount: serializer.fromJson<int>(json['retryCount']),
       createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
     );
@@ -247,6 +275,7 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
       'parentID': serializer.toJson<String?>(parentID),
       'name': serializer.toJson<String>(name),
       'synced': serializer.toJson<bool>(synced),
+      'retryCount': serializer.toJson<int>(retryCount),
       'createdAt': serializer.toJson<DateTime?>(createdAt),
       'updatedAt': serializer.toJson<DateTime?>(updatedAt),
     };
@@ -257,6 +286,7 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
     Value<String?> parentID = const Value.absent(),
     String? name,
     bool? synced,
+    int? retryCount,
     Value<DateTime?> createdAt = const Value.absent(),
     Value<DateTime?> updatedAt = const Value.absent(),
   }) => FolderItem(
@@ -264,6 +294,7 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
     parentID: parentID.present ? parentID.value : this.parentID,
     name: name ?? this.name,
     synced: synced ?? this.synced,
+    retryCount: retryCount ?? this.retryCount,
     createdAt: createdAt.present ? createdAt.value : this.createdAt,
     updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
   );
@@ -273,6 +304,9 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
       parentID: data.parentID.present ? data.parentID.value : this.parentID,
       name: data.name.present ? data.name.value : this.name,
       synced: data.synced.present ? data.synced.value : this.synced,
+      retryCount: data.retryCount.present
+          ? data.retryCount.value
+          : this.retryCount,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -285,6 +319,7 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
           ..write('parentID: $parentID, ')
           ..write('name: $name, ')
           ..write('synced: $synced, ')
+          ..write('retryCount: $retryCount, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -293,7 +328,7 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
 
   @override
   int get hashCode =>
-      Object.hash(id, parentID, name, synced, createdAt, updatedAt);
+      Object.hash(id, parentID, name, synced, retryCount, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -302,6 +337,7 @@ class FolderItem extends DataClass implements Insertable<FolderItem> {
           other.parentID == this.parentID &&
           other.name == this.name &&
           other.synced == this.synced &&
+          other.retryCount == this.retryCount &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -311,6 +347,7 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
   final Value<String?> parentID;
   final Value<String> name;
   final Value<bool> synced;
+  final Value<int> retryCount;
   final Value<DateTime?> createdAt;
   final Value<DateTime?> updatedAt;
   final Value<int> rowid;
@@ -319,6 +356,7 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
     this.parentID = const Value.absent(),
     this.name = const Value.absent(),
     this.synced = const Value.absent(),
+    this.retryCount = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -328,6 +366,7 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
     this.parentID = const Value.absent(),
     required String name,
     required bool synced,
+    this.retryCount = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -339,6 +378,7 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
     Expression<String>? parentID,
     Expression<String>? name,
     Expression<bool>? synced,
+    Expression<int>? retryCount,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
@@ -348,6 +388,7 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
       if (parentID != null) 'parent_i_d': parentID,
       if (name != null) 'name': name,
       if (synced != null) 'synced': synced,
+      if (retryCount != null) 'retry_count': retryCount,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
@@ -359,6 +400,7 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
     Value<String?>? parentID,
     Value<String>? name,
     Value<bool>? synced,
+    Value<int>? retryCount,
     Value<DateTime?>? createdAt,
     Value<DateTime?>? updatedAt,
     Value<int>? rowid,
@@ -368,6 +410,7 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
       parentID: parentID ?? this.parentID,
       name: name ?? this.name,
       synced: synced ?? this.synced,
+      retryCount: retryCount ?? this.retryCount,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
@@ -389,6 +432,9 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
     if (synced.present) {
       map['synced'] = Variable<bool>(synced.value);
     }
+    if (retryCount.present) {
+      map['retry_count'] = Variable<int>(retryCount.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -408,6 +454,7 @@ class FolderItemsCompanion extends UpdateCompanion<FolderItem> {
           ..write('parentID: $parentID, ')
           ..write('name: $name, ')
           ..write('synced: $synced, ')
+          ..write('retryCount: $retryCount, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
@@ -478,6 +525,18 @@ class $NotesItemsTable extends NotesItems
       'CHECK ("synced" IN (0, 1))',
     ),
   );
+  static const VerificationMeta _retryCountMeta = const VerificationMeta(
+    'retryCount',
+  );
+  @override
+  late final GeneratedColumn<int> retryCount = GeneratedColumn<int>(
+    'retry_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -507,6 +566,7 @@ class $NotesItemsTable extends NotesItems
     title,
     content,
     synced,
+    retryCount,
     createdAt,
     updatedAt,
   ];
@@ -555,6 +615,12 @@ class $NotesItemsTable extends NotesItems
     } else if (isInserting) {
       context.missing(_syncedMeta);
     }
+    if (data.containsKey('retry_count')) {
+      context.handle(
+        _retryCountMeta,
+        retryCount.isAcceptableOrUnknown(data['retry_count']!, _retryCountMeta),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -596,6 +662,10 @@ class $NotesItemsTable extends NotesItems
         DriftSqlType.bool,
         data['${effectivePrefix}synced'],
       )!,
+      retryCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}retry_count'],
+      )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -619,6 +689,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
   final String? title;
   final String? content;
   final bool synced;
+  final int retryCount;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   const NotesItem({
@@ -627,6 +698,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
     this.title,
     this.content,
     required this.synced,
+    required this.retryCount,
     this.createdAt,
     this.updatedAt,
   });
@@ -642,6 +714,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
       map['content'] = Variable<String>(content);
     }
     map['synced'] = Variable<bool>(synced);
+    map['retry_count'] = Variable<int>(retryCount);
     if (!nullToAbsent || createdAt != null) {
       map['created_at'] = Variable<DateTime>(createdAt);
     }
@@ -662,6 +735,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
           ? const Value.absent()
           : Value(content),
       synced: Value(synced),
+      retryCount: Value(retryCount),
       createdAt: createdAt == null && nullToAbsent
           ? const Value.absent()
           : Value(createdAt),
@@ -682,6 +756,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
       title: serializer.fromJson<String?>(json['title']),
       content: serializer.fromJson<String?>(json['content']),
       synced: serializer.fromJson<bool>(json['synced']),
+      retryCount: serializer.fromJson<int>(json['retryCount']),
       createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
     );
@@ -695,6 +770,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
       'title': serializer.toJson<String?>(title),
       'content': serializer.toJson<String?>(content),
       'synced': serializer.toJson<bool>(synced),
+      'retryCount': serializer.toJson<int>(retryCount),
       'createdAt': serializer.toJson<DateTime?>(createdAt),
       'updatedAt': serializer.toJson<DateTime?>(updatedAt),
     };
@@ -706,6 +782,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
     Value<String?> title = const Value.absent(),
     Value<String?> content = const Value.absent(),
     bool? synced,
+    int? retryCount,
     Value<DateTime?> createdAt = const Value.absent(),
     Value<DateTime?> updatedAt = const Value.absent(),
   }) => NotesItem(
@@ -714,6 +791,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
     title: title.present ? title.value : this.title,
     content: content.present ? content.value : this.content,
     synced: synced ?? this.synced,
+    retryCount: retryCount ?? this.retryCount,
     createdAt: createdAt.present ? createdAt.value : this.createdAt,
     updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
   );
@@ -724,6 +802,9 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
       title: data.title.present ? data.title.value : this.title,
       content: data.content.present ? data.content.value : this.content,
       synced: data.synced.present ? data.synced.value : this.synced,
+      retryCount: data.retryCount.present
+          ? data.retryCount.value
+          : this.retryCount,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -737,6 +818,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
           ..write('title: $title, ')
           ..write('content: $content, ')
           ..write('synced: $synced, ')
+          ..write('retryCount: $retryCount, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -744,8 +826,16 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, folderID, title, content, synced, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+    id,
+    folderID,
+    title,
+    content,
+    synced,
+    retryCount,
+    createdAt,
+    updatedAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -755,6 +845,7 @@ class NotesItem extends DataClass implements Insertable<NotesItem> {
           other.title == this.title &&
           other.content == this.content &&
           other.synced == this.synced &&
+          other.retryCount == this.retryCount &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -765,6 +856,7 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
   final Value<String?> title;
   final Value<String?> content;
   final Value<bool> synced;
+  final Value<int> retryCount;
   final Value<DateTime?> createdAt;
   final Value<DateTime?> updatedAt;
   final Value<int> rowid;
@@ -774,6 +866,7 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
     this.title = const Value.absent(),
     this.content = const Value.absent(),
     this.synced = const Value.absent(),
+    this.retryCount = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -784,6 +877,7 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
     this.title = const Value.absent(),
     this.content = const Value.absent(),
     required bool synced,
+    this.retryCount = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -796,6 +890,7 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
     Expression<String>? title,
     Expression<String>? content,
     Expression<bool>? synced,
+    Expression<int>? retryCount,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
@@ -806,6 +901,7 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
       if (title != null) 'title': title,
       if (content != null) 'content': content,
       if (synced != null) 'synced': synced,
+      if (retryCount != null) 'retry_count': retryCount,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
@@ -818,6 +914,7 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
     Value<String?>? title,
     Value<String?>? content,
     Value<bool>? synced,
+    Value<int>? retryCount,
     Value<DateTime?>? createdAt,
     Value<DateTime?>? updatedAt,
     Value<int>? rowid,
@@ -828,6 +925,7 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
       title: title ?? this.title,
       content: content ?? this.content,
       synced: synced ?? this.synced,
+      retryCount: retryCount ?? this.retryCount,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
@@ -852,6 +950,9 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
     if (synced.present) {
       map['synced'] = Variable<bool>(synced.value);
     }
+    if (retryCount.present) {
+      map['retry_count'] = Variable<int>(retryCount.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -872,6 +973,7 @@ class NotesItemsCompanion extends UpdateCompanion<NotesItem> {
           ..write('title: $title, ')
           ..write('content: $content, ')
           ..write('synced: $synced, ')
+          ..write('retryCount: $retryCount, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
@@ -908,6 +1010,7 @@ typedef $$FolderItemsTableCreateCompanionBuilder =
       Value<String?> parentID,
       required String name,
       required bool synced,
+      Value<int> retryCount,
       Value<DateTime?> createdAt,
       Value<DateTime?> updatedAt,
       Value<int> rowid,
@@ -918,6 +1021,7 @@ typedef $$FolderItemsTableUpdateCompanionBuilder =
       Value<String?> parentID,
       Value<String> name,
       Value<bool> synced,
+      Value<int> retryCount,
       Value<DateTime?> createdAt,
       Value<DateTime?> updatedAt,
       Value<int> rowid,
@@ -972,6 +1076,11 @@ class $$FolderItemsTableFilterComposer
 
   ColumnFilters<bool> get synced => $composableBuilder(
     column: $table.synced,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get retryCount => $composableBuilder(
+    column: $table.retryCount,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1040,6 +1149,11 @@ class $$FolderItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get retryCount => $composableBuilder(
+    column: $table.retryCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -1071,6 +1185,11 @@ class $$FolderItemsTableAnnotationComposer
 
   GeneratedColumn<bool> get synced =>
       $composableBuilder(column: $table.synced, builder: (column) => column);
+
+  GeneratedColumn<int> get retryCount => $composableBuilder(
+    column: $table.retryCount,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -1136,6 +1255,7 @@ class $$FolderItemsTableTableManager
                 Value<String?> parentID = const Value.absent(),
                 Value<String> name = const Value.absent(),
                 Value<bool> synced = const Value.absent(),
+                Value<int> retryCount = const Value.absent(),
                 Value<DateTime?> createdAt = const Value.absent(),
                 Value<DateTime?> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -1144,6 +1264,7 @@ class $$FolderItemsTableTableManager
                 parentID: parentID,
                 name: name,
                 synced: synced,
+                retryCount: retryCount,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -1154,6 +1275,7 @@ class $$FolderItemsTableTableManager
                 Value<String?> parentID = const Value.absent(),
                 required String name,
                 required bool synced,
+                Value<int> retryCount = const Value.absent(),
                 Value<DateTime?> createdAt = const Value.absent(),
                 Value<DateTime?> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -1162,6 +1284,7 @@ class $$FolderItemsTableTableManager
                 parentID: parentID,
                 name: name,
                 synced: synced,
+                retryCount: retryCount,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -1229,6 +1352,7 @@ typedef $$NotesItemsTableCreateCompanionBuilder =
       Value<String?> title,
       Value<String?> content,
       required bool synced,
+      Value<int> retryCount,
       Value<DateTime?> createdAt,
       Value<DateTime?> updatedAt,
       Value<int> rowid,
@@ -1240,6 +1364,7 @@ typedef $$NotesItemsTableUpdateCompanionBuilder =
       Value<String?> title,
       Value<String?> content,
       Value<bool> synced,
+      Value<int> retryCount,
       Value<DateTime?> createdAt,
       Value<DateTime?> updatedAt,
       Value<int> rowid,
@@ -1295,6 +1420,11 @@ class $$NotesItemsTableFilterComposer
 
   ColumnFilters<bool> get synced => $composableBuilder(
     column: $table.synced,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get retryCount => $composableBuilder(
+    column: $table.retryCount,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1361,6 +1491,11 @@ class $$NotesItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get retryCount => $composableBuilder(
+    column: $table.retryCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -1415,6 +1550,11 @@ class $$NotesItemsTableAnnotationComposer
 
   GeneratedColumn<bool> get synced =>
       $composableBuilder(column: $table.synced, builder: (column) => column);
+
+  GeneratedColumn<int> get retryCount => $composableBuilder(
+    column: $table.retryCount,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -1479,6 +1619,7 @@ class $$NotesItemsTableTableManager
                 Value<String?> title = const Value.absent(),
                 Value<String?> content = const Value.absent(),
                 Value<bool> synced = const Value.absent(),
+                Value<int> retryCount = const Value.absent(),
                 Value<DateTime?> createdAt = const Value.absent(),
                 Value<DateTime?> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -1488,6 +1629,7 @@ class $$NotesItemsTableTableManager
                 title: title,
                 content: content,
                 synced: synced,
+                retryCount: retryCount,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -1499,6 +1641,7 @@ class $$NotesItemsTableTableManager
                 Value<String?> title = const Value.absent(),
                 Value<String?> content = const Value.absent(),
                 required bool synced,
+                Value<int> retryCount = const Value.absent(),
                 Value<DateTime?> createdAt = const Value.absent(),
                 Value<DateTime?> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -1508,6 +1651,7 @@ class $$NotesItemsTableTableManager
                 title: title,
                 content: content,
                 synced: synced,
+                retryCount: retryCount,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,

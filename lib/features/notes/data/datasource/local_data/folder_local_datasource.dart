@@ -33,6 +33,8 @@ abstract interface class FolderLocalDataSource {
   Future<int> fetchUnsyncedFoldersCount();
 
   Future<FolderEntity> markFolderAsSynced(String folderId);
+
+  Future<void> incrementRetryCount(String folderId);
 }
 
 class FolderLocalDataSourceImpl implements FolderLocalDataSource {
@@ -83,6 +85,7 @@ class FolderLocalDataSourceImpl implements FolderLocalDataSource {
             parentId: row.parentID,
             name: row.name,
             synced: row.synced,
+            retryCount: row.retryCount,
             createdAt: row.createdAt,
             updatedAt: row.updatedAt,
           ),
@@ -110,6 +113,7 @@ class FolderLocalDataSourceImpl implements FolderLocalDataSource {
             parentId: row.parentID,
             name: row.name,
             synced: row.synced,
+            retryCount: row.retryCount,
             createdAt: row.createdAt,
             updatedAt: row.updatedAt,
           ),
@@ -165,6 +169,7 @@ class FolderLocalDataSourceImpl implements FolderLocalDataSource {
       parentId: row.parentID,
       name: row.name,
       synced: row.synced,
+      retryCount: row.retryCount,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     );
@@ -191,6 +196,7 @@ class FolderLocalDataSourceImpl implements FolderLocalDataSource {
             parentId: row.parentID,
             name: row.name,
             synced: row.synced,
+            retryCount: row.retryCount,
             createdAt: row.createdAt,
             updatedAt: row.updatedAt,
           ),
@@ -221,5 +227,12 @@ class FolderLocalDataSourceImpl implements FolderLocalDataSource {
     return row?.read(countExp) ?? 0;
   }
 
-
+  @override
+  Future<void> incrementRetryCount(String folderId) async {
+    final folder = await fetchFolderById(folderId);
+    if(folder == null) return;
+    await (database.update(database.folderItems)..where((tbl) => tbl.id.equals(folderId))).write(
+      FolderItemsCompanion(retryCount: Value(folder.retryCount + 1)),
+    );
+  }
 }
