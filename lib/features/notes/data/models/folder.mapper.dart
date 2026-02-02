@@ -42,6 +42,12 @@ class FolderMapper extends ClassMapperBase<Folder> {
     _$updatedAt,
     opt: true,
   );
+  static DateTime? _$deletedAt(Folder v) => v.deletedAt;
+  static const Field<Folder, DateTime> _f$deletedAt = Field(
+    'deletedAt',
+    _$deletedAt,
+    opt: true,
+  );
 
   @override
   final MappableFields<Folder> fields = const {
@@ -50,6 +56,7 @@ class FolderMapper extends ClassMapperBase<Folder> {
     #name: _f$name,
     #createdAt: _f$createdAt,
     #updatedAt: _f$updatedAt,
+    #deletedAt: _f$deletedAt,
   };
 
   static Folder _instantiate(DecodingData data) {
@@ -59,6 +66,7 @@ class FolderMapper extends ClassMapperBase<Folder> {
       name: data.dec(_f$name),
       createdAt: data.dec(_f$createdAt),
       updatedAt: data.dec(_f$updatedAt),
+      deletedAt: data.dec(_f$deletedAt),
     );
   }
 
@@ -114,6 +122,7 @@ abstract class FolderCopyWith<$R, $In extends Folder, $Out>
     String? name,
     DateTime? createdAt,
     DateTime? updatedAt,
+    DateTime? deletedAt,
   });
   FolderCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -131,6 +140,7 @@ class _FolderCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Folder, $Out>
     String? name,
     DateTime? createdAt,
     Object? updatedAt = $none,
+    Object? deletedAt = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
@@ -138,6 +148,7 @@ class _FolderCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Folder, $Out>
       if (name != null) #name: name,
       if (createdAt != null) #createdAt: createdAt,
       if (updatedAt != $none) #updatedAt: updatedAt,
+      if (deletedAt != $none) #deletedAt: deletedAt,
     }),
   );
   @override
@@ -147,6 +158,7 @@ class _FolderCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Folder, $Out>
     name: data.get(#name, or: $value.name),
     createdAt: data.get(#createdAt, or: $value.createdAt),
     updatedAt: data.get(#updatedAt, or: $value.updatedAt),
+    deletedAt: data.get(#deletedAt, or: $value.deletedAt),
   );
 
   @override

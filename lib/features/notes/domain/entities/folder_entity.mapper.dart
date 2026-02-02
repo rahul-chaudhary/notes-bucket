@@ -50,6 +50,12 @@ class FolderEntityMapper extends ClassMapperBase<FolderEntity> {
     _$updatedAt,
     opt: true,
   );
+  static DateTime? _$deletedAt(FolderEntity v) => v.deletedAt;
+  static const Field<FolderEntity, DateTime> _f$deletedAt = Field(
+    'deletedAt',
+    _$deletedAt,
+    opt: true,
+  );
 
   @override
   final MappableFields<FolderEntity> fields = const {
@@ -60,6 +66,7 @@ class FolderEntityMapper extends ClassMapperBase<FolderEntity> {
     #retryCount: _f$retryCount,
     #createdAt: _f$createdAt,
     #updatedAt: _f$updatedAt,
+    #deletedAt: _f$deletedAt,
   };
 
   static FolderEntity _instantiate(DecodingData data) {
@@ -71,6 +78,7 @@ class FolderEntityMapper extends ClassMapperBase<FolderEntity> {
       retryCount: data.dec(_f$retryCount),
       createdAt: data.dec(_f$createdAt),
       updatedAt: data.dec(_f$updatedAt),
+      deletedAt: data.dec(_f$deletedAt),
     );
   }
 
@@ -144,6 +152,7 @@ abstract class FolderEntityCopyWith<$R, $In extends FolderEntity, $Out>
     int? retryCount,
     DateTime? createdAt,
     DateTime? updatedAt,
+    DateTime? deletedAt,
   });
   FolderEntityCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -165,6 +174,7 @@ class _FolderEntityCopyWithImpl<$R, $Out>
     int? retryCount,
     Object? createdAt = $none,
     Object? updatedAt = $none,
+    Object? deletedAt = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
@@ -174,6 +184,7 @@ class _FolderEntityCopyWithImpl<$R, $Out>
       if (retryCount != null) #retryCount: retryCount,
       if (createdAt != $none) #createdAt: createdAt,
       if (updatedAt != $none) #updatedAt: updatedAt,
+      if (deletedAt != $none) #deletedAt: deletedAt,
     }),
   );
   @override
@@ -185,6 +196,7 @@ class _FolderEntityCopyWithImpl<$R, $Out>
     retryCount: data.get(#retryCount, or: $value.retryCount),
     createdAt: data.get(#createdAt, or: $value.createdAt),
     updatedAt: data.get(#updatedAt, or: $value.updatedAt),
+    deletedAt: data.get(#deletedAt, or: $value.deletedAt),
   );
 
   @override
