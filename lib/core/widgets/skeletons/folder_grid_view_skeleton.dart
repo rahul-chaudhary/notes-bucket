@@ -32,6 +32,9 @@ class FolderGridVewSkeleton extends StatelessWidget {
           final sampleFolder = FolderEntity(
             id: '',
             name: 'Loading...',
+            retryCount: 0,
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
             synced: false,
           );
           return SizedBox(
