@@ -41,6 +41,12 @@ class NoteMapper extends ClassMapperBase<Note> {
     'updatedAt',
     _$updatedAt,
   );
+  static DateTime? _$deletedAt(Note v) => v.deletedAt;
+  static const Field<Note, DateTime> _f$deletedAt = Field(
+    'deletedAt',
+    _$deletedAt,
+    opt: true,
+  );
 
   @override
   final MappableFields<Note> fields = const {
@@ -51,6 +57,7 @@ class NoteMapper extends ClassMapperBase<Note> {
     #version: _f$version,
     #createdAt: _f$createdAt,
     #updatedAt: _f$updatedAt,
+    #deletedAt: _f$deletedAt,
   };
 
   static Note _instantiate(DecodingData data) {
@@ -62,6 +69,7 @@ class NoteMapper extends ClassMapperBase<Note> {
       version: data.dec(_f$version),
       createdAt: data.dec(_f$createdAt),
       updatedAt: data.dec(_f$updatedAt),
+      deletedAt: data.dec(_f$deletedAt),
     );
   }
 
@@ -119,6 +127,7 @@ abstract class NoteCopyWith<$R, $In extends Note, $Out>
     int? version,
     DateTime? createdAt,
     DateTime? updatedAt,
+    DateTime? deletedAt,
   });
   NoteCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -138,6 +147,7 @@ class _NoteCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Note, $Out>
     int? version,
     DateTime? createdAt,
     DateTime? updatedAt,
+    Object? deletedAt = $none,
   }) => $apply(
     FieldCopyWithData({
       if (id != null) #id: id,
@@ -147,6 +157,7 @@ class _NoteCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Note, $Out>
       if (version != null) #version: version,
       if (createdAt != null) #createdAt: createdAt,
       if (updatedAt != null) #updatedAt: updatedAt,
+      if (deletedAt != $none) #deletedAt: deletedAt,
     }),
   );
   @override
@@ -158,6 +169,7 @@ class _NoteCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Note, $Out>
     version: data.get(#version, or: $value.version),
     createdAt: data.get(#createdAt, or: $value.createdAt),
     updatedAt: data.get(#updatedAt, or: $value.updatedAt),
+    deletedAt: data.get(#deletedAt, or: $value.deletedAt),
   );
 
   @override

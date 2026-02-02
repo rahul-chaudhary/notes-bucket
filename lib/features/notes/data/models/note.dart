@@ -1,6 +1,4 @@
 import 'package:dart_mappable/dart_mappable.dart';
-
-import '../../domain/entities/note_entity.dart';
 part 'note.mapper.dart';
 
 @MappableClass()
@@ -12,6 +10,7 @@ class Note with NoteMappable {
   final int version;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final DateTime? deletedAt;
 
   Note({
     required this.id,
@@ -21,18 +20,6 @@ class Note with NoteMappable {
     required this.version,
     required this.createdAt,
     required this.updatedAt,
+    this.deletedAt,
   });
-
-  //toEntity method
-  NoteEntity toEntity() {
-    return NoteEntity(
-      id: id,
-      folderId: folderId,
-      title: title,
-      content: content,
-      synced: true,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
-    );
-  }
 }

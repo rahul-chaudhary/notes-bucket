@@ -12,6 +12,7 @@ class NoteEntity with NoteEntityMappable {
   final int retryCount;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final DateTime? deletedAt;
 
   NoteEntity({
     required this.id,
@@ -22,5 +23,6 @@ class NoteEntity with NoteEntityMappable {
     required this.retryCount,
     this.createdAt,
     this.updatedAt,
+    this.deletedAt,
   });
 }
