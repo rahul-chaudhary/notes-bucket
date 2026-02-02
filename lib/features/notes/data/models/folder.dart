@@ -1,6 +1,4 @@
 import 'package:dart_mappable/dart_mappable.dart';
-
-import '../../domain/entities/folder_entity.dart';
 part 'folder.mapper.dart';
 
 @MappableClass()
@@ -10,6 +8,7 @@ class Folder with FolderMappable {
   final String name;
   final DateTime createdAt;
   final DateTime? updatedAt;
+  final DateTime? deletedAt;
 
   Folder({
     required this.id,
@@ -17,17 +16,6 @@ class Folder with FolderMappable {
     required this.name,
     required this.createdAt,
     this.updatedAt,
+    this.deletedAt,
   });
-
-  //toEntity method
-  FolderEntity toEntity() {
-    return FolderEntity(
-      id: id,
-      parentId: parentId,
-      name: name,
-      synced: true,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
-    );
-  }
 }

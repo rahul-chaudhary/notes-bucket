@@ -11,6 +11,7 @@ class FolderEntity with FolderEntityMappable {
   final int retryCount;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final DateTime? deletedAt;
 
   FolderEntity({
     required this.id,
@@ -20,5 +21,6 @@ class FolderEntity with FolderEntityMappable {
     required this.retryCount,
     this.createdAt,
     this.updatedAt,
+    this.deletedAt,
   });
 }
