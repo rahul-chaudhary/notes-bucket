@@ -1,5 +1,6 @@
 import 'package:notes_bucket/core/network/api_client.dart';
 import 'package:notes_bucket/core/network/constants/api_endpoints.dart';
+import 'package:notes_bucket/features/notes/data/models/response_models.dart';
 import 'package:notes_bucket/features/notes/data/models/folder.dart';
 
 abstract interface class FolderRemoteDatasource {
@@ -11,11 +12,11 @@ abstract interface class FolderRemoteDatasource {
 
   Future<Folder> fetchFolderByID(String folderId);
 
-  Future<List<Folder>> bulkAddFolders(List<Folder> folders);
+  Future<BulkFolderResModel> bulkAddFolders(List<Folder> folders);
 
-  Future<List<Folder>> bulkUpdateFolders(List<Folder> folders);
+  Future<BulkFolderResModel> bulkUpdateFolders(List<Folder> folders);
 
-  Future<String> bulkDeleteFolders(List<String> folderIds);
+  Future<List<FailedFolderModel>> bulkDeleteFolders(List<String> folderIds);
 }
 
 class FolderRemoteDatasourceImpl implements FolderRemoteDatasource {
@@ -76,7 +77,7 @@ class FolderRemoteDatasourceImpl implements FolderRemoteDatasource {
   }
 
   @override
-  Future<List<Folder>> bulkAddFolders(List<Folder> folders) async {
+  Future<BulkFolderResModel> bulkAddFolders(List<Folder> folders) async {
     try {
       final response = await apiClient.post(
         ApiEndpoints.bulkFolders,
@@ -90,16 +91,14 @@ class FolderRemoteDatasourceImpl implements FolderRemoteDatasource {
             )
             .toList(),
       );
-      return response.data['folders']
-          .map((folder) => FolderMapper.fromJson(folder))
-          .toList();
+      return BulkFolderResModelMapper.fromJson(response.data);
     } catch (e) {
       rethrow;
     }
   }
 
   @override
-  Future<List<Folder>> bulkUpdateFolders(List<Folder> folders) async {
+  Future<BulkFolderResModel> bulkUpdateFolders(List<Folder> folders) async {
     try {
       final response = await apiClient.put(
         ApiEndpoints.bulkFolders,
@@ -114,22 +113,22 @@ class FolderRemoteDatasourceImpl implements FolderRemoteDatasource {
             .toList(),
       );
 
-      return response.data['folders']
-          .map((folder) => FolderMapper.fromJson(folder))
-          .toList();
+      return BulkFolderResModelMapper.fromJson(response.data);
     } catch (e) {
       rethrow;
     }
   }
 
   @override
-  Future<String> bulkDeleteFolders(List<String> folderIds) async {
+  Future<List<FailedFolderModel>> bulkDeleteFolders(List<String> folderIds) async {
     try {
       final response = await apiClient.delete(
         ApiEndpoints.bulkFolders,
         data: folderIds,
       );
-      return response.data['message'];
+      return response.data['failed']
+          .map((folder) => FailedFolderModelMapper.fromJson(folder))
+          .toList();
     } catch (e) {
       rethrow;
     }
