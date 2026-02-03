@@ -98,7 +98,7 @@ class NoteRepositoryImpl implements NoteRepository {
   @override
   Future<Either<Failure, NoteEntity>> markNoteAsSynced(String noteId) async {
     try {
-      final syncedNote = await noteLocalDataSource.markNoteAsSynced(noteId);
+      final syncedNote = await noteLocalDataSource.updateSyncStatus(noteId);
       return Right(syncedNote);
     } on DatabaseException catch (e, st) {
       return Left(DatabaseFailure(e.message, st));
@@ -108,7 +108,7 @@ class NoteRepositoryImpl implements NoteRepository {
   @override
   Future<Either<Failure, List<NoteEntity>>> fetchUnsyncedNotes() async {
     try {
-      final notes = await noteLocalDataSource.fetchUnsyncedNotes();
+      final notes = await noteLocalDataSource.getNotesBySyncStatus();
       return Right(notes);
     } on DatabaseException catch (e, st) {
       return Left(DatabaseFailure(e.message, st));

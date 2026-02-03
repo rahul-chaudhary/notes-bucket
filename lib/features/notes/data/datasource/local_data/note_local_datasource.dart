@@ -4,6 +4,7 @@ import 'package:notes_bucket/core/errors/failures.dart';
 import 'package:notes_bucket/core/utils/app_utils_func.dart';
 import 'package:notes_bucket/features/notes/domain/entities/note_entity.dart';
 import 'package:notes_bucket/features/notes/domain/usecases/note_usecases.dart';
+import 'package:notes_bucket/features/sync/models/sync_status_enum.dart';
 
 abstract interface class NoteLocalDataSource {
   Future<NoteEntity> addNote(AddNoteParams params);
@@ -20,11 +21,11 @@ abstract interface class NoteLocalDataSource {
 
   Future<int> fetchNotesCountByFolderId(String folderId);
 
-  Future<NoteEntity> markNoteAsSynced(String noteId);
+  Future<NoteEntity> updateSyncStatus(String noteId, SyncStatus status);
 
-  Future<List<NoteEntity>> fetchUnsyncedNotes();
+  Future<List<NoteEntity>> getNotesBySyncStatus(SyncStatus status);
 
-  Future<int> fetchUnsyncedNotesCount();
+  Future<int> getNotesCountBySyncStatus(SyncStatus status);
 
   Future<void> incrementRetryCount(String noteId);
 }
@@ -45,14 +46,15 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
         folderID: params.folderId,
         title: Value(params.title),
         content: Value(params.content),
-        synced: false,
+        syncStatus: SyncStatus.pendingCreate,
+        retryCount: Value(0),
         createdAt: Value(null),
         updatedAt: Value(null),
       ),
     );
     final n = await fetchNoteById(id);
     if (n == null) throw DatabaseFailure('Fail to add note', null);
-    return n!;
+    return n;
   }
 
   @override
@@ -69,7 +71,7 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
             folderId: row.folderID,
             title: row.title,
             content: row.content,
-            synced: row.synced,
+            syncStatus: row.syncStatus,
             retryCount: row.retryCount,
             createdAt: row.createdAt,
             updatedAt: row.updatedAt,
@@ -91,7 +93,7 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
       folderId: queryResult.folderID,
       title: queryResult.title,
       content: queryResult.content,
-      synced: queryResult.synced,
+      syncStatus: queryResult.syncStatus,
       retryCount: queryResult.retryCount,
       createdAt: queryResult.createdAt,
       updatedAt: queryResult.updatedAt,
@@ -109,7 +111,7 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
         folderID: note.folderId,
         title: Value(note.title),
         content: Value(note.content),
-        synced: note.synced,
+        syncStatus: note.syncStatus,
         retryCount: Value(note.retryCount),
         createdAt: Value(note.createdAt),
         updatedAt: Value(note.updatedAt),
@@ -137,7 +139,7 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
       folderId: row.folderID,
       title: row.title,
       content: row.content,
-      synced: row.synced,
+      syncStatus: row.syncStatus,
       retryCount: row.retryCount,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
@@ -155,25 +157,25 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
   }
 
   @override
-  Future<NoteEntity> markNoteAsSynced(String noteId) async {
+  Future<NoteEntity> updateSyncStatus(String noteId, SyncStatus status) async {
      await (database.update(database.notesItems)
       ..where((tbl) => tbl.id.equals(noteId)))
-        .write(const NotesItemsCompanion(synced: Value(true)));
+        .write(NotesItemsCompanion(syncStatus: Value(status)));
 
     final n = await fetchNoteById(noteId);
     return n!;
   }
 
   @override
-  Future<List<NoteEntity>> fetchUnsyncedNotes() async {
+  Future<List<NoteEntity>> getNotesBySyncStatus(SyncStatus status) async {
     final queryResult = await (database.select(database.notesItems)
-      ..where((tbl) => tbl.synced.equals(false))).get();
+      ..where((tbl) => tbl.syncStatus.equals(status.index))).get();
     return queryResult.map((row) => NoteEntity(
       id: row.id,
       folderId: row.folderID,
       title: row.title,
       content: row.content,
-      synced: row.synced,
+      syncStatus: row.syncStatus,
       retryCount: row.retryCount,
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
@@ -181,12 +183,12 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
   }
 
   @override
-  Future<int> fetchUnsyncedNotesCount() async {
+  Future<int> getNotesCountBySyncStatus(SyncStatus status) async {
     final countExp = countAll();
 
     final row = await (database.selectOnly(database.notesItems)
       ..addColumns([countExp])
-      ..where(database.notesItems.synced.equals(false)))
+      ..where(database.notesItems.syncStatus.equals(status.index)))
         .getSingleOrNull();
 
     return row?.read(countExp) ?? 0;

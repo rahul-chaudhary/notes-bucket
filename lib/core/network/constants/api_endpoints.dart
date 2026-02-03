@@ -21,6 +21,7 @@ abstract final class ApiEndpoints {
 
   // Folders endpoints
   static const String folder = '/folder';
+  static const String bulkFolders = '/folder/bulk';
 
   //notifications & firebase endpoints
   static const String saveFCMToken = 'notification/saveFCMToken';

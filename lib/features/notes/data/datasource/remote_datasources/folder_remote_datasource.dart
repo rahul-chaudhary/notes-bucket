@@ -10,6 +10,12 @@ abstract interface class FolderRemoteDatasource {
   Future<String> deleteFolder(String folderId);
 
   Future<Folder> fetchFolderByID(String folderId);
+
+  Future<List<Folder>> bulkAddFolders(List<Folder> folders);
+
+  Future<List<Folder>> bulkUpdateFolders(List<Folder> folders);
+
+  Future<String> bulkDeleteFolders(List<String> folderIds);
 }
 
 class FolderRemoteDatasourceImpl implements FolderRemoteDatasource {
@@ -69,4 +75,63 @@ class FolderRemoteDatasourceImpl implements FolderRemoteDatasource {
     }
   }
 
+  @override
+  Future<List<Folder>> bulkAddFolders(List<Folder> folders) async {
+    try {
+      final response = await apiClient.post(
+        ApiEndpoints.bulkFolders,
+        data: folders
+            .map(
+              (folder) => {
+                'id': folder.id,
+                'name': folder.name,
+                'parent_id': folder.parentId,
+              },
+            )
+            .toList(),
+      );
+      return response.data['folders']
+          .map((folder) => FolderMapper.fromJson(folder))
+          .toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<Folder>> bulkUpdateFolders(List<Folder> folders) async {
+    try {
+      final response = await apiClient.put(
+        ApiEndpoints.bulkFolders,
+        data: folders
+            .map(
+              (folder) => {
+                'id': folder.id,
+                'name': folder.name,
+                'parent_id': folder.parentId,
+              },
+            )
+            .toList(),
+      );
+
+      return response.data['folders']
+          .map((folder) => FolderMapper.fromJson(folder))
+          .toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<String> bulkDeleteFolders(List<String> folderIds) async {
+    try {
+      final response = await apiClient.delete(
+        ApiEndpoints.bulkFolders,
+        data: folderIds,
+      );
+      return response.data['message'];
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

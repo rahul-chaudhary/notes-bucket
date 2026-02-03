@@ -5,25 +5,27 @@ import 'package:notes_bucket/features/notes/data/datasource/local_data/note_loca
 import 'package:notes_bucket/features/notes/data/datasource/remote_datasources/folder_remote_datasource.dart';
 import 'package:notes_bucket/features/notes/data/datasource/remote_datasources/note_remote_datasource.dart';
 
-enum SyncStatus { idle, syncingFolders, syncingNotes, success, failure }
+import 'models/sync_status_enum.dart';
+
+enum SyncingStatus { idle, syncingFolders, syncingNotes, success, failure }
 
 const maxRetries = 3;
 
 class SyncState {
-  final SyncStatus status;
+  final SyncingStatus status;
   final String? message;
 
   const SyncState(this.status, {this.message});
 
-  const SyncState.idle() : this(SyncStatus.idle);
+  const SyncState.idle() : this(SyncingStatus.idle);
 
-  const SyncState.syncingFolders() : this(SyncStatus.syncingFolders);
+  const SyncState.syncingFolders() : this(SyncingStatus.syncingFolders);
 
-  const SyncState.syncingNotes() : this(SyncStatus.syncingNotes);
+  const SyncState.syncingNotes() : this(SyncingStatus.syncingNotes);
 
-  const SyncState.success() : this(SyncStatus.success);
+  const SyncState.success() : this(SyncingStatus.success);
 
-  const SyncState.failure(String msg) : this(SyncStatus.failure, message: msg);
+  const SyncState.failure(String msg) : this(SyncingStatus.failure, message: msg);
 }
 
 class SyncService {
@@ -47,13 +49,13 @@ class SyncService {
       onStateChanged(const SyncState.syncingFolders());
       await _syncFolder();
 
-      final unsyncedFolders = await folderLocal.fetchUnsyncedFoldersCount();
+      final unsyncedFolders = await folderLocal.getFolderCountBySyncStatus(SyncStatus.pendingCreate);
       if (unsyncedFolders == 0) {
         onStateChanged(const SyncState.syncingNotes());
         await _syncNotes();
       }
 
-      final unsyncedNotes = await noteLocal.fetchUnsyncedNotesCount();
+      final unsyncedNotes = await noteLocal.getNotesCountBySyncStatus(SyncStatus.pendingCreate);
       if(unsyncedFolders == 0 && unsyncedNotes == 0) {
         onStateChanged(const SyncState.success());
       }
@@ -65,7 +67,7 @@ class SyncService {
   }
 
   Future<void> _syncFolder() async {
-    var unsyncedFolders = await folderLocal.fetchUnsyncedFolders();
+    var unsyncedFolders = await folderLocal.fetchFoldersBySyncStatus(SyncStatus.pendingCreate);
 
     while (unsyncedFolders.isNotEmpty) {
       for (final folder in unsyncedFolders) {
@@ -73,12 +75,12 @@ class SyncService {
         try {
           if (folder.parentId == null) {
             await folderRemote.addFolder(folder.id, folder.name, folder.parentId);
-            await folderLocal.markFolderAsSynced(folder.id);
+            await folderLocal.updateSyncStatus(folder.id);
           } else {
             final parent = await folderLocal.fetchFolderById(folder.parentId!);
-            if (parent!.synced) {
+            if (parent?.syncStatus == SyncStatus.synced) {
               await folderRemote.addFolder(folder.id, folder.name, folder.parentId);
-              await folderLocal.markFolderAsSynced(folder.id);
+              await folderLocal.updateSyncStatus(folder.id, SyncStatus.synced);
             }
           }
         } catch (e) {
@@ -86,30 +88,30 @@ class SyncService {
           await folderLocal.incrementRetryCount(folder.id);
         }
       }
-      unsyncedFolders = await folderLocal.fetchUnsyncedFolders();
+      unsyncedFolders = await folderLocal.fetchFoldersBySyncStatus();
     }
   }
 
   Future<void> _syncNotes() async {
     try {
-      final unsyncedNotes = await noteLocal.fetchUnsyncedNotes();
+      final unsyncedNotes = await noteLocal.getNotesBySyncStatus();
       for (final note in unsyncedNotes) {
         if (note.retryCount >= maxRetries) continue;
         final parent = await folderLocal.fetchFolderById(note.folderId);
-        if (parent!.synced) {
-          try {
-            await noteRemote.addNote(
-              note.id,
-              note.folderId,
-              note.title,
-              note.content,
-            );
-            await noteLocal.markNoteAsSynced(note.id);
-          } catch (e) {
-            dbPrint("Failed to sync note: ${note.id}", e: e);
-            await noteLocal.incrementRetryCount(note.id);
-          }
-        }
+        // if (parent!.synced) {
+        //   try {
+        //     await noteRemote.addNote(
+        //       note.id,
+        //       note.folderId,
+        //       note.title,
+        //       note.content,
+        //     );
+        //     await noteLocal.markNoteAsSynced(note.id);
+        //   } catch (e) {
+        //     dbPrint("Failed to sync note: ${note.id}", e: e);
+        //     await noteLocal.incrementRetryCount(note.id);
+        //   }
+        // }
       }
     } catch (e) {
       throw SyncFailure(e.toString());

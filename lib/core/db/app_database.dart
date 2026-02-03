@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:notes_bucket/core/constants/app_constants.dart';
+import 'package:notes_bucket/features/sync/models/sync_status_enum.dart';
 import 'package:path_provider/path_provider.dart';
 
 part 'app_database.g.dart';
@@ -11,10 +12,11 @@ class FolderItems extends Table {
   TextColumn get name => text().withLength(
       min: AppConstants.minFolderNameLength,
       max: AppConstants.maxFolderNameLength)();
-  BoolColumn get synced => boolean()();
+  IntColumn get syncStatus => intEnum<SyncStatus>()();
   IntColumn get retryCount => integer().withDefault(const Constant(0))();
   DateTimeColumn get createdAt => dateTime().nullable()();
   DateTimeColumn get updatedAt => dateTime().nullable()();
+  DateTimeColumn get deletedAt => dateTime().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -27,10 +29,11 @@ class NotesItems extends Table {
       min: AppConstants.minNoteTitleLength,
       max: AppConstants.maxNoteTitleLength)();
   TextColumn get content => text().nullable()();
-  BoolColumn get synced => boolean()();
+  IntColumn get syncStatus => intEnum<SyncStatus>()();
   IntColumn get retryCount => integer().withDefault(const Constant(0))();
   DateTimeColumn get createdAt => dateTime().nullable()();
   DateTimeColumn get updatedAt => dateTime().nullable()();
+  DateTimeColumn get deletedAt => dateTime().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -48,8 +51,8 @@ class AppDatabase extends _$AppDatabase {
     onCreate: (m) => m.createAll(),
     onUpgrade: (m, from, to) async {
       if (from < 2) {
-        await m.addColumn(folderItems, folderItems.retryCount);
-        await m.addColumn(notesItems, notesItems.retryCount);
+        await m.addColumn(folderItems, folderItems.syncStatus);
+        await m.addColumn(notesItems, notesItems.syncStatus);
       }
     },
   );

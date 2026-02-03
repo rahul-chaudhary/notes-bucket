@@ -13,13 +13,13 @@ class SyncMonitor extends ConsumerWidget {
     final syncState = ref.watch(syncMonitorProvider);
 
     switch (syncState.status) {
-      case SyncStatus.syncingFolders:
+      case SyncingStatus.syncingFolders:
         return _buildText(context, "Syncing folders…");
-      case SyncStatus.syncingNotes:
+      case SyncingStatus.syncingNotes:
         return _buildText(context, "Syncing notes…");
-      case SyncStatus.success:
+      case SyncingStatus.success:
         return _buildText(context, 'All synced ✨');
-      case SyncStatus.failure:
+      case SyncingStatus.failure:
         return _buildText(context, syncState.message ?? 'error');
       default:
         return Text('Everything up to date 🎉', style: AppTextStyles.bodySmall(context));

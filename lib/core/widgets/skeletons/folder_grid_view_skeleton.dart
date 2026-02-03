@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:notes_bucket/core/theme/app_color.dart';
 import 'package:notes_bucket/core/widgets/buttons/folder_button.dart';
 import 'package:notes_bucket/features/notes/domain/entities/folder_entity.dart';
+import 'package:notes_bucket/features/sync/models/sync_status_enum.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class FolderGridVewSkeleton extends StatelessWidget {
@@ -35,7 +36,7 @@ class FolderGridVewSkeleton extends StatelessWidget {
             retryCount: 0,
             createdAt: DateTime.now(),
             updatedAt: DateTime.now(),
-            synced: false,
+            syncStatus: SyncStatus.synced,
           );
           return SizedBox(
             height: 100,

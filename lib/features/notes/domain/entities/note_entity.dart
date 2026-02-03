@@ -1,4 +1,5 @@
 import 'package:dart_mappable/dart_mappable.dart';
+import 'package:notes_bucket/features/sync/models/sync_status_enum.dart';
 
 part 'note_entity.mapper.dart';
 
@@ -8,7 +9,7 @@ class NoteEntity with NoteEntityMappable {
   final String folderId;
   final String? title;
   final String? content;
-  final bool synced;
+  final SyncStatus syncStatus;
   final int retryCount;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -19,7 +20,7 @@ class NoteEntity with NoteEntityMappable {
     required this.folderId,
     required this.title,
     required this.content,
-    required this.synced,
+    required this.syncStatus,
     required this.retryCount,
     this.createdAt,
     this.updatedAt,
